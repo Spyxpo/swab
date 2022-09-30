@@ -1,0 +1,7 @@
+/projects
+/build
+/assets
+.DS_Store
+run.spec
+__pycache__
+/dist
