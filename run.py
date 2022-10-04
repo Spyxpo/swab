@@ -667,15 +667,15 @@ help_menu.add_command(
 help_menu.add_separator()
 help_menu.add_command(
     label='Changelog',
-    command=lambda: webbrowser.open('https://github.com/Spyxpo/spyxpo-web-to-app-builder/blob/master/CHANGELOG.md'),
+    command=lambda: webbrowser.open('https://github.com/Spyxpo/swab/blob/stable/CHANGELOG.md'),
 )
 help_menu.add_command(
     label='Source Code',
-    command=lambda: webbrowser.open('https://github.com/Spyxpo/spyxpo-web-to-app-builder/'),
+    command=lambda: webbrowser.open('https://github.com/Spyxpo/swab/'),
 )
 help_menu.add_command(
     label='View License',
-    command=lambda: webbrowser.open('https://github.com/Spyxpo/spyxpo-web-to-app-builder/blob/master/LICENSE'),
+    command=lambda: webbrowser.open('https://github.com/Spyxpo/swab/blob/stable/LICENSE'),
 )
 
 app_name_label = Label(root, text="App Name")
