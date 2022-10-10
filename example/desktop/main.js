@@ -1,5 +1,6 @@
 // Electron
 const { app } = require("electron");
+
 // Add app, Menu
 
 // This method will be called when Electron has finished initialization and is ready to create browser windows
@@ -10,7 +11,7 @@ app.on("ready", () => {
   mainWindow = window.createBrowserWindow(app);
 
   // Option 1: Uses Webtag and load a custom html file with external content
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/index.html`, {userAgent: 'Chrome'});
 
   // Option 2: Load directly an URL if you don't need interface customization
   //mainWindow.loadURL("https://github.com");
