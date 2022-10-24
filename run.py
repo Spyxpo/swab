@@ -14,6 +14,9 @@ import platform
 import webbrowser
 from PIL import Image
 import icnsutil
+import wget
+import userpath
+import zipfile
 import subprocess
 
 running_on = platform.system()
@@ -39,6 +42,10 @@ def clear():
 
 clear()
 
+# packages version details
+packages_version_info = open('.packages', 'r')
+flutter_version = packages_version_info.readlines()[0]
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -61,7 +68,49 @@ def check_requirements(name, success_text, error_text):
         print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
         input(f'{bcolors.ENDC}Press ENTER to exit.')
         exit()
-
+        
+def check_flutter():
+    program = subprocess.call(['which', 'flutter'])
+    if program == 0:
+        print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+        clear()
+        pass
+    else:
+        print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+        print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+        if platform == 'Windows':
+            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_{flutter_version}-stable.zip"
+            print("Downloading FLutter for Windows...")
+            wget.download(url, 'flutter.zip')
+            print("Extracting Flutter.....")
+            with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+                zip_ref.extractall("C:\\")
+            location = "C:\\flutter\\bin"
+            userpath.append(location)
+            #os.system('setx /M path "%path%;C:\\flutter\\bin"')
+            print("Flutter installed successfully.")
+        elif platform == 'Darwin':
+            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
+            print("Downloading FLutter for macOS...")
+            wget.download(url, 'flutter.zip')
+            print("Extracting Flutter.....")
+            with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+                zip_ref.extractall("/Users/")
+            location = "/Users/flutter/bin"
+            userpath.append(location)
+            print("Flutter installed successfully.")      
+        elif platform == 'Linux':
+            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
+            print("Downloading FLutter for Linux...")
+            wget.download(url, 'flutter.tar.xz')
+            print("Extracting Flutter.....")
+            os.system('tar xf flutter.tar.xz')
+            location = os.getcwd() + "/flutter/bin"
+            userpath.append(location)
+            print("Flutter installed successfully.")
+        else:
+            pass
+  
 if running_on == 'Windows':
     pass
 elif running_on == 'Darwin':
@@ -75,6 +124,8 @@ if running_on == 'Windows':
     try:
         check_requirements('python', 'Python is already installed.', 'Python is not in the PATH or is installed on this device.')
     except:
+        check_requirements('python3', 'Python is already installed.', 'Python is not in the PATH or is installed on this device.')
+    else:
         pass
 else:
     pass
@@ -82,10 +133,9 @@ else:
 check_requirements('node', 'NodeJS is already installed.', 'NodeJS is not in the PATH or is installed on this device.')
 check_requirements('java', 'JRE is already installed.', 'JRE is not in the PATH or is installed on this device.')
 check_requirements('javac', 'JDK is already installed.', 'JDK is not in the PATH or is installed on this device.')
-check_requirements('flutter', 'Flutter is already installed.', 'Flutter is not in the PATH or is installed on this device.')
+check_flutter()
 check_requirements('git', 'Git is already installed.', 'Git is not in the PATH or is installed on this device.')
 check_requirements('android', 'Android Studio is already installed.', 'Android Studio is not in the PATH or is installed on this device.')
-
 
 if os.path.exists("assets"):
     pass

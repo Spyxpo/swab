@@ -50,6 +50,8 @@ Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashr
 ```bash
 pip3 install pillow 
 pip3 install icnsutil
+pip3 install userpath
+pip3 install wget
 ```
 
 or
@@ -57,6 +59,8 @@ or
 ```bash
 pip install pillow 
 pip install icnsutil
+pip install userpath
+pip install wget
 ```
 
 ## Installation
