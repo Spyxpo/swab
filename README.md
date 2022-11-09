@@ -153,13 +153,20 @@ keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -va
 
 ## Coming soon
 
-- [ ] iOS apps
-- [ ] Admin App
-- [ ] Deep Linking 2
-- [ ] Pull to refresh
+- [ ] Auto prequisites installation
+- [ ] Dessktop app installer
+- [ ] Desktop app update popup
+- [ ] Desktop app Splash Screen
+- [ ] Desktop app External url opener
+- [ ] Desktop app Deep Linking
+- [ ] Desktop app Loading Indicator
 - [ ] Notifications
-- [ ] Admob support
 - [ ] Local HTML website
+- [ ] Admob support
+- [ ] Admin app
+- [ ] Deep Linking enhancements
+- [ ] Pull to refresh
+- [ ] iOS app
 
 ## Authors
 
