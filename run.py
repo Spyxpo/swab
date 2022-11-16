@@ -58,58 +58,84 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def check_requirements(name, success_text, error_text):
-    program = subprocess.call(['which', name])
-    if program == 0:
-        print(f'{bcolors.OKGREEN}{success_text}\n')
-        clear()
-        pass
-    else:
-        print(f'{bcolors.WARNING}{error_text}\n')
-        print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
-        input(f'{bcolors.ENDC}Press ENTER to exit.')
-        exit()
+    if running_on == 'Windows':
+        program = subprocess.call(['where', name])
+        if program == 0:
+            print(f'{bcolors.OKGREEN}{success_text}\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}{error_text}\n')
+            print(f'{bcolors.FAIL}Please install \"{name}\" then try again.\n')
+            exit()
+    else:        
+        program = subprocess.call(['which', name])
+        if program == 0:
+            print(f'{bcolors.OKGREEN}{success_text}\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}{error_text}\n')
+            print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
+            input(f'{bcolors.ENDC}Press ENTER to exit.')
+            exit()
         
 def check_flutter():
-    program = subprocess.call(['which', 'flutter'])
-    if program == 0:
-        print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
-        clear()
-        pass
-    else:
-        print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
-        print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
-        if platform == 'Windows':
+    if running_on == 'Windows':
+        flutter = subprocess.call(['where', 'flutter'])
+        if flutter == 0:
+            print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+            
             url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_{flutter_version}-stable.zip"
-            print("Downloading FLutter for Windows...")
+            print(f"{bcolors.OKGREEN}Downloading FLutter for Windows...")
             wget.download(url, 'flutter.zip')
             print("Extracting Flutter.....")
             with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
                 zip_ref.extractall("C:\\")
             location = "C:\\flutter\\bin"
             userpath.append(location)
+            os.remove('flutter.zip')
             #os.system('setx /M path "%path%;C:\\flutter\\bin"')
             print("Flutter installed successfully.")
-        elif platform == 'Darwin':
-            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
-            print("Downloading FLutter for macOS...")
-            wget.download(url, 'flutter.zip')
-            print("Extracting Flutter.....")
-            with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
-                zip_ref.extractall("/Users/")
-            location = "/Users/flutter/bin"
-            userpath.append(location)
-            print("Flutter installed successfully.")      
-        elif platform == 'Linux':
-            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
-            print("Downloading FLutter for Linux...")
-            wget.download(url, 'flutter.tar.xz')
-            print("Extracting Flutter.....")
-            os.system('tar xf flutter.tar.xz')
-            location = os.getcwd() + "/flutter/bin"
-            userpath.append(location)
-            print("Flutter installed successfully.")
-        else:
+        
+    else:
+        program = subprocess.call(['which', 'flutter'])
+        if program == 0:
+            print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+            clear()
             pass
+        else:
+            print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+          
+            if platform == 'Darwin':
+                url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
+                print("Downloading FLutter for macOS...")
+                wget.download(url, 'flutter.zip')
+                print("Extracting Flutter.....")
+                with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+                    zip_ref.extractall("/Users/")
+                location = "/Users/flutter/bin"
+                userpath.append(location)
+                os.remove('flutter.zip')
+                print("Flutter installed successfully.")      
+            elif platform == 'Linux':
+                url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
+                print("Downloading FLutter for Linux...")
+                wget.download(url, 'flutter.tar.xz')
+                print("Extracting Flutter.....")
+                os.system('tar xf flutter.tar.xz')
+                location = os.getcwd() + "/flutter/bin"
+                userpath.append(location)
+                os.remove('flutter.tar.xz')
+                print("Flutter installed successfully.")
+            else:
+                pass
   
 if running_on == 'Windows':
     pass
@@ -130,10 +156,10 @@ if running_on == 'Windows':
 else:
     pass
 
+check_flutter()
 check_requirements('node', 'NodeJS is already installed.', 'NodeJS is not in the PATH or is installed on this device.')
 check_requirements('java', 'JRE is already installed.', 'JRE is not in the PATH or is installed on this device.')
 check_requirements('javac', 'JDK is already installed.', 'JDK is not in the PATH or is installed on this device.')
-check_flutter()
 check_requirements('git', 'Git is already installed.', 'Git is not in the PATH or is installed on this device.')
 check_requirements('android', 'Android Studio is already installed.', 'Android Studio is not in the PATH or is installed on this device.')
 

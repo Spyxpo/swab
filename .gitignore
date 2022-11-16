@@ -5,3 +5,4 @@
 run.spec
 __pycache__
 /dist
+*.tmp
