@@ -6,3 +6,8 @@ run.spec
 __pycache__
 /dist
 *.tmp
+*.exe
+*.msi
+*.zip
+*.xz
+*.gz
