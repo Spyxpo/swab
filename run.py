@@ -44,7 +44,16 @@ clear()
 
 # packages version details
 packages_version_info = open('.packages', 'r')
-flutter_version = packages_version_info.readlines()[0]
+line = packages_version_info.readlines()
+
+flutter_version = line[0]
+nodejs_version = line[1]
+jdk_version = line[2]
+jre_version = line[3]
+git_version = line[4]
+android_studio_version = line[5]
+
+packages_version_info.close()
 
 class bcolors:
     HEADER = '\033[95m'
@@ -136,7 +145,229 @@ def check_flutter():
                 print("Flutter installed successfully.")
             else:
                 pass
-  
+
+def check_nodejs():
+    if running_on == 'Windows':
+        nodejs = subprocess.call(['where', 'node'])
+        if nodejs == 0:
+            print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+            url = f"https://nodejs.org/dist/v{nodejs_version}/node-{nodejs_version}-x64.msi"
+            print(f"{bcolors.OKGREEN}Downloading NodeJS for Windows...")
+            wget.download(url, 'nodejs.msi')
+            print("Installing NodeJS.....")
+            os.system('msiexec /i nodejs.msi /quiet')
+            os.remove('nodejs.msi')
+            print("NodeJS installed successfully.")
+    else:
+        nodejs = subprocess.call(['which', 'node'])
+        if nodejs == 0:
+            print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}.pkg"
+                print(f"{bcolors.OKGREEN}Downloading NodeJS for macOS...")
+                wget.download(url, 'nodejs.pkg')
+                print("Installing NodeJS.....")
+                os.system('open nodejs.pkg')
+                os.remove('nodejs.pkg')
+                print("NodeJS installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
+                print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
+                wget.download(url, 'nodejs.tar.xz')
+                print("Extracting NodeJS.....")
+                os.system('tar xf nodejs.tar.xz')
+                location = os.getcwd() + f"/node-v{nodejs_version}-linux-x64/bin"
+                userpath.append(location)
+                os.remove
+
+def check_java():
+    if running_on == 'Windows':
+        java = subprocess.call(['where', 'java'])
+        if java == 0:
+            print(f'{bcolors.OKGREEN}Java is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+            url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_windows-x64_bin.exe"
+            print(f"{bcolors.OKGREEN}Downloading Java for Windows...")
+            wget.download(url, 'java.exe')
+            print("Installing Java.....")
+            os.system('java.exe')
+            os.remove('java.exe')
+            print("Java installed successfully.")
+    else:
+        java = subprocess.call(['which', 'java'])
+        if java == 0:
+            print(f'{bcolors.OKGREEN}Java is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.dmg"
+                print(f"{bcolors.OKGREEN}Downloading Java for macOS...")
+                wget.download(url, 'java.dmg')
+                print("Installing Java.....")
+                os.system('open java.dmg')
+                os.remove('java.dmg')
+                print("Java installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
+                print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
+                wget.download(url, 'java.tar.gz')
+                os.system('tar xf java.tar.gz')
+                location = os.getcwd() + f"/jdk-{jdk_version}/bin"
+                userpath.append(location)
+                os.remove('java.tar.gz')
+                print("Java installed successfully.")
+
+def check_jre():
+    if running_on == 'Windows':
+        jre = subprocess.call(['where', 'javac'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}Java JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+            url = f"https://download.oracle.com/otn/java/jdk/{jre_version}/latest/jre-{jre_version}_windows-x64_bin.exe"
+            print(f"{bcolors.OKGREEN}Downloading Java JRE for Windows...")
+            wget.download(url, 'jre.exe')
+            print("Installing Java.....")
+            os.system('jre.exe')
+            os.remove('jre.exe')
+            print("Java JRE installed successfully.")
+    else:
+        jre = subprocess.call(['which', 'javac'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}Java JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://download.oracle.com/otn/java/jdk/{jre_version}/latest/jre-{jre_version}_macos-x64_bin.dmg"
+                print(f"{bcolors.OKGREEN}Downloading Java JRE for macOS...")
+                wget.download(url, 'jre.dmg')
+                print("Installing Java.....")
+                os.system('open jre.dmg')
+                os.remove('jre.dmg')
+                print("Java JRE installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://download.oracle.com/otn/java/jdk/{jre_version}/latest/jre-{jre_version}_linux-x64_bin.tar.gz"
+                print(f"{bcolors.OKGREEN}Downloading Java JRE for Linux...")
+                wget.download(url, 'jre.tar.gz')
+                os.system('tar xf jre.tar.gz')
+                location = os.getcwd() + f"/jre-{jre_version}/bin"
+                userpath.append(location)
+                os.remove('jre.tar.gz')
+                print("Java JRE installed successfully.")
+
+def check_android_studio():
+    if running_on == 'Windows':
+        android_studio = subprocess.call(['where', 'android'])
+        if android_studio == 0:
+            print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
+            url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-{android_studio_version}-windows.zip"
+            print(f"{bcolors.OKGREEN}Downloading Android Studio for Windows...")
+            wget.download(url, 'android-studio.zip')
+            print("Installing Android Studio.....")
+            os.system('unzip android-studio.zip')
+            location = os.getcwd() + f"/android-studio/bin"
+            userpath.append(location)
+            os.remove('android-studio.zip')
+            print("Android Studio installed successfully.")
+    else:
+        android_studio = subprocess.call(['which', 'android'])
+        if android_studio == 0:
+            print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-mac_arm.dmg"
+                print(f"{bcolors.OKGREEN}Downloading Android Studio for macOS...")
+                wget.download(url, 'android-studio.dmg')
+                print("Installing Android Studio.....")
+                os.system('open android-studio.dmg')
+                os.remove('android-studio.dmg')
+                print("Android Studio installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-{android_studio_version}-linux.tar.gz"
+                print(f"{bcolors.OKGREEN}Downloading Android Studio for Linux...")
+                wget.download(url, 'android-studio.tar.gz')
+                os.system('tar xf android-studio.tar.gz')
+                location = os.getcwd() + f"/android-studio/bin"
+                userpath.append(location)
+                os.remove('android-studio.tar.gz')
+                print("Android Studio installed successfully.")
+
+def check_git():
+    if running_on == 'Windows':
+        git = subprocess.call(['where', 'git'])
+        if git == 0:
+            print(f'{bcolors.OKGREEN}Git is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+            url = f"https://github.com/git-for-windows/git/releases/download/v{git_version}.windows.1/Git-{git_version}-64-bit.exe"
+            print(f"{bcolors.OKGREEN}Downloading Git for Windows...")
+            wget.download(url, 'git.exe')
+            print("Installing Git.....")
+            os.system('git.exe')
+            os.remove('git.exe')
+            print("Git installed successfully.")
+    else:
+        git = subprocess.call(['which', 'git'])
+        if git == 0:
+            print(f'{bcolors.OKGREEN}Git is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://sourceforge.net/projects/git-osx-installer/files/git-2.33.0-intel-universal-mavericks.dmg/download"
+                print(f"{bcolors.OKGREEN}Downloading Git for macOS...")
+                wget.download(url, 'git.dmg')
+                print("Installing Git.....")
+                os.system('open git.dmg')
+                os.remove('git.dmg')
+                print("Git installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://git-scm.com/download/linux"
+                print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
+                wget.download(url, 'git.tar.gz')
+                os.system('tar xf git.tar.gz')
+                location = os.getcwd() + f"/git/bin"
+                userpath.append(location)
+                os.remove('git.tar.gz')
+                print("Git installed successfully.")
+
 if running_on == 'Windows':
     pass
 elif running_on == 'Darwin':
@@ -157,11 +388,11 @@ else:
     pass
 
 check_flutter()
-check_requirements('node', 'NodeJS is already installed.', 'NodeJS is not in the PATH or is installed on this device.')
-check_requirements('java', 'JRE is already installed.', 'JRE is not in the PATH or is installed on this device.')
-check_requirements('javac', 'JDK is already installed.', 'JDK is not in the PATH or is installed on this device.')
-check_requirements('git', 'Git is already installed.', 'Git is not in the PATH or is installed on this device.')
-check_requirements('android', 'Android Studio is already installed.', 'Android Studio is not in the PATH or is installed on this device.')
+check_nodejs()
+check_java()
+check_jre()
+check_git()
+check_android_studio()
 
 if os.path.exists("assets"):
     pass
