@@ -100,7 +100,7 @@ def check_flutter():
             print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
             
             url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_{flutter_version}-stable.zip"
-            print(f"{bcolors.OKGREEN}Downloading FLutter for Windows...")
+            print(f"{bcolors.OKGREEN}Downloading Flutter for Windows...")
             wget.download(url, 'flutter.zip')
             print("\nExtracting Flutter.....")
             with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
@@ -132,7 +132,7 @@ def check_flutter():
           
             if platform == 'Darwin':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
-                print("Downloading FLutter for macOS...")
+                print("Downloading Flutter for macOS...")
                 wget.download(url, 'flutter.zip')
                 print("\nExtracting Flutter.....")
                 with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
@@ -143,7 +143,7 @@ def check_flutter():
                 print("Flutter installed successfully.")      
             elif platform == 'Linux':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
-                print("Downloading FLutter for Linux...")
+                print("Downloading Flutter for Linux...")
                 wget.download(url, 'flutter.tar.xz')
                 print("\nExtracting Flutter.....")
                 os.system('tar xf flutter.tar.xz')
