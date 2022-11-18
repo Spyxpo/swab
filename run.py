@@ -109,6 +109,16 @@ def check_flutter():
             userpath.append(location)
             os.remove('flutter.zip')
             print("Flutter installed successfully.")
+            flutter = subprocess.call(['where', 'flutter'])
+            if flutter == 0:
+                print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+                clear()
+                pass
+            else:
+                print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+                print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+                input(f'{bcolors.ENDC}Press ENTER to exit.')
+                exit()
         
     else:
         program = subprocess.call(['which', 'flutter'])
@@ -154,13 +164,23 @@ def check_nodejs():
         else:
             print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
-            url = f"https://nodejs.org/dist/v{nodejs_version}/node-{nodejs_version}-x64.msi"
+            url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-x64.msi"
             print(f"{bcolors.OKGREEN}Downloading NodeJS for Windows...")
             wget.download(url, 'nodejs.msi')
             print("\nInstalling NodeJS.....")
-            os.system('msiexec /i nodejs.msi /quiet')
+            os.system('nodejs.msi')
             os.remove('nodejs.msi')
             print("NodeJS installed successfully.")
+            nodejs = subprocess.call(['where', 'node'])
+            if nodejs == 0:
+                print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+                clear()
+                pass
+            else:
+                print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+                print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+                input(f'{bcolors.ENDC}Press ENTER to exit.')
+                exit()
     else:
         nodejs = subprocess.call(['which', 'node'])
         if nodejs == 0:
@@ -184,7 +204,7 @@ def check_nodejs():
                 wget.download(url, 'nodejs.tar.xz')
                 print("\nExtracting NodeJS.....")
                 os.system('tar xf nodejs.tar.xz')
-                location = os.getcwd() + f"/node-v{nodejs_version}-linux-x64/bin"
+                location = os.getcwd() + "/nodejs/bin"
                 userpath.append(location)
                 os.remove
 
@@ -207,6 +227,16 @@ def check_java():
             userpath.append(location)
             os.remove('java.exe')
             print("Java installed successfully.")
+            java = subprocess.call(['where', 'java'])
+            if java == 0:
+                print(f'{bcolors.OKGREEN}Java is already installed.\n')
+                clear()
+                pass
+            else:
+                print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+                print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+                input(f'{bcolors.ENDC}Press ENTER to exit.')
+                exit()
     else:
         java = subprocess.call(['which', 'java'])
         if java == 0:
@@ -252,6 +282,16 @@ def check_git():
             os.system('git.exe')
             os.remove('git.exe')
             print("Git installed successfully.")
+            git = subprocess.call(['where', 'git'])
+            if git == 0:
+                print(f'{bcolors.OKGREEN}Git is already installed.\n')
+                clear()
+                pass
+            else:
+                print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+                print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+                input(f'{bcolors.ENDC}Press ENTER to exit.')
+                exit()
     else:
         git = subprocess.call(['which', 'git'])
         if git == 0:
@@ -298,6 +338,16 @@ def check_android_studio():
             os.system('android-studio.exe')
             os.remove('android-studio.exe')
             print("Android Studio installed successfully.")
+            android_studio = subprocess.call(['where', 'android'])
+            if android_studio == 0:
+                print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
+                clear()
+                pass
+            else:
+                print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
+                print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
+                input(f'{bcolors.ENDC}Press ENTER to exit.')
+                exit()
     else:
         android_studio = subprocess.call(['which', 'android'])
         if android_studio == 0:
