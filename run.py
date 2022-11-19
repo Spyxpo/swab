@@ -4,6 +4,7 @@ Project Name: Spyxpo Web To App Builder
 Project Description: This is a tool which is used to convert a website into an app for iOS, Android, Windows, macOS and Linux.
 '''
 
+import sys
 from tkinter import *
 import tkinter as tk
 from tkinter.messagebox import showinfo
@@ -87,7 +88,10 @@ def check_requirements(name, success_text, error_text):
             print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
             input(f'{bcolors.ENDC}Press ENTER to exit.')
             exit()
-        
+
+def custom_bar(current, total, width=80):
+    return wget.bar_adaptive(round(current/1024/1024, 2), round(total/1024/1024, 2), width) + ' MB'
+
 def check_flutter():
     if running_on == 'Windows':
         flutter = subprocess.call(['where', 'flutter'])
@@ -101,7 +105,7 @@ def check_flutter():
             
             url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_{flutter_version}-stable.zip"
             print(f"{bcolors.OKGREEN}Downloading Flutter for Windows...")
-            wget.download(url, 'flutter.zip')
+            wget.download(url, 'flutter.zip', bar=custom_bar)
             print("\nExtracting Flutter.....")
             with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
                 zip_ref.extractall("C:\\")
@@ -109,16 +113,6 @@ def check_flutter():
             userpath.append(location)
             os.remove('flutter.zip')
             print("Flutter installed successfully.")
-            flutter = subprocess.call(['where', 'flutter'])
-            if flutter == 0:
-                print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
-                clear()
-                pass
-            else:
-                print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
-                print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
-                input(f'{bcolors.ENDC}Press ENTER to exit.')
-                exit()
         
     else:
         program = subprocess.call(['which', 'flutter'])
@@ -133,7 +127,7 @@ def check_flutter():
             if platform == 'Darwin':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
                 print("Downloading Flutter for macOS...")
-                wget.download(url, 'flutter.zip')
+                wget.download(url, 'flutter.zip', bar=custom_bar)
                 print("\nExtracting Flutter.....")
                 with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
                     zip_ref.extractall("/Users/")
@@ -144,10 +138,10 @@ def check_flutter():
             elif platform == 'Linux':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
                 print("Downloading Flutter for Linux...")
-                wget.download(url, 'flutter.tar.xz')
+                wget.download(url, 'flutter.tar.xz', bar=custom_bar)
                 print("\nExtracting Flutter.....")
                 os.system('tar xf flutter.tar.xz')
-                location = os.getcwd() + "/flutter/bin"
+                location = "flutter/bin"
                 userpath.append(location)
                 os.remove('flutter.tar.xz')
                 print("Flutter installed successfully.")
@@ -166,21 +160,12 @@ def check_nodejs():
             print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
             url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-x64.msi"
             print(f"{bcolors.OKGREEN}Downloading NodeJS for Windows...")
-            wget.download(url, 'nodejs.msi')
+            wget.download(url, 'nodejs.msi', bar=custom_bar)
             print("\nInstalling NodeJS.....")
             os.system('nodejs.msi')
             os.remove('nodejs.msi')
             print("NodeJS installed successfully.")
-            nodejs = subprocess.call(['where', 'node'])
-            if nodejs == 0:
-                print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
-                clear()
-                pass
-            else:
-                print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
-                print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
-                input(f'{bcolors.ENDC}Press ENTER to exit.')
-                exit()
+            
     else:
         nodejs = subprocess.call(['which', 'node'])
         if nodejs == 0:
@@ -193,7 +178,7 @@ def check_nodejs():
             if running_on == 'Darwin':
                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}.pkg"
                 print(f"{bcolors.OKGREEN}Downloading NodeJS for macOS...")
-                wget.download(url, 'nodejs.pkg')
+                wget.download(url, 'nodejs.pkg', bar=custom_bar)
                 print("\nInstalling NodeJS.....")
                 os.system('open nodejs.pkg')
                 os.remove('nodejs.pkg')
@@ -201,12 +186,12 @@ def check_nodejs():
             elif running_on == 'Linux':
                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
                 print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
-                wget.download(url, 'nodejs.tar.xz')
+                wget.download(url, 'nodejs.tar.xz', bar=custom_bar)
                 print("\nExtracting NodeJS.....")
                 os.system('tar xf nodejs.tar.xz')
                 location = os.getcwd() + "/nodejs/bin"
                 userpath.append(location)
-                os.remove
+                os.remove('nodejs.tar.xz')
 
 def check_java():
     if running_on == 'Windows':
@@ -220,23 +205,14 @@ def check_java():
             print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
             url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_windows-x64_bin.exe"
             print(f"{bcolors.OKGREEN}Downloading Java for Windows...")
-            wget.download(url, 'java.exe')
+            wget.download(url, 'java.exe', bar=custom_bar)
             print("\nInstalling Java.....")
             os.system('java.exe')
             location = f"C:\\Program Files\\Java\\jdk-{jdk_version}\\bin"
             userpath.append(location)
             os.remove('java.exe')
             print("Java installed successfully.")
-            java = subprocess.call(['where', 'java'])
-            if java == 0:
-                print(f'{bcolors.OKGREEN}Java is already installed.\n')
-                clear()
-                pass
-            else:
-                print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
-                print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
-                input(f'{bcolors.ENDC}Press ENTER to exit.')
-                exit()
+            
     else:
         java = subprocess.call(['which', 'java'])
         if java == 0:
@@ -249,7 +225,7 @@ def check_java():
             if running_on == 'Darwin':
                 url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.dmg"
                 print(f"{bcolors.OKGREEN}Downloading Java for macOS...")
-                wget.download(url, 'java.dmg')
+                wget.download(url, 'java.dmg', bar=custom_bar)
                 print("\nInstalling Java.....")
                 os.system('open java.dmg')
                 os.remove('java.dmg')
@@ -257,7 +233,7 @@ def check_java():
             elif running_on == 'Linux':
                 url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
                 print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
-                wget.download(url, 'java.tar.gz')
+                wget.download(url, 'java.tar.gz', bar=custom_bar)
                 print("\nExtracting Java.....")
                 os.system('tar xf java.tar.gz')
                 location = os.getcwd() + f"/jdk-{jdk_version}/bin"
@@ -277,21 +253,12 @@ def check_git():
             print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
             url = f"https://github.com/git-for-windows/git/releases/download/v{git_version}.windows.1/Git-{git_version}-64-bit.exe"
             print(f"{bcolors.OKGREEN}Downloading Git for Windows...")
-            wget.download(url, 'git.exe')
+            wget.download(url, 'git.exe', bar=custom_bar)
             print("\nInstalling Git.....")
             os.system('git.exe')
             os.remove('git.exe')
             print("Git installed successfully.")
-            git = subprocess.call(['where', 'git'])
-            if git == 0:
-                print(f'{bcolors.OKGREEN}Git is already installed.\n')
-                clear()
-                pass
-            else:
-                print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
-                print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
-                input(f'{bcolors.ENDC}Press ENTER to exit.')
-                exit()
+            
     else:
         git = subprocess.call(['which', 'git'])
         if git == 0:
@@ -302,17 +269,17 @@ def check_git():
             print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
             if running_on == 'Darwin':
-                url = f"https://sourceforge.net/projects/git-osx-installer/files/git-2.33.0-intel-universal-mavericks.dmg/download"
+                url = f"https://sourceforge.net/projects/git-osx-installer/files/git-{git_version}-intel-universal-mavericks.dmg/download"
                 print(f"{bcolors.OKGREEN}Downloading Git for macOS...")
-                wget.download(url, 'git.dmg')
+                wget.download(url, 'git.dmg', bar=custom_bar)
                 print("\nInstalling Git.....")
                 os.system('open git.dmg')
                 os.remove('git.dmg')
                 print("Git installed successfully.")
             elif running_on == 'Linux':
-                url = f"https://git-scm.com/download/linux"
+                url = f"https://www.kernel.org/pub/software/scm/git/git-{git_version}.tar.gz"
                 print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
-                wget.download(url, 'git.tar.gz')
+                wget.download(url, 'git.tar.gz', bar=custom_bar)
                 print("\nExtracting Git.....")
                 os.system('tar xf git.tar.gz')
                 location = os.getcwd() + f"/git/bin"
@@ -328,26 +295,20 @@ def check_android_studio():
             clear()
             pass
         else:
-           # install android studio and append it in path
+            # install android studio and append it in path
             print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
-            url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-windows.exe"
+            url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-ide-{android_studio_version}-windows.zip"
             print(f"{bcolors.OKGREEN}Downloading Android Studio for Windows...")
-            wget.download(url, 'android-studio.exe')
-            print("\nInstalling Android Studio.....")
-            os.system('android-studio.exe')
-            os.remove('android-studio.exe')
-            print("Android Studio installed successfully.")
-            android_studio = subprocess.call(['where', 'android'])
-            if android_studio == 0:
-                print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
-                clear()
-                pass
-            else:
-                print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
-                print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
-                input(f'{bcolors.ENDC}Press ENTER to exit.')
-                exit()
+            wget.download(url, 'android-studio.zip', bar=custom_bar)
+            print("\nExtracting Android Studio.....")
+            with zipfile.ZipFile('android-studio.zip', 'r') as zip_ref:
+                zip_ref.extractall()
+            location = os.getcwd() + f"/android-studio/bin"
+            userpath.append(location)
+            os.remove('android-studio.zip')
+            os.execv(sys.argv[0], sys.argv)
+
     else:
         android_studio = subprocess.call(['which', 'android'])
         if android_studio == 0:
@@ -360,7 +321,7 @@ def check_android_studio():
             if running_on == 'Darwin':
                 url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-mac_arm.dmg"
                 print(f"{bcolors.OKGREEN}Downloading Android Studio for macOS...")
-                wget.download(url, 'android-studio.dmg')
+                wget.download(url, 'android-studio.dmg', bar=custom_bar)
                 print("\nInstalling Android Studio.....")
                 os.system('open android-studio.dmg')
                 os.remove('android-studio.dmg')
@@ -368,7 +329,7 @@ def check_android_studio():
             elif running_on == 'Linux':
                 url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-{android_studio_version}-linux.tar.gz"
                 print(f"{bcolors.OKGREEN}Downloading Android Studio for Linux...")
-                wget.download(url, 'android-studio.tar.gz')
+                wget.download(url, 'android-studio.tar.gz', bar=custom_bar)
                 print("\nExtracting Android Studio.....")
                 os.system('tar xf android-studio.tar.gz')
                 location = os.getcwd() + f"/android-studio/bin"
