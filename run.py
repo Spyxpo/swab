@@ -295,10 +295,9 @@ def check_android_studio():
             clear()
             pass
         else:
-            # install android studio and append it in path
             print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
-            url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-ide-{android_studio_version}-windows.zip"
+            url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-windows.exe"
             print(f"{bcolors.OKGREEN}Downloading Android Studio for Windows...")
             wget.download(url, 'android-studio.zip', bar=custom_bar)
             print("\nExtracting Android Studio.....")
@@ -687,14 +686,14 @@ def saveData():
 
     # for desktop app
 
-     # add app name in package.json
+    # add app name in package.json
     with open(f'projects/{app_name_info}/desktop/package.json')as desktop_name_file:
         desktop_name = desktop_name_file.read().replace("app_name", str(app_name_info).lower(), 1)
 
     with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_name_file:
         new_desktop_name_file.write(desktop_name)
 
-     # add website url in index.html
+    # add website url in index.html
     with open(f'projects/{app_name_info}/desktop/index.html')as desktop_url_file:
         desktop_url = desktop_url_file.read().replace("WEBSITE", str(app_web_url), 1)
 
@@ -722,7 +721,7 @@ def saveData():
     with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_description_file:
         new_desktop_description_file.write(desktop_description)    
 
-     # add app name in view.js
+    # add app name in view.js
     with open(f'projects/{app_name_info}/desktop/src/view.js')as desktop_view_file:
         desktop_view = desktop_view_file.read().replace("WEBSITE", str(app_web_url), 1)
 
