@@ -461,9 +461,11 @@ def uploadIconAction(event=None):
 
     app_name_info = app_name.get()
     icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+    icon_path_label['text'] = icon
     print(f'{bcolors.ENDC}Icon image: {icon}')
-    
+
     if icon == '':
+        showinfo("No icon", "No icon, please select an icon.")
         pass
     else:
         size = 512, 512
@@ -493,6 +495,7 @@ def uploadKeystoreAction():
     alias_info = alias.get()
     keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks")])
     print('Keystore file:', keystore_path)
+    keystore_path_label['text'] = keystore_path
 
     key_file = open('assets/key.properties', 'w')
     key_file.write(f'storeFile={keystore_path}\n')
@@ -883,7 +886,7 @@ root = tk.Tk()
 icon = PhotoImage(file = 'images/logo.png')
 root.iconphoto(False, icon)
 root.title('Spyxpo Web To App Builder | ' + version)
-root.geometry('480x670')
+root.geometry('480x690')
 root.resizable(0, 0)
 
 menubar = Menu(root)
@@ -986,7 +989,10 @@ Entry(root, textvariable=web_url, width=35).pack()
 
 icon_label = Label(root, text="Icon (Choose .png image only (recommended 512x512))")
 icon_label.pack()
-Button(tk.Button(root, text='Choose an Icon', command=uploadIconAction).pack())
+Button(tk.Button(root, text=f'Choose an Icon', command=uploadIconAction).pack())
+
+icon_path_label = Label(root, text="No file selected", fg='grey')
+icon_path_label.pack()
 
 if running_on == 'Darwin':
     device_label = Label(root, text="Running on macOS", fg='green')
@@ -1007,8 +1013,8 @@ keystore_label = Label(root, text="Keystore (Choose .jks file only)")
 keystore_label.pack()
 Button(tk.Button(root, text='Choose a Keystore', command=uploadKeystoreAction).pack())
 
-keystore_label = Label(root, text="-Keystore file information-")
-keystore_label.pack()
+keystore_path_label = Label(root, text="No file selected", fg='grey')
+keystore_path_label.pack()
 
 alias_label = Label(root, text="Key Alias")
 alias_label.pack()
