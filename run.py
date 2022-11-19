@@ -466,6 +466,7 @@ def uploadIconAction(event=None):
 
     if icon == '':
         showinfo("No icon", "No icon, please select an icon.")
+        icon_path_label['text'] = 'No file selected'
         pass
     else:
         size = 512, 512
@@ -497,9 +498,14 @@ def uploadKeystoreAction():
     print('Keystore file:', keystore_path)
     keystore_path_label['text'] = keystore_path
 
-    key_file = open('assets/key.properties', 'w')
-    key_file.write(f'storeFile={keystore_path}\n')
-    key_file.close()
+    if keystore_path == '':
+        showinfo("No keystore", "No keystore, please select a keystore.")
+        keystore_path_label['text'] = 'No file selected'
+        pass
+    else:    
+        key_file = open('assets/key.properties', 'w')
+        key_file.write(f'storeFile={keystore_path}\n')
+        key_file.close()
 
 def saveData():
 
