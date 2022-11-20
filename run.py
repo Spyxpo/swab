@@ -459,30 +459,47 @@ def upload_icon_action(event=None):
     if app_name_info == "":
         showinfo("No app name", "No app name, please enter an app name.")
         return False
+    elif icon_path_label.cget("text") == "No file selected": 
+        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon_path_label['text'] = icon
+        print(f'{bcolors.ENDC}Icon image: {icon}')
+
+        if icon == '':
+            showinfo("No icon", "No icon, please select an icon.")
+            icon_path_label['text'] = 'No file selected'
+            pass
+        else:
+            size = 512, 512
+            image = Image.open(icon)
+            image_resized = image.resize(size)
+            image_resized.save("assets/favicon.png", "PNG")
+
+            ico = Image.open('assets/favicon.png')
+            ico.save('assets/favicon.ico')
+
+            icns = icnsutil.IcnsFile()
+            icns.add_media(file='assets/favicon.png')
+            icns.write('assets/favicon.icns')
     else:
-        pass
+        icon = icon_path_label.cget("text")
+        print(f'{bcolors.ENDC}Icon image: {icon}')
 
-    app_name_info = app_name.get()
-    icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
-    icon_path_label['text'] = icon
-    print(f'{bcolors.ENDC}Icon image: {icon}')
+        if icon == '':
+            showinfo("No icon", "No icon, please select an icon.")
+            icon_path_label['text'] = 'No file selected'
+            pass
+        else:
+            size = 512, 512
+            image = Image.open(icon)
+            image_resized = image.resize(size)
+            image_resized.save("assets/favicon.png", "PNG")
 
-    if icon == '':
-        showinfo("No icon", "No icon, please select an icon.")
-        icon_path_label['text'] = 'No file selected'
-        pass
-    else:
-        size = 512, 512
-        image = Image.open(icon)
-        image_resized = image.resize(size)
-        image_resized.save("assets/favicon.png", "PNG")
+            ico = Image.open('assets/favicon.png')
+            ico.save('assets/favicon.ico')
 
-        ico = Image.open('assets/favicon.png')
-        ico.save('assets/favicon.ico')
-
-        icns = icnsutil.IcnsFile()
-        icns.add_media(file='assets/favicon.png')
-        icns.write('assets/favicon.icns')
+            icns = icnsutil.IcnsFile()
+            icns.add_media(file='assets/favicon.png')
+            icns.write('assets/favicon.icns')
 
 def upload_keystore_action():
     app_name_info = app_name.get()
@@ -490,24 +507,37 @@ def upload_keystore_action():
     if app_name_info == "":
         showinfo("No app name", "No app name, please enter an app name.")
         return False
+    elif keystore_path_label.cget("text") == "No file selected": 
+        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path_label['text'] = keystore_path
+        
+        if keystore_path == '':
+            showinfo("No keystore", "No keystore, please select a keystore.")
+            keystore_path_label['text'] = 'No file selected'
+            pass
+        else:
+            print('Keystore file:', keystore_path)
+            keystore_path_label['text'] = keystore_path
+            key_file = open('assets/key.properties', 'w')
+            key_file.write(f'storeFile={keystore_path}\n')
+            key_file.close()
     else:
-        pass
+        keystore_path = keystore_path_label.cget("text")
+        print(f'{bcolors.ENDC}Keystore: {keystore_path}')
 
-    app_name_info = app_name.get()
-    keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks")])
-    print('Keystore file:', keystore_path)
-    keystore_path_label['text'] = keystore_path
+        if keystore_path == '':
+            showinfo("No keystore", "No keystore, please select a keystore.")
+            keystore_path_label['text'] = 'No file selected'
+            pass
+        else:
+            print('Keystore file:', keystore_path)
+            keystore_path_label['text'] = keystore_path
+            key_file = open('assets/key.properties', 'w')
+            key_file.write(f'storeFile={keystore_path}\n')
+            key_file.close()
+        
 
-    if keystore_path == '':
-        showinfo("No keystore", "No keystore, please select a keystore.")
-        keystore_path_label['text'] = 'No file selected'
-        pass
-    else:    
-        key_file = open('assets/key.properties', 'w')
-        key_file.write(f'storeFile={keystore_path}\n')
-        key_file.close()
-
-def saveData():
+def save_data():
 
     app_name_info = app_name.get()
     app_description_info = app_description.get()
@@ -524,13 +554,13 @@ def saveData():
     else:
         os.mkdir("projects")
 
-    if os.path.exists(f"build/{app_name_info}_{app_version_info}.apk"):
-        os.remove(f"build/{app_name_info}_{app_version_info}.apk")
+    if os.path.exists(f"build/{app_name_info}/"):
+        shutil.rmtree(f"build/{app_name_info}/")
     else:
         pass
 
-    if os.path.exists(f"build/{app_name_info}_{app_version_info}.aab"):
-        os.remove(f"build/{app_name_info}_{app_version_info}.aab")
+    if os.path.exists(f"projects/{app_name_info}/"):
+        shutil.rmtree(f"projects/{app_name_info}/")
     else:
         pass
 
@@ -836,6 +866,7 @@ def saveData():
         shutil.copytree(linux_desktop_original_build_location, linux_desktop_target_build_location)
     else:
         pass
+    
     # remove existing project files, updating existing projects coming soon
     shutil.rmtree(f"projects/{app_name_info}/")
 
@@ -951,7 +982,7 @@ def open_project():
         if save_project_answer == True:
             save_project()
         else:
-            file = filedialog.askopenfilename()
+            file = filedialog.askopenfilename(filetypes=[("SWAB Project Files", "*.swab")])
             if file == '':
                 pass
             else:
@@ -963,11 +994,27 @@ def open_project():
                     app_version.set(data['app_version'])
                     app_build_number.set(data['app_build_number'])
                     web_url.set(data['web_url'])
-                    # icon_path_label.config(text=data['icon_path'])
-                    # keystore_path_label.config(text=data['keystore_path'])
+                    icon_path_label.config(text=data['icon_path'])
+                    keystore_path_label.config(text=data['keystore_path'])
                     alias.set(data['alias'])
                     key_pass.set(data['key_pass'])
-                    store_pass.set(data['store_pass'])     
+                    store_pass.set(data['store_pass'])   
+
+                size = 512, 512
+                image = Image.open(icon_path_label.cget('text'))
+                image_resized = image.resize(size)
+                image_resized.save("assets/favicon.png", "PNG")
+
+                ico = Image.open('assets/favicon.png')
+                ico.save('assets/favicon.ico')
+
+                icns = icnsutil.IcnsFile()
+                icns.add_media(file='assets/favicon.png')
+                icns.write('assets/favicon.icns')       
+
+                key_file = open('assets/key.properties', 'w')
+                key_file.write('storeFile=' + keystore_path_label.cget('text') + '\n')
+                key_file.close()               
 
 file_menu.add_command(
     label='Open Project',
@@ -1052,7 +1099,7 @@ menubar.add_cascade(
 )
 commands_menu.add_command(
     label='Build',
-    command=lambda: saveData(),
+    command=lambda: save_data(),
 )
 commands_menu.add_command(
     label='Clean',
@@ -1147,7 +1194,7 @@ elif running_on == 'Linux':
 else:
     pass
 
-keystore_label = Label(root, text="Keystore (Choose .jks file only)")
+keystore_label = Label(root, text="Keystore File")
 keystore_label.pack()
 Button(tk.Button(root, text='Choose a Keystore', command=upload_keystore_action).pack())
 
@@ -1172,7 +1219,7 @@ Entry(root, textvariable=key_pass, width=35, show="\u2022").pack()
 blank_label = Label(root, text="\nVerify the details before building")
 blank_label.pack()
 
-build_button = Button(root, text='Build', command=lambda: saveData())
+build_button = Button(root, text='Build', command=lambda: save_data())
 build_button.pack()
 
 root.mainloop()
