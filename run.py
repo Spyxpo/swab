@@ -4,9 +4,11 @@ Project Name: Spyxpo Web To App Builder
 Project Description: This is a tool which is used to convert a website into an app for iOS, Android, Windows, macOS and Linux.
 '''
 
+import json
 import sys
 from tkinter import *
 import tkinter as tk
+from tkinter import messagebox
 from tkinter.messagebox import showinfo
 from tkinter import filedialog
 import shutil
@@ -426,6 +428,7 @@ def clean_dir():
     remove_pycache()
     remove_dist()
     remove_run_spec()
+    os.mkdir("assets/")
     
 def clean_build():
     try:
@@ -440,7 +443,7 @@ def clean_build():
         print(e)
         pass
 
-def openBuildfolder():
+def open_build_folder():
     if running_on == 'Darwin':
         os.system('open build')
     elif running_on == 'Linux':
@@ -450,7 +453,7 @@ def openBuildfolder():
     else:
         pass
 
-def uploadIconAction(event=None):
+def upload_icon_action(event=None):
     app_name_info = app_name.get()
 
     if app_name_info == "":
@@ -481,7 +484,7 @@ def uploadIconAction(event=None):
         icns.add_media(file='assets/favicon.png')
         icns.write('assets/favicon.icns')
 
-def uploadKeystoreAction():
+def upload_keystore_action():
     app_name_info = app_name.get()
 
     if app_name_info == "":
@@ -491,9 +494,6 @@ def uploadKeystoreAction():
         pass
 
     app_name_info = app_name.get()
-    store_pass_info = store_pass.get()
-    key_pass_info = key_pass.get()
-    alias_info = alias.get()
     keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks")])
     print('Keystore file:', keystore_path)
     keystore_path_label['text'] = keystore_path
@@ -881,7 +881,7 @@ def saveData():
     else:
         pass
 
-    openBuildfolder()
+    open_build_folder()
 
 # version details
 version_info = open('VERSION', 'r')
@@ -889,8 +889,8 @@ version = version_info.read()
 
 # tkinter ui
 root = tk.Tk()
-icon = PhotoImage(file = 'images/logo.png')
-root.iconphoto(False, icon)
+app_icon = PhotoImage(file = 'images/logo.png')
+root.iconphoto(False, app_icon)
 root.title('Spyxpo Web To App Builder | ' + version)
 root.geometry('480x690')
 root.resizable(0, 0)
@@ -908,9 +908,134 @@ menubar.add_cascade(
     underline=0
 )
 
+def new_project():
+    if app_name == '' and app_description == '' and app_package_name == '' and app_version == '' and app_build_number == '' and web_url == '' and icon_path_label.cget('text') == 'No file selected' and keystore_path_label.cget('text') == 'No file selected' and alias == '' and key_pass == '' and store_pass == '':
+        app_name.set('')
+        app_description.set('')
+        app_package_name.set('')
+        app_version.set('')
+        app_build_number.set('')
+        web_url.set('')
+        icon_path_label.config(text='No file selected')
+        keystore_path_label.config(text = 'No file selected')
+        alias.set('')
+        key_pass.set('')
+        store_pass.set('')
+    else:
+        save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
+        if save_project_answer == True:
+            save_project()
+        else:
+            app_name.set('')
+            app_description.set('')
+            app_package_name.set('')
+            app_version.set('')
+            app_build_number.set('')
+            web_url.set('')
+            icon_path_label.config(text='No file selected')
+            keystore_path_label.config(text = 'No file selected')
+            alias.set('')
+            key_pass.set('')
+            store_pass.set('')
+
 file_menu.add_command(
-    label='Open Build Folder',
-    command=lambda: openBuildfolder(),
+    label='New',
+    command=lambda: new_project(),
+)
+
+def open_project():
+    if app_name == '' and app_description == '' and app_package_name == '' and app_version == '' and app_build_number == '' and web_url == '' and icon_path_label.cget('text') == 'No file selected' and keystore_path_label.cget('text') == 'No file selected' and alias == '' and key_pass == '' and store_pass == '':
+        pass
+    else:
+        save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
+        if save_project_answer == True:
+            save_project()
+        else:
+            file = filedialog.askopenfilename()
+            if file == '':
+                pass
+            else:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    app_name.set(data['app_name'])
+                    app_description.set(data['app_description'])
+                    app_package_name.set(data['app_package_name'])
+                    app_version.set(data['app_version'])
+                    app_build_number.set(data['app_build_number'])
+                    web_url.set(data['web_url'])
+                    # icon_path_label.config(text=data['icon_path'])
+                    # keystore_path_label.config(text=data['keystore_path'])
+                    alias.set(data['alias'])
+                    key_pass.set(data['key_pass'])
+                    store_pass.set(data['store_pass'])     
+
+file_menu.add_command(
+    label='Open Project',
+    command=lambda: open_project(),
+)
+
+file_menu.add_separator()
+
+def save_project():
+    if app_name.get() == '':
+        messagebox.showerror("Error", "Please enter app name.")
+        return False
+    elif app_description.get() == '':
+        messagebox.showerror("Error", "Please enter app description.")
+        return False
+    elif app_package_name.get() == '':
+        messagebox.showerror("Error", "Please enter app package name.")
+        return False
+    elif app_version.get() == '':
+        messagebox.showerror("Error", "Please enter app version.")
+        return False
+    elif app_build_number.get() == '':
+        messagebox.showerror("Error", "Please enter app build number.")
+        return False
+    elif web_url.get() == '':
+        messagebox.showerror("Error", "Please enter web url.")
+        return False
+    elif icon_path_label.cget('text') == 'No file selected':
+        messagebox.showerror("Error", "Please select icon.")
+        return False
+    elif keystore_path_label.cget('text') == 'No file selected':
+        messagebox.showerror("Error", "Please select keystore.")
+        return False
+    elif alias.get() == '':
+        messagebox.showerror("Error", "Please enter alias.")
+        return False
+    elif key_pass.get() == '':
+        messagebox.showerror("Error", "Please enter key password.")
+        return False
+    elif store_pass.get() == '':
+        messagebox.showerror("Error", "Please enter store password.")
+        return False
+    else:
+        project = {
+            'app_name': app_name.get(),
+            'app_description': app_description.get(),
+            'app_package_name': app_package_name.get(),
+            'app_version': app_version.get(),
+            'app_build_number': app_build_number.get(),
+            'web_url': web_url.get(),
+            'icon_path': icon_path_label.cget('text'),
+            'keystore_path': keystore_path_label.cget('text'),
+            'alias': alias.get(),
+            'key_pass': key_pass.get(),
+            'store_pass': store_pass.get()
+        }
+
+        file = filedialog.asksaveasfile(mode='w', defaultextension=".swab")
+        if file is None:
+            json.dump(project, app_name_info + '.swab', indent=4)
+            file.close()
+        else:
+            json.dump(project, file, indent=4)
+            file.close()
+
+file_menu.add_command(
+    label='Save',
+    command=lambda: save_project(),
 )
 
 file_menu.add_separator()
@@ -936,6 +1061,13 @@ commands_menu.add_command(
 commands_menu.add_command(
     label='Clean Build',
     command=lambda: clean_build(),
+)
+
+commands_menu.add_separator()
+
+commands_menu.add_command(
+    label='Open Build Folder',
+    command=lambda: open_build_folder(),
 )
 
 # help menu item
@@ -995,7 +1127,7 @@ Entry(root, textvariable=web_url, width=35).pack()
 
 icon_label = Label(root, text="Icon (Choose .png image only (recommended 512x512))")
 icon_label.pack()
-Button(tk.Button(root, text=f'Choose an Icon', command=uploadIconAction).pack())
+Button(tk.Button(root, text=f'Choose an Icon', command=upload_icon_action).pack())
 
 icon_path_label = Label(root, text="No file selected", fg='grey')
 icon_path_label.pack()
@@ -1017,7 +1149,7 @@ else:
 
 keystore_label = Label(root, text="Keystore (Choose .jks file only)")
 keystore_label.pack()
-Button(tk.Button(root, text='Choose a Keystore', command=uploadKeystoreAction).pack())
+Button(tk.Button(root, text='Choose a Keystore', command=upload_keystore_action).pack())
 
 keystore_path_label = Label(root, text="No file selected", fg='grey')
 keystore_path_label.pack()
