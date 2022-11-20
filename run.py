@@ -1034,7 +1034,7 @@ def save_project():
             file.close()
 
 file_menu.add_command(
-    label='Save',
+    label='Save As...',
     command=lambda: save_project(),
 )
 
