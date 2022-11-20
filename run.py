@@ -510,7 +510,7 @@ def upload_keystore_action():
     elif keystore_path_label.cget("text") == "No file selected": 
         keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
         keystore_path_label['text'] = keystore_path
-        
+
         if keystore_path == '':
             showinfo("No keystore", "No keystore, please select a keystore.")
             keystore_path_label['text'] = 'No file selected'
@@ -535,7 +535,6 @@ def upload_keystore_action():
             key_file = open('assets/key.properties', 'w')
             key_file.write(f'storeFile={keystore_path}\n')
             key_file.close()
-        
 
 def save_data():
 
