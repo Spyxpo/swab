@@ -15,3 +15,7 @@ cd example/desktop
 npm install
 npm start
 ```
+
+> Example App Project File
+
+- `example.swab` file is located in this folder you can open it from menubar in SWAB.
