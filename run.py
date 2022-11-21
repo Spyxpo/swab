@@ -5,7 +5,6 @@ Project Description: This is a tool which is used to convert a website into an a
 '''
 
 import json
-import sys
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
@@ -194,6 +193,8 @@ def check_nodejs():
                 location = os.getcwd() + "/nodejs/bin"
                 userpath.append(location)
                 os.remove('nodejs.tar.xz')
+            else:
+                pass    
 
 def check_java():
     if running_on == 'Windows':
@@ -242,6 +243,8 @@ def check_java():
                 userpath.append(location)
                 os.remove('java.tar.gz')
                 print("Java installed successfully.")
+            else:
+                pass    
 
 def check_git():
     if running_on == 'Windows':
@@ -288,6 +291,8 @@ def check_git():
                 userpath.append(location)
                 os.remove('git.tar.gz')
                 print("Git installed successfully.")
+            else:
+                pass    
 
 def check_cmdline_tools():
     if running_on == 'Windows':
@@ -330,6 +335,9 @@ def check_cmdline_tools():
                 location = os.getcwd() + f"/cmdline-tools/bin"
                 userpath.append(location)
                 os.remove('android-sdk.zip')
+                print("Android SDK installed successfully.")
+                input("Press Enter to exit and restart the program...")
+                exit()
             elif running_on == 'Linux':
                 url = f"https://dl.google.com/android/repository/commandlinetools-linux-{android_sdk_version}_latest.zip"
                 print(f"{bcolors.OKGREEN}Downloading Android SDK for Linux...")
@@ -340,6 +348,11 @@ def check_cmdline_tools():
                 location = os.getcwd() + f"/cmdline-tools/bin"
                 userpath.append(location)
                 os.remove('android-sdk.zip')
+                print("Android SDK installed successfully.")
+                input("Press Enter to exit and restart the program...")
+                exit()
+            else:
+                pass    
 
 if running_on == 'Windows':
     pass
