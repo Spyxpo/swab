@@ -12,3 +12,6 @@ __pycache__
 *.xz
 *.gz
 *.log
+*.dmg
+*.pkg
+cmdline-tools/

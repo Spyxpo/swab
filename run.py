@@ -289,10 +289,9 @@ def check_git():
                 os.remove('git.tar.gz')
                 print("Git installed successfully.")
 
-
 def check_cmdline_tools():
     if running_on == 'Windows':
-        cmdline_tools = subprocess.call(['where', 'android'])
+        cmdline_tools = subprocess.call(['where', 'sdkmanager'])
         if cmdline_tools == 0:
             print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
             clear()
@@ -309,9 +308,11 @@ def check_cmdline_tools():
             location = os.getcwd() + f"/cmdline-tools/bin"
             userpath.append(location)
             os.remove('android-sdk.zip')
-            os.execv(sys.argv[0], sys.argv)
+            print("Android SDK installed successfully.")
+            input("Press Enter to exit and restart the program...")
+            exit()
     else:
-        cmdline_tools = subprocess.call(['which', 'android'])
+        cmdline_tools = subprocess.call(['which', 'sdkmanager'])
         if cmdline_tools == 0:
             print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
             clear()
@@ -329,7 +330,6 @@ def check_cmdline_tools():
                 location = os.getcwd() + f"/cmdline-tools/bin"
                 userpath.append(location)
                 os.remove('android-sdk.zip')
-                os.execv(sys.argv[0], sys.argv)
             elif running_on == 'Linux':
                 url = f"https://dl.google.com/android/repository/commandlinetools-linux-{android_sdk_version}_latest.zip"
                 print(f"{bcolors.OKGREEN}Downloading Android SDK for Linux...")
@@ -340,7 +340,6 @@ def check_cmdline_tools():
                 location = os.getcwd() + f"/cmdline-tools/bin"
                 userpath.append(location)
                 os.remove('android-sdk.zip')
-                os.execv(sys.argv[0], sys.argv)
 
 if running_on == 'Windows':
     pass
