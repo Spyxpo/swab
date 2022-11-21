@@ -926,7 +926,7 @@ version = version_info.read()
 root = tk.Tk()
 app_icon = PhotoImage(file = 'images/logo.png')
 root.iconphoto(False, app_icon)
-root.title('Spyxpo Web To App Builder | ' + version)
+root.title('SWAB | ' + version)
 root.geometry('480x690')
 root.resizable(0, 0)
 
