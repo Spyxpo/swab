@@ -246,6 +246,55 @@ def check_java():
             else:
                 pass    
 
+def check_jre():
+    if running_on == 'Windows':
+        jre = subprocess.call(['where', 'keytool'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+            url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247136_10e8cce67c7843478f41411b7003171c"
+            print(f"{bcolors.OKGREEN}Downloading JRE for Windows...")
+            wget.download(url, 'jre.exe', bar=custom_bar)
+            print("\nInstalling JRE.....")
+            os.system('jre.exe')
+            # location = f"C:\\Program Files\\Java\\jre-{jre_version}\\bin"
+            # userpath.append(location)
+            os.remove('jre.exe')
+            print("JRE installed successfully.")
+    else:
+        jre = subprocess.call(['which', 'keytool'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
+                print(f"{bcolors.OKGREEN}Downloading JRE for macOS...")
+                wget.download(url, 'jre.dmg', bar=custom_bar)
+                print("\nInstalling JRE.....")
+                os.system('open jre.dmg')
+                os.remove('jre.dmg')
+                print("JRE installed successfully.")
+            elif running_on == 'Linux':
+                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247139_3d5a2bb8f8d4428bbe94aed7ec7ae784"
+                print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
+                wget.download(url, 'jre.tar.gz', bar=custom_bar)
+                print("\nExtracting JRE.....")
+                os.system('tar xf jre.tar.gz')
+                # location = os.getcwd() + f"/jre-{jre_version}/bin"
+                # userpath.append(location)
+                os.remove('jre.tar.gz')
+                print("JRE installed successfully.")
+            else:
+                pass
+
 def check_git():
     if running_on == 'Windows':
         git = subprocess.call(['where', 'git'])
