@@ -53,7 +53,7 @@ flutter_version = line[0]
 nodejs_version = line[1]
 jdk_version = line[2]
 git_version = line[3]
-android_studio_version = line[4]
+android_sdk_version = line[4]
 
 packages_version_info.close()
 
@@ -289,54 +289,58 @@ def check_git():
                 os.remove('git.tar.gz')
                 print("Git installed successfully.")
 
-def check_android_studio():
-    if running_on == 'Windows':
-        android_studio = subprocess.call(['where', 'android'])
-        if android_studio == 0:
-            print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
-            url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-windows.exe"
-            print(f"{bcolors.OKGREEN}Downloading Android Studio for Windows...")
-            wget.download(url, 'android-studio.zip', bar=custom_bar)
-            print("\nExtracting Android Studio.....")
-            with zipfile.ZipFile('android-studio.zip', 'r') as zip_ref:
-                zip_ref.extractall()
-            location = os.getcwd() + f"/android-studio/bin"
-            userpath.append(location)
-            os.remove('android-studio.zip')
-            os.execv(sys.argv[0], sys.argv)
 
-    else:
-        android_studio = subprocess.call(['which', 'android'])
-        if android_studio == 0:
-            print(f'{bcolors.OKGREEN}Android Studio is already installed.\n')
+def check_cmdline_tools():
+    if running_on == 'Windows':
+        cmdline_tools = subprocess.call(['where', 'android'])
+        if cmdline_tools == 0:
+            print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
             clear()
             pass
         else:
-            print(f'{bcolors.WARNING}Android Studio is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"Android Studio\" then set PATH and try again.\n')
+            print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
+            url = f"https://dl.google.com/android/repository/commandlinetools-win-{android_sdk_version}_latest.zip"
+            print(f"{bcolors.OKGREEN}Downloading Android SDK for Windows...")
+            wget.download(url, 'android-sdk.zip', bar=custom_bar)
+            print("\nExtracting Android SDK.....")
+            with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+                zip_ref.extractall()
+            location = os.getcwd() + f"/cmdline-tools/bin"
+            userpath.append(location)
+            os.remove('android-sdk.zip')
+            os.execv(sys.argv[0], sys.argv)
+    else:
+        cmdline_tools = subprocess.call(['which', 'android'])
+        if cmdline_tools == 0:
+            print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
             if running_on == 'Darwin':
-                url = f"https://redirector.gvt1.com/edgedl/android/studio/install/{android_studio_version}/android-studio-{android_studio_version}-mac_arm.dmg"
-                print(f"{bcolors.OKGREEN}Downloading Android Studio for macOS...")
-                wget.download(url, 'android-studio.dmg', bar=custom_bar)
-                print("\nInstalling Android Studio.....")
-                os.system('open android-studio.dmg')
-                os.remove('android-studio.dmg')
-                print("Android Studio installed successfully.")
-            elif running_on == 'Linux':
-                url = f"https://redirector.gvt1.com/edgedl/android/studio/ide-zips/{android_studio_version}/android-studio-{android_studio_version}-linux.tar.gz"
-                print(f"{bcolors.OKGREEN}Downloading Android Studio for Linux...")
-                wget.download(url, 'android-studio.tar.gz', bar=custom_bar)
-                print("\nExtracting Android Studio.....")
-                os.system('tar xf android-studio.tar.gz')
-                location = os.getcwd() + f"/android-studio/bin"
+                url = f"https://dl.google.com/android/repository/commandlinetools-mac-{android_sdk_version}_latest.zip"
+                print(f"{bcolors.OKGREEN}Downloading Android SDK for macOS...")
+                wget.download(url, 'android-sdk.zip', bar=custom_bar)
+                print("\nExtracting Android SDK.....")
+                with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+                    zip_ref.extractall()
+                location = os.getcwd() + f"/cmdline-tools/bin"
                 userpath.append(location)
-                os.remove('android-studio.tar.gz')
-                print("Android Studio installed successfully.")
+                os.remove('android-sdk.zip')
+                os.execv(sys.argv[0], sys.argv)
+            elif running_on == 'Linux':
+                url = f"https://dl.google.com/android/repository/commandlinetools-linux-{android_sdk_version}_latest.zip"
+                print(f"{bcolors.OKGREEN}Downloading Android SDK for Linux...")
+                wget.download(url, 'android-sdk.zip', bar=custom_bar)
+                print("\nExtracting Android SDK.....")
+                with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+                    zip_ref.extractall()
+                location = os.getcwd() + f"/cmdline-tools/bin"
+                userpath.append(location)
+                os.remove('android-sdk.zip')
+                os.execv(sys.argv[0], sys.argv)
 
 if running_on == 'Windows':
     pass
@@ -361,7 +365,7 @@ check_flutter()
 check_nodejs()
 check_java()
 check_git()
-check_android_studio()
+check_cmdline_tools()
 
 if os.path.exists("assets"):
     pass
