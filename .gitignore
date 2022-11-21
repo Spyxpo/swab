@@ -11,6 +11,5 @@ __pycache__
 *.zip
 *.xz
 *.gz
-*.swab
 *.json
 *.log

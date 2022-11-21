@@ -563,6 +563,11 @@ def save_data():
     else:
         pass
 
+    if os.path.exists(f"projects/"):
+        shutil.rmtree(f"projects/")
+    else:
+        pass
+
     if app_name_info == "":
         showinfo("No app name", "No app name, please enter an app name.")
         return False
@@ -954,7 +959,7 @@ def new_project():
     else:
         save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
         if save_project_answer == True:
-            save_project()
+            save_as_project()
         else:
             app_name.set('')
             app_description.set('')
@@ -979,7 +984,7 @@ def open_project():
     else:
         save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
         if save_project_answer == True:
-            save_project()
+            save_as_project()
         else:
             file = filedialog.askopenfilename(filetypes=[("SWAB Project Files", "*.swab")])
             if file == '':
@@ -1022,7 +1027,7 @@ file_menu.add_command(
 
 file_menu.add_separator()
 
-def save_project():
+def save_as_project():
     if app_name.get() == '':
         messagebox.showerror("Error", "Please enter app name.")
         return False
@@ -1081,7 +1086,7 @@ def save_project():
 
 file_menu.add_command(
     label='Save As...',
-    command=lambda: save_project(),
+    command=lambda: save_as_project(),
 )
 
 file_menu.add_separator()
