@@ -14,4 +14,4 @@
 - [X] Loading Indicator
 - [X] Splash Screen
 - [X] Desktop apps custom icon
-- [X] Console Requirements Checker
+- [X] Auto Preqrequisites installation for Windows

@@ -149,7 +149,7 @@ keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -va
 - [X] Loading Indicator
 - [X] Splash Screen
 - [X] Desktop apps custom icon
-- [X] Console Requirements Checker
+- [X] Auto Preqrequisites installation for Windows
 
 ## Coming soon
 
