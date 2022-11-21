@@ -445,11 +445,23 @@ def clean_build():
 
 def open_build_folder():
     if running_on == 'Darwin':
-        os.system('open build')
+        if (os.path.exists("build")):
+            os.system("open build/")
+        else:
+            os.mkdir("build/")
+            os.system("open build/")
     elif running_on == 'Linux':
-        os.system('open build')
+        if (os.path.exists("build")):
+            os.system("open build/")
+        else:
+            os.mkdir("build/")
+            os.system("open build/")
     elif running_on == 'Windows':
-        os.system('start build')
+        if (os.path.exists("build")):
+            os.system("start build/")
+        else:
+            os.mkdir("build/")
+            os.system("start build/")
     else:
         pass
 
