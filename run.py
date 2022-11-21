@@ -339,15 +339,8 @@ def check_cmdline_tools():
                 input("Press Enter to exit and restart the program...")
                 exit()
             elif running_on == 'Linux':
-                url = f"https://dl.google.com/android/repository/commandlinetools-linux-{android_sdk_version}_latest.zip"
-                print(f"{bcolors.OKGREEN}Downloading Android SDK for Linux...")
-                wget.download(url, 'android-sdk.zip', bar=custom_bar)
-                print("\nExtracting Android SDK.....")
-                with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
-                    zip_ref.extractall()
-                location = os.getcwd() + f"/cmdline-tools/bin"
-                userpath.append(location)
-                os.remove('android-sdk.zip')
+                os.system('sudo apt install snapd')
+                os.system('sudo snap install android-studio --classic')
                 print("Android SDK installed successfully.")
                 input("Press Enter to exit and restart the program...")
                 exit()
