@@ -5,7 +5,7 @@
     "app_version": "1.0.0",
     "app_build_number": "1",
     "web_url": "www.spyxpo.com",
-    "icon_path": "../images/favicon.png",
+    "icon_path": "../images/example-logo.png",
     "keystore_path": "add-keystore-to-the-path",
     "alias": "upload-keystore",
     "key_pass": "123456",
