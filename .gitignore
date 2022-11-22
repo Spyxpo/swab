@@ -15,3 +15,5 @@ __pycache__
 *.dmg
 *.pkg
 cmdline-tools/
+java/
+nodejs/
