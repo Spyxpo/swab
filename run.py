@@ -551,7 +551,8 @@ def upload_icon_action(event=None):
             icns.add_media(file='assets/favicon.png')
             icns.write('assets/favicon.icns')
     else:
-        icon = icon_path_label.cget("text")
+        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon_path_label['text'] = icon
         print(f'{bcolors.ENDC}Icon image: {icon}')
 
         if icon == '':
@@ -592,8 +593,8 @@ def upload_keystore_action():
             key_file.write(f'storeFile={keystore_path}\n')
             key_file.close()
     else:
-        keystore_path = keystore_path_label.cget("text")
-        print(f'{bcolors.ENDC}Keystore: {keystore_path}')
+        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path_label['text'] = keystore_path
 
         if keystore_path == '':
             showinfo("No keystore", "No keystore, please select a keystore.")
