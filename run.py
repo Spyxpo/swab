@@ -6,6 +6,7 @@ Project Description: This is a tool which is used to convert a website into an a
 
 import json
 import tarfile
+import time
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
@@ -638,6 +639,8 @@ def upload_keystore_action():
 
 def save_data():
 
+    start_time = time.time()
+
     app_name_info = app_name.get()
     app_description_info = app_description.get()
     app_package_info = app_package_name.get().lower()
@@ -1027,6 +1030,8 @@ def save_data():
     alias.set('')
     key_pass.set('')
     store_pass.set('')
+
+    print('Build completed in ' + str(time.time() - start_time) + ' seconds.')
 
     open_build_folder()
 
