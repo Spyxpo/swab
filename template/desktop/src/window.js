@@ -14,11 +14,15 @@ exports.createBrowserWindow = () => {
     backgroundColor: "#fff",
     autoHideMenuBar: true,
     webPreferences: {
-      nativeWindowOpen: true,
       devTools: false, // false if you want to remove dev tools access for the user
       contextIsolation: true,
       webviewTag: true, // https://www.electronjs.org/docs/api/webview-tag,
       preload: path.join(__dirname, "../preload.js"), // required for print function
+      enableRemoteModule: true,
+      nodeIntegration: false,
+      nativeWindowOpen: true,
+      webSecurity: true,
+      allowRunningInsecureContent: true
     },
   });
 };

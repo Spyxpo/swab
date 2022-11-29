@@ -17,3 +17,5 @@ __pycache__
 cmdline-tools/
 java/
 nodejs/
+jre/
+jdk/

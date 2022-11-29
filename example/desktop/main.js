@@ -11,7 +11,7 @@ app.on("ready", () => {
   mainWindow = window.createBrowserWindow(app);
 
   // Option 1: Uses Webtag and load a custom html file with external content
-  mainWindow.loadURL(`file://${__dirname}/index.html`, {userAgent: 'Chrome'});
+  mainWindow.loadURL(`file://${__dirname}/index.html`, { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36' });
 
   // Option 2: Load directly an URL if you don't need interface customization
   //mainWindow.loadURL("https://github.com");

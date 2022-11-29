@@ -54,8 +54,9 @@ line = packages_version_info.readlines()
 flutter_version = line[0]
 nodejs_version = line[1]
 jdk_version = line[2]
-git_version = line[3]
-android_sdk_version = line[4]
+jre_version = jdk_version.split[3]
+git_version = line[4]
+android_sdk_version = line[5]
 
 packages_version_info.close()
 
@@ -299,6 +300,57 @@ def check_java():
             else:
                 pass    
 
+def check_jre():
+    if running_on == 'Windows':
+        jre = subprocess.call(['where', 'java'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+            url = f'https://www.techspot.com/downloads/downloadnow/5198/?evp=8ac5f15c387fb61b7484086c2f15e494&file=5647'
+            print(f"{bcolors.OKGREEN}Downloading JRE for Windows...")
+            wget.download(url, 'jre.exe', bar=custom_bar)
+            print("\nInstalling JRE.....")
+            os.system('jre.exe')
+            location = f"C:\\Program Files\\Java\\jre{jre_version}\\bin"
+            userpath.append(location)
+            os.remove('jre.exe')
+            print("JRE installed successfully.")
+    else:
+        jre = subprocess.call(['which', 'java'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+            if running_on == 'Darwin':
+                url = f"https://www.techspot.com/downloads/downloadnow/5198/?evp=91a508f7a3f5244c06e5b0706bbc39d7&file=5649"
+                print(f"Downloading JRE for macOS...")
+                wget.download(url, 'jre.dmg', bar=custom_bar)
+                print("\nInstalling JRE.....")
+                location = os.getcwd() + f'/jre{jre_version}/Contents/Home/bin'  
+                userpath.append(location)
+                os.remove('jre.dmg')
+                print("JRE installed successfully.")
+
+            elif running_on == 'Linux':
+                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247127_10e8cce67c7843478f41411b7003171c"
+                print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
+                wget.download(url, 'jre.tar.gz', bar=custom_bar)
+                print("\nExtracting JRE.....")
+                os.system('tar xf jre.tar.gz')
+                location = os.getcwd() + f"/jre{jre_version}/bin"
+                userpath.append(location)
+                os.remove('jre.tar.gz')
+                print("JRE installed successfully.")
+            else:
+                pass
+
 def check_git():
     if running_on == 'Windows':
         git = subprocess.call(['where', 'git'])
@@ -448,6 +500,7 @@ else:
 check_flutter()
 check_nodejs()
 check_java()
+check_jre()
 check_git()
 check_cmdline_tools()
 
@@ -974,7 +1027,6 @@ def save_data():
     else:
         pass
     
-    # remove existing project files, updating existing projects coming soon
     shutil.rmtree(f"projects/{app_name_info}/")
 
     if os.path.exists("assets/favicon.png"):
