@@ -22,6 +22,7 @@ import wget
 import userpath
 import zipfile
 import subprocess
+import socket
 
 running_on = platform.system()
 machine_architecture = platform.machine()
@@ -35,6 +36,17 @@ elif running_on == 'Windows':
 else:
     print("Platform can't be detected.")            
 
+def check_internet():
+  try:
+        host = socket.gethostbyname('www.google.com')
+        s = socket.create_connection((host, 80), 2)
+        s.close()
+        return True
+  except Exception:
+        no_internet = tk.Tk()
+        no_internet.withdraw()
+        messagebox.showerror("Error", "No internet connection.")
+
 def clear():
     if running_on == 'Darwin':
         os.system('clear')
@@ -46,6 +58,7 @@ def clear():
         pass
 
 clear()
+check_internet()
 
 # packages version details
 packages_version_info = open('.packages', 'r')
