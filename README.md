@@ -178,12 +178,12 @@ keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize
 - [X] Loading Indicator
 - [X] Splash Screen
 - [X] Desktop apps custom icon
-- [X] Auto Preqrequisites installation for Windows
+- [X] Auto Prerequisites installation for Windows
 - [X] Create custom Keystore for Android App
 
 ## Coming soon
 
-- [ ] Auto prequisites installation
+- [ ] Auto Prerequisites installation
 - [ ] Dessktop app installer
 - [ ] Desktop app update popup
 - [ ] Desktop app Splash Screen
