@@ -54,7 +54,7 @@ line = packages_version_info.readlines()
 flutter_version = line[0]
 nodejs_version = line[1]
 jdk_version = line[2]
-jre_version = jdk_version.split[3]
+jre_version = line[3]
 git_version = line[4]
 android_sdk_version = line[5]
 
