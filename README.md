@@ -130,7 +130,7 @@ All issues that are known to us are listed here, we are working on fixing them.
 Keep your keystore file backed up(backup .jks file, alias name and passwords of your keystore file)
 
 ```bash
-keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storetype JKS
+keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storetype JKS
 ```
 
 ## Features

@@ -1274,6 +1274,9 @@ commands_menu.add_command(
     label='Build',
     command=lambda: save_data(),
 )
+
+commands_menu.add_separator()
+
 commands_menu.add_command(
     label='Clean',
     command=lambda: clean_dir(),
@@ -1281,6 +1284,72 @@ commands_menu.add_command(
 commands_menu.add_command(
     label='Clean Build',
     command=lambda: clean_build(),
+)
+
+commands_menu.add_separator()
+
+def create_keystore():
+    create_keystore_window = Toplevel(root)
+    create_keystore_window.title('Create a Keystore')
+    create_keystore_window.geometry('400x440')
+    create_keystore_window.resizable(False, False)
+
+    alias_name_label = Label(create_keystore_window, text="Alias Name")
+    alias_name_label.pack()
+    alias_name = StringVar()
+    Entry(create_keystore_window, textvariable=alias_name, width=35).pack()
+
+    keystore_password_label = Label(create_keystore_window, text="Keystore Password")
+    keystore_password_label.pack()
+    keystore_password = StringVar()
+    Entry(create_keystore_window, textvariable=keystore_password, width=35).pack()
+
+    your_name_label = Label(create_keystore_window, text="Your Name")
+    your_name_label.pack()
+    your_name = StringVar()
+    Entry(create_keystore_window, textvariable=your_name, width=35).pack()
+
+    your_organization_unit_label = Label(create_keystore_window, text="Your Organization Unit")
+    your_organization_unit_label.pack()
+    your_organization_unit = StringVar()
+    Entry(create_keystore_window, textvariable=your_organization_unit, width=35).pack()
+
+    your_organization_label = Label(create_keystore_window, text="Your Organization")
+    your_organization_label.pack()
+    your_organization = StringVar()
+    Entry(create_keystore_window, textvariable=your_organization, width=35).pack()
+
+    your_city_or_locality_label = Label(create_keystore_window, text="Your City or Locality")
+    your_city_or_locality_label.pack()
+    your_city_or_locality = StringVar()
+    Entry(create_keystore_window, textvariable=your_city_or_locality, width=35).pack()
+
+    your_state_or_province_label = Label(create_keystore_window, text="Your State or Province")
+    your_state_or_province_label.pack()
+    your_state_or_province = StringVar()
+    Entry(create_keystore_window, textvariable=your_state_or_province, width=35).pack()
+
+    your_two_letter_country_code_label = Label(create_keystore_window, text="Your Two-Letter Country Code")
+    your_two_letter_country_code_label.pack()
+    your_two_letter_country_code = StringVar()
+    Entry(create_keystore_window, textvariable=your_two_letter_country_code, width=35).pack()
+
+    def save_keystore():
+        file = filedialog.asksaveasfile(mode='w', defaultextension=".keystore")
+        if file is None:
+            return
+        else:
+            os.system('keytool -genkey -v -keystore ' + file.name + ' -alias ' + alias_name.get() + ' -keyalg RSA -keysize 2048 -validity 10000 -storepass ' + keystore_password.get() + ' -keypass ' + keystore_password.get() + ' -dname "CN=' + your_name.get() + ', OU=' + your_organization_unit.get() + ', O=' + your_organization.get() + ', L=' + your_city_or_locality.get() + ', S=' + your_state_or_province.get() + ', C=' + your_two_letter_country_code.get() + '"')
+            print('Keystore created successfully.')
+            create_keystore_window.destroy()
+            messagebox.showinfo("Success", "Keystore created successfully.")
+
+    create_keystore_button = Button(create_keystore_window, text='Create', command=lambda: save_keystore())
+    create_keystore_button.pack()
+
+commands_menu.add_command(
+    label='Create a Keystore',
+    command=lambda: create_keystore(),
 )
 
 commands_menu.add_separator()
