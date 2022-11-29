@@ -1339,7 +1339,18 @@ def create_keystore():
         if file is None:
             return
         else:
-            os.system('keytool -genkey -v -keystore ' + file.name + ' -alias ' + alias_name.get() + ' -keyalg RSA -keysize 2048 -validity 10000 -storepass ' + keystore_password.get() + ' -keypass ' + keystore_password.get() + ' -dname "CN=' + your_name.get() + ', OU=' + your_organization_unit.get() + ', O=' + your_organization.get() + ', L=' + your_city_or_locality.get() + ', S=' + your_state_or_province.get() + ', C=' + your_two_letter_country_code.get() + '"')
+            keystore_file =  'keytool -genkey -noprompt \
+            -alias ' + alias_name.get() + ' \
+            -keypass ' + keystore_password.get() + ' \
+            -keyalg ' + 'RSA' + ' \
+            -sigalg ' + 'SHA1withRSA' + '\
+            -validity ' + '10000' + ' \
+            -keysize ' + '2048' + ' \
+            -keystore ' + file.name + ' \
+            -storepass '+ keystore_password.get() +' \
+            -storetype  ' + 'JKS' 
+            
+            os.system(keystore_file)
             print('Keystore created successfully.')
             create_keystore_window.destroy()
             messagebox.showinfo("Success", "Keystore created successfully.")
