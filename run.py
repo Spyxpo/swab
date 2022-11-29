@@ -302,7 +302,7 @@ def check_java():
 
 def check_jre():
     if running_on == 'Windows':
-        jre = subprocess.call(['where', 'java'])
+        jre = subprocess.call(['where', 'keytool'])
         if jre == 0:
             print(f'{bcolors.OKGREEN}JRE is already installed.\n')
             clear()
@@ -320,7 +320,7 @@ def check_jre():
             os.remove('jre.exe')
             print("JRE installed successfully.")
     else:
-        jre = subprocess.call(['which', 'java'])
+        jre = subprocess.call(['which', 'keytool'])
         if jre == 0:
             print(f'{bcolors.OKGREEN}JRE is already installed.\n')
             clear()
