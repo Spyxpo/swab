@@ -15,3 +15,4 @@
 - [X] Splash Screen
 - [X] Desktop apps custom icon
 - [X] Auto Preqrequisites installation for Windows
+- [X] Create custom Keystore for Android App

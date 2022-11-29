@@ -150,6 +150,7 @@ keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -vali
 - [X] Splash Screen
 - [X] Desktop apps custom icon
 - [X] Auto Preqrequisites installation for Windows
+- [X] Create custom Keystore for Android App
 
 ## Coming soon
 
