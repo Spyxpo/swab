@@ -44,8 +44,12 @@ def check_internet():
         return True
   except Exception:
         no_internet = tk.Tk()
+        no_internet_app_icon = PhotoImage(file = 'images/logo.png')
+        no_internet.iconphoto(False, no_internet_app_icon)
+        no_internet.resizable(0, 0)
         no_internet.withdraw()
         messagebox.showerror("Error", "No internet connection.")
+        exit()
 
 def clear():
     if running_on == 'Darwin':
