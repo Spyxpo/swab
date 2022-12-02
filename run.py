@@ -1378,6 +1378,7 @@ def create_keystore():
             return
         else:
             os.system(f'keytool -genkey -noprompt -v -keystore {file.name}.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias {alias_name.get()} -storetype PKCS12 -storepass {keystore_password.get()} -keypass {keystore_password.get()} -dname "CN={your_name.get()}, OU={your_organization_unit.get()}, O={your_organization.get()}, L={your_city_or_locality.get()}, S={your_state_or_province.get()}, C={your_two_letter_country_code.get()}"')
+            file.close()
             os.remove(file.name)
             print('Keystore created successfully.')
             create_keystore_window.destroy()
