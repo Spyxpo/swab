@@ -457,6 +457,11 @@ def check_cmdline_tools():
             location = os.getcwd() + f"/cmdline-tools/bin"
             userpath.append(location)
             os.remove('android-sdk.zip')
+            # os.system('sdkmanager.bat --install "cmdline-tools;latest" --sdk_root=../../')
+            # os.system('sdkmanager.bat "build-tools;30.0.3"')
+            # os.system('sdkmanager.bat  "platforms;android-31"')
+            # os.system('flutter config --android-sdk %ANDROID_SDK_ROOT%')
+            # os.system('flutter doctor --android-licenses')
             print("Android SDK installed successfully.")
             input("Press Enter to exit and restart the program...")
             exit()
