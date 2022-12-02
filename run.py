@@ -23,6 +23,7 @@ import userpath
 import zipfile
 import subprocess
 import socket
+import getpass
 
 running_on = platform.system()
 machine_architecture = platform.machine()
@@ -146,18 +147,24 @@ def check_flutter():
             print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
           
-            if platform == 'Darwin':
+            if running_on == 'Darwin':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
                 print("Downloading Flutter for macOS...")
                 wget.download(url, 'flutter.zip', bar=custom_bar)
                 print("\nExtracting Flutter.....")
                 with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
-                    zip_ref.extractall("/Users/")
-                location = "/Users/flutter/bin"
+                    zip_ref.extractall(f"/Users/{getpass.getuser()}/Documents/")
+                location = f"/Users/{getpass.getuser()}/Documents/flutter/bin/"
                 userpath.append(location)
+                os.system(f"chmod +x {location}/flutter")
+                os.system(f"chmod +x {location}/dart")
+                os.system(f"chmod +x {location}/flutter.bat")
+                os.system(f"chmod +x {location}/dart.bat")
+                os.system(f"chmod +x {location}/internal/shared.sh")
+                os.system(f"chmod +x {location}/internal/update_dart_sdk.sh")
                 os.remove('flutter.zip')
-                print("Flutter installed successfully.")      
-            elif platform == 'Linux':
+                print("Flutter installed successfully.")    
+            elif running_on == 'Darwin':
                 url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
                 print("Downloading Flutter for Linux...")
                 wget.download(url, 'flutter.tar.xz', bar=custom_bar)
