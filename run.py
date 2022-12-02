@@ -334,7 +334,7 @@ def check_jre():
         else:
             print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
-            url = f'https://www.techspot.com/downloads/downloadnow/5198/?evp=8ac5f15c387fb61b7484086c2f15e494&file=5647'
+            url = f'https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247136_10e8cce67c7843478f41411b7003171c'
             print(f"{bcolors.OKGREEN}Downloading JRE for Windows...")
             wget.download(url, 'jre.exe', bar=custom_bar)
             print("\nInstalling JRE.....")
@@ -353,7 +353,7 @@ def check_jre():
             print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
             print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
             if running_on == 'Darwin':
-                url = f"https://www.techspot.com/downloads/downloadnow/5198/?evp=91a508f7a3f5244c06e5b0706bbc39d7&file=5649"
+                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
                 print(f"Downloading JRE for macOS...")
                 wget.download(url, 'jre.dmg', bar=custom_bar)
                 print("\nInstalling JRE.....")
@@ -1315,6 +1315,8 @@ commands_menu.add_separator()
 def create_keystore():
     create_keystore_window = Toplevel(root)
     create_keystore_window.title('Create a Keystore')
+    keystore_app_icon = PhotoImage(file = 'images/logo.png')
+    create_keystore_window.iconphoto(False, keystore_app_icon)
     create_keystore_window.geometry('400x440')
     create_keystore_window.resizable(False, False)
 
