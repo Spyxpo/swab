@@ -4,8 +4,12 @@ Project Name: Spyxpo Web To App Builder
 Project Description: This is a tool which is used to convert a website into an app for iOS, Android, Windows, macOS and Linux.
 '''
 
+import json
+import tarfile
+import time
 from tkinter import *
 import tkinter as tk
+from tkinter import messagebox
 from tkinter.messagebox import showinfo
 from tkinter import filedialog
 import shutil
@@ -14,9 +18,15 @@ import platform
 import webbrowser
 from PIL import Image
 import icnsutil
+import wget
+import userpath
+import zipfile
 import subprocess
+import socket
+import getpass
 
 running_on = platform.system()
+machine_architecture = platform.machine()
 
 if running_on == 'Darwin':
     print("Running on macOS")
@@ -26,6 +36,21 @@ elif running_on == 'Windows':
     print("Running on Windows")
 else:
     print("Platform can't be detected.")            
+
+def check_internet():
+  try:
+        host = socket.gethostbyname('www.google.com')
+        s = socket.create_connection((host, 80), 2)
+        s.close()
+        return True
+  except Exception:
+        no_internet = tk.Tk()
+        no_internet_app_icon = PhotoImage(file = 'images/logo.png')
+        no_internet.iconphoto(False, no_internet_app_icon)
+        no_internet.resizable(0, 0)
+        no_internet.withdraw()
+        messagebox.showerror("Error", "No internet connection.")
+        exit()
 
 def clear():
     if running_on == 'Darwin':
@@ -38,6 +63,20 @@ def clear():
         pass
 
 clear()
+check_internet()
+
+# packages version details
+packages_version_info = open('.packages', 'r')
+line = packages_version_info.readlines()
+
+flutter_version = line[0]
+nodejs_version = line[1]
+jdk_version = line[2]
+jre_version = line[3]
+git_version = line[4]
+android_sdk_version = line[5]
+
+packages_version_info.close()
 
 class bcolors:
     HEADER = '\033[95m'
@@ -51,16 +90,429 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def check_requirements(name, success_text, error_text):
-    program = subprocess.call(['which', name])
-    if program == 0:
-        print(f'{bcolors.OKGREEN}{success_text}\n')
-        clear()
-        pass
+    if running_on == 'Windows':
+        program = subprocess.call(['where', name])
+        if program == 0:
+            print(f'{bcolors.OKGREEN}{success_text}\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}{error_text}\n')
+            print(f'{bcolors.FAIL}Please install \"{name}\" then try again.\n') 
+            input(f'{bcolors.ENDC}Press ENTER to exit.')
+            exit()
+    else:        
+        program = subprocess.call(['which', name])
+        if program == 0:
+            print(f'{bcolors.OKGREEN}{success_text}\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}{error_text}\n')
+            print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
+            input(f'{bcolors.ENDC}Press ENTER to exit.')
+            exit()
+
+def custom_bar(current, total, width=80):
+    return wget.bar_adaptive(round(current/1024/1024, 2), round(total/1024/1024, 2), width) + ' MB'
+
+def check_flutter():
+    if running_on == 'Windows':
+        flutter = subprocess.call(['where', 'flutter'])
+        if flutter == 0:
+            print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+            
+            url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_{flutter_version}-stable.zip"
+            print(f"{bcolors.OKGREEN}Downloading Flutter for Windows...")
+            wget.download(url, 'flutter.zip', bar=custom_bar)
+            print("\nExtracting Flutter.....")
+            with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+                zip_ref.extractall("C:\\")
+            location = "C:\\flutter\\bin"
+            userpath.append(location)
+            os.remove('flutter.zip')
+            print("Flutter installed successfully.")
+        
     else:
-        print(f'{bcolors.WARNING}{error_text}\n')
-        print(f'{bcolors.FAIL}Please install \"{name}\" then set PATH and try again.\n')
-        input(f'{bcolors.ENDC}Press ENTER to exit.')
-        exit()
+        # program = subprocess.call(['which', 'flutter'])
+        # if program == 0:
+        #     print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+        #     clear()
+        #     pass
+        # else:
+        #     print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+        #     print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+          
+        #     if running_on == 'Darwin':
+        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
+        #         print("Downloading Flutter for macOS...")
+        #         wget.download(url, 'flutter.zip', bar=custom_bar)
+        #         print("\nExtracting Flutter.....")
+        #         with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+        #             zip_ref.extractall(f"/Users/{getpass.getuser()}/Documents/")
+        #         location = f"/Users/{getpass.getuser()}/Documents/flutter/bin/"
+        #         userpath.append(location)
+        #         os.system(f"chmod +x {location}/flutter")
+        #         os.system(f"chmod +x {location}/dart")
+        #         os.system(f"chmod +x {location}/flutter.bat")
+        #         os.system(f"chmod +x {location}/dart.bat")
+        #         os.system(f"chmod +x {location}/internal/shared.sh")
+        #         os.system(f"chmod +x {location}/internal/update_dart_sdk.sh")
+        #         os.remove('flutter.zip')
+        #         print("Flutter installed successfully.")    
+        #     elif running_on == 'Darwin':
+        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
+        #         print("Downloading Flutter for Linux...")
+        #         wget.download(url, 'flutter.tar.xz', bar=custom_bar)
+        #         print("\nExtracting Flutter.....")
+        #         os.system('tar xf flutter.tar.xz')
+        #         location = "flutter/bin"
+        #         userpath.append(location)
+        #         os.remove('flutter.tar.xz')
+        #         print("Flutter installed successfully.")
+        #     else:
+        #         pass
+        pass
+
+def check_nodejs():
+    if running_on == 'Windows':
+        nodejs = subprocess.call(['where', 'node'])
+        if nodejs == 0:
+            print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+            url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-x64.msi"
+            print(f"{bcolors.OKGREEN}Downloading NodeJS for Windows...")
+            wget.download(url, 'nodejs.msi', bar=custom_bar)
+            print("\nInstalling NodeJS.....")
+            os.system('nodejs.msi')
+            os.remove('nodejs.msi')
+            print("NodeJS installed successfully.")
+            
+    # else:
+    #     nodejs = subprocess.call(['which', 'node'])
+    #     if nodejs == 0:
+    #         print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-arm64.tar.gz"
+    #                 print(f"Downloading NodeJS for macOS...")
+    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling NodeJS.....")
+                    
+    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
+
+    #                 os.rename(f"node-v{nodejs_version}-darwin-arm64", "nodejs")
+
+    #                 location = os.getcwd() + "/nodejs/bin/"
+    #                 userpath.append(location)
+    #                 os.remove('nodejs.tar.gz')
+    #                 print("NodeJS installed successfully.")
+
+    #             else:
+    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-x64.tar.gz"
+    #                 print(f"Downloading NodeJS for macOS...")
+    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling NodeJS.....")
+                    
+    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
+
+    #                 os.rename(f"node-v{nodejs_version}-darwin-x64", "nodejs")
+
+    #                 location = os.getcwd() + "/nodejs/bin/"
+    #                 userpath.append(location)
+    #                 os.remove('nodejs.tar.gz')
+    #                 print("NodeJS installed successfully.")
+                    
+    #         elif running_on == 'Linux':
+    #             url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
+    #             print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
+    #             wget.download(url, 'nodejs.tar.xz', bar=custom_bar)
+    #             print("\nExtracting NodeJS.....")
+    #             os.system('tar xf nodejs.tar.xz')
+    #             location = os.getcwd() + "/nodejs/bin"
+    #             userpath.append(location)
+    #             os.remove('nodejs.tar.xz')
+    #         else:
+    #             pass    
+    pass
+
+def check_java():
+    if running_on == 'Windows':
+        java = subprocess.call(['where', 'java'])
+        if java == 0:
+            print(f'{bcolors.OKGREEN}Java is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+            url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_windows-x64_bin.exe"
+            print(f"{bcolors.OKGREEN}Downloading Java for Windows...")
+            wget.download(url, 'java.exe', bar=custom_bar)
+            print("\nInstalling Java.....")
+            os.system('java.exe')
+            location = f"C:\\Program Files\\Java\\jdk-{jdk_version}\\bin"
+            userpath.append(location)
+            os.remove('java.exe')
+            print("Java installed successfully.")
+            
+    # else:
+    #     java = subprocess.call(['which', 'java'])
+    #     if java == 0:
+    #         print(f'{bcolors.OKGREEN}Java is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-aarch64_bin.tar.gz"
+    #                 print(f"Downloading Java for macOS...")
+    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling Java.....")
+                    
+    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
+                        
+    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
+
+    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
+    #                 userpath.append(location)
+    #                 os.remove('java.tar.gz')
+    #                 print("Java installed successfully.")
+
+    #             else:
+    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.tar.gz"   
+    #                 print(f"Downloading Java for macOS...")
+    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling Java.....")
+                    
+    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
+
+    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
+
+    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
+    #                 userpath.append(location)
+    #                 os.remove('java.tar.gz')
+    #                 print("Java installed successfully.")
+
+    #         elif running_on == 'Linux':
+    #             url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
+    #             print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
+    #             wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #             print("\nExtracting Java.....")
+    #             os.system('tar xf java.tar.gz')
+    #             location = os.getcwd() + f"/jdk-{jdk_version}/bin"
+    #             userpath.append(location)
+    #             os.remove('java.tar.gz')
+    #             print("Java installed successfully.")
+    #         else:
+    #             pass   
+    pass 
+
+def check_jre():
+    if running_on == 'Windows':
+        jre = subprocess.call(['where', 'keytool'])
+        if jre == 0:
+            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+            url = f'https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247136_10e8cce67c7843478f41411b7003171c'
+            print(f"{bcolors.OKGREEN}Downloading JRE for Windows...")
+            wget.download(url, 'jre.exe', bar=custom_bar)
+            print("\nInstalling JRE.....")
+            os.system('jre.exe')
+            location = f"C:\\Program Files\\Java\\jre{jre_version}\\bin"
+            userpath.append(location)
+            os.remove('jre.exe')
+            print("JRE installed successfully.")
+    # else:
+    #     jre = subprocess.call(['which', 'keytool'])
+    #     if jre == 0:
+    #         print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
+    #             print(f"Downloading JRE for macOS...")
+    #             wget.download(url, 'jre.dmg', bar=custom_bar)
+    #             print("\nInstalling JRE.....")
+    #             location = os.getcwd() + f'/jre{jre_version}/Contents/Home/bin'  
+    #             userpath.append(location)
+    #             os.remove('jre.dmg')
+    #             print("JRE installed successfully.")
+
+    #         elif running_on == 'Linux':
+    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247127_10e8cce67c7843478f41411b7003171c"
+    #             print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
+    #             wget.download(url, 'jre.tar.gz', bar=custom_bar)
+    #             print("\nExtracting JRE.....")
+    #             os.system('tar xf jre.tar.gz')
+    #             location = os.getcwd() + f"/jre{jre_version}/bin"
+    #             userpath.append(location)
+    #             os.remove('jre.tar.gz')
+    #             print("JRE installed successfully.")
+    #         else:
+    #             pass
+    pass
+
+def check_git():
+    if running_on == 'Windows':
+        git = subprocess.call(['where', 'git'])
+        if git == 0:
+            print(f'{bcolors.OKGREEN}Git is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+            url = f"https://github.com/git-for-windows/git/releases/download/v{git_version}.windows.1/Git-{git_version}-64-bit.exe"
+            print(f"{bcolors.OKGREEN}Downloading Git for Windows...")
+            wget.download(url, 'git.exe', bar=custom_bar)
+            print("\nInstalling Git.....")
+            os.system('git.exe')
+            os.remove('git.exe')
+            print("Git installed successfully.")
+            
+    # else:
+    #     git = subprocess.call(['which', 'git'])
+    #     if git == 0:
+    #         print(f'{bcolors.OKGREEN}Git is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 brew = subprocess.call(['which', 'brew'])
+    #                 if brew == 0:
+    #                     print("Installing Git...")
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+    #                 else:
+    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+
+    #             else:
+    #                 brew = subprocess.call(['which', 'brew'])
+    #                 if brew == 0:
+    #                     print("Installing Git...")
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+    #                 else:
+    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+
+    #         elif running_on == 'Linux':
+    #             url = f"https://www.kernel.org/pub/software/scm/git/git-{git_version}.tar.gz"
+    #             print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
+    #             wget.download(url, 'git.tar.gz', bar=custom_bar)
+    #             print("\nExtracting Git.....")
+    #             os.system('tar xf git.tar.gz')
+    #             location = os.getcwd() + f"/git/bin"
+    #             userpath.append(location)
+    #             os.remove('git.tar.gz')
+    #             print("Git installed successfully.")
+    #         else:
+    #             pass    
+    pass
+
+def check_cmdline_tools():
+    if running_on == 'Windows':
+        cmdline_tools = subprocess.call(['where', 'sdkmanager'])
+        if cmdline_tools == 0:
+            print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
+            url = f"https://dl.google.com/android/repository/commandlinetools-win-{android_sdk_version}_latest.zip"
+            print(f"{bcolors.OKGREEN}Downloading Android SDK for Windows...")
+            wget.download(url, 'android-sdk.zip', bar=custom_bar)
+            print("\nExtracting Android SDK.....")
+            with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+                zip_ref.extractall()
+            location = os.getcwd() + f"/cmdline-tools/bin"
+            userpath.append(location)
+            os.remove('android-sdk.zip')
+            # os.system('sdkmanager.bat --install "cmdline-tools;latest" --sdk_root=../../')
+            # os.system('sdkmanager.bat "build-tools;30.0.3"')
+            # os.system('sdkmanager.bat  "platforms;android-31"')
+            # os.system('flutter config --android-sdk %ANDROID_SDK_ROOT%')
+            # os.system('flutter doctor --android-licenses')
+            print("Android SDK installed successfully.")
+            input("Press Enter to exit and restart the program...")
+            exit()
+    # else:
+    #     cmdline_tools = subprocess.call(['which', 'sdkmanager'])
+    #     if cmdline_tools == 0:
+    #         print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             url = f"https://dl.google.com/android/repository/commandlinetools-mac-{android_sdk_version}_latest.zip"
+    #             print(f"Downloading Android SDK for macOS...")
+    #             wget.download(url, 'android-sdk.zip', bar=custom_bar)
+    #             print("\nExtracting Android SDK.....")
+
+    #             with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+    #                 zip_ref.extractall()
+
+    #             location = os.getcwd() + f"/cmdline-tools/bin"
+
+    #             os.system(f"chmod +x {location}/sdkmanager")
+    #             os.system(f"chmod +x {location}/avdmanager")
+    #             os.system(f"chmod +x {location}/apkanalyser")
+    #             os.system(f"chmod +x {location}/lint")
+    #             os.system(f"chmod +x {location}/profgen")
+    #             os.system(f"chmod +x {location}/retrace")
+    #             os.system(f"chmod +x {location}/screenshot2")
+
+    #             userpath.append(location)
+    #             os.remove('android-sdk.zip')
+    #             print("Android SDK installed successfully.")
+    #             input("Press Enter to exit and restart the program...")
+    #             exit()
+    #         elif running_on == 'Linux':
+    #             os.system('sudo apt install snapd')
+    #             os.system('sudo snap install android-studio --classic')
+    #             print("Android SDK installed successfully.")
+    #             input("Press Enter to exit and restart the program...")
+    #             exit()
+    #         else:
+    #             pass    
+    pass
 
 if running_on == 'Windows':
     pass
@@ -75,17 +527,18 @@ if running_on == 'Windows':
     try:
         check_requirements('python', 'Python is already installed.', 'Python is not in the PATH or is installed on this device.')
     except:
+        check_requirements('python3', 'Python is already installed.', 'Python is not in the PATH or is installed on this device.')
+    else:
         pass
 else:
     pass
 
-check_requirements('node', 'NodeJS is already installed.', 'NodeJS is not in the PATH or is installed on this device.')
-check_requirements('java', 'JRE is already installed.', 'JRE is not in the PATH or is installed on this device.')
-check_requirements('javac', 'JDK is already installed.', 'JDK is not in the PATH or is installed on this device.')
-check_requirements('flutter', 'Flutter is already installed.', 'Flutter is not in the PATH or is installed on this device.')
-check_requirements('git', 'Git is already installed.', 'Git is not in the PATH or is installed on this device.')
-check_requirements('android', 'Android Studio is already installed.', 'Android Studio is not in the PATH or is installed on this device.')
-
+check_flutter()
+check_nodejs()
+check_java()
+check_jre()
+check_git()
+check_cmdline_tools()
 
 if os.path.exists("assets"):
     pass
@@ -152,6 +605,7 @@ def clean_dir():
     remove_pycache()
     remove_dist()
     remove_run_spec()
+    os.mkdir("assets/")
     
 def clean_build():
     try:
@@ -166,65 +620,115 @@ def clean_build():
         print(e)
         pass
 
-def openBuildfolder():
+def open_build_folder():
     if running_on == 'Darwin':
-        os.system('open build')
+        if (os.path.exists("build")):
+            os.system("open build")
+        else:
+            os.mkdir("build")
+            os.system("open build")
     elif running_on == 'Linux':
-        os.system('open build')
+        if (os.path.exists("build")):
+            os.system("open build")
+        else:
+            os.mkdir("build")
+            os.system("open build")
     elif running_on == 'Windows':
-        os.system('start build')
+        if (os.path.exists("build")):
+            os.system("start build")
+        else:
+            os.mkdir("build")
+            os.system("start build")
     else:
         pass
 
-def uploadIconAction(event=None):
+def upload_icon_action(event=None):
     app_name_info = app_name.get()
 
     if app_name_info == "":
         showinfo("No app name", "No app name, please enter an app name.")
         return False
+    elif icon_path_label.cget("text") == "No file selected": 
+        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon_path_label['text'] = icon
+        print(f'{bcolors.ENDC}Icon image: {icon}')
+
+        if icon == '':
+            showinfo("No icon", "No icon, please select an icon.")
+            icon_path_label['text'] = 'No file selected'
+            pass
+        else:
+            size = 512, 512
+            image = Image.open(icon)
+            image_resized = image.resize(size)
+            image_resized.save("assets/favicon.png", "PNG")
+
+            ico = Image.open('assets/favicon.png')
+            ico.save('assets/favicon.ico')
+
+            icns = icnsutil.IcnsFile()
+            icns.add_media(file='assets/favicon.png')
+            icns.write('assets/favicon.icns')
     else:
-        pass
+        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon_path_label['text'] = icon
+        print(f'{bcolors.ENDC}Icon image: {icon}')
 
-    app_name_info = app_name.get()
-    icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
-    print(f'{bcolors.ENDC}Icon image: {icon}')
-    
-    if icon == '':
-        pass
-    else:
-        size = 512, 512
-        image = Image.open(icon)
-        image_resized = image.resize(size)
-        image_resized.save("assets/favicon.png", "PNG")
+        if icon == '':
+            showinfo("No icon", "No icon, please select an icon.")
+            icon_path_label['text'] = 'No file selected'
+            pass
+        else:
+            size = 512, 512
+            image = Image.open(icon)
+            image_resized = image.resize(size)
+            image_resized.save("assets/favicon.png", "PNG")
 
-        ico = Image.open('assets/favicon.png')
-        ico.save('assets/favicon.ico')
+            ico = Image.open('assets/favicon.png')
+            ico.save('assets/favicon.ico')
 
-        icns = icnsutil.IcnsFile()
-        icns.add_media(file='assets/favicon.png')
-        icns.write('assets/favicon.icns')
+            icns = icnsutil.IcnsFile()
+            icns.add_media(file='assets/favicon.png')
+            icns.write('assets/favicon.icns')
 
-def uploadKeystoreAction():
+def upload_keystore_action():
     app_name_info = app_name.get()
 
     if app_name_info == "":
         showinfo("No app name", "No app name, please enter an app name.")
         return False
+    elif keystore_path_label.cget("text") == "No file selected": 
+        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path_label['text'] = keystore_path
+
+        if keystore_path == '':
+            showinfo("No keystore", "No keystore, please select a keystore.")
+            keystore_path_label['text'] = 'No file selected'
+            pass
+        else:
+            print('Keystore file:', keystore_path)
+            keystore_path_label['text'] = keystore_path
+            key_file = open('assets/key.properties', 'w')
+            key_file.write(f'storeFile={keystore_path}\n')
+            key_file.close()
     else:
-        pass
+        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path_label['text'] = keystore_path
 
-    app_name_info = app_name.get()
-    store_pass_info = store_pass.get()
-    key_pass_info = key_pass.get()
-    alias_info = alias.get()
-    keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks")])
-    print('Keystore file:', keystore_path)
+        if keystore_path == '':
+            showinfo("No keystore", "No keystore, please select a keystore.")
+            keystore_path_label['text'] = 'No file selected'
+            pass
+        else:
+            print('Keystore file:', keystore_path)
+            keystore_path_label['text'] = keystore_path
+            key_file = open('assets/key.properties', 'w')
+            key_file.write(f'storeFile={keystore_path}\n')
+            key_file.close()
 
-    key_file = open('assets/key.properties', 'w')
-    key_file.write(f'storeFile={keystore_path}\n')
-    key_file.close()
+def save_data():
 
-def saveData():
+    start_time = time.time()
 
     app_name_info = app_name.get()
     app_description_info = app_description.get()
@@ -241,13 +745,18 @@ def saveData():
     else:
         os.mkdir("projects")
 
-    if os.path.exists(f"build/{app_name_info}_{app_version_info}.apk"):
-        os.remove(f"build/{app_name_info}_{app_version_info}.apk")
+    if os.path.exists(f"build/{app_name_info}/"):
+        shutil.rmtree(f"build/{app_name_info}/")
     else:
         pass
 
-    if os.path.exists(f"build/{app_name_info}_{app_version_info}.aab"):
-        os.remove(f"build/{app_name_info}_{app_version_info}.aab")
+    if os.path.exists(f"projects/{app_name_info}/"):
+        shutil.rmtree(f"projects/{app_name_info}/")
+    else:
+        pass
+
+    if os.path.exists(f"projects/"):
+        shutil.rmtree(f"projects/")
     else:
         pass
 
@@ -412,14 +921,14 @@ def saveData():
 
     # for desktop app
 
-     # add app name in package.json
+    # add app name in package.json
     with open(f'projects/{app_name_info}/desktop/package.json')as desktop_name_file:
         desktop_name = desktop_name_file.read().replace("app_name", str(app_name_info).lower(), 1)
 
     with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_name_file:
         new_desktop_name_file.write(desktop_name)
 
-     # add website url in index.html
+    # add website url in index.html
     with open(f'projects/{app_name_info}/desktop/index.html')as desktop_url_file:
         desktop_url = desktop_url_file.read().replace("WEBSITE", str(app_web_url), 1)
 
@@ -447,7 +956,7 @@ def saveData():
     with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_description_file:
         new_desktop_description_file.write(desktop_description)    
 
-     # add app name in view.js
+    # add app name in view.js
     with open(f'projects/{app_name_info}/desktop/src/view.js')as desktop_view_file:
         desktop_view = desktop_view_file.read().replace("WEBSITE", str(app_web_url), 1)
 
@@ -553,7 +1062,7 @@ def saveData():
         shutil.copytree(linux_desktop_original_build_location, linux_desktop_target_build_location)
     else:
         pass
-    # remove existing project files, updating existing projects coming soon
+    
     shutil.rmtree(f"projects/{app_name_info}/")
 
     if os.path.exists("assets/favicon.png"):
@@ -598,7 +1107,21 @@ def saveData():
     else:
         pass
 
-    openBuildfolder()
+    app_name.set('')
+    app_description.set('')
+    app_package_name.set('')
+    app_version.set('')
+    app_build_number.set('')
+    web_url.set('')
+    icon_path_label.config(text='No file selected')
+    keystore_path_label.config(text = 'No file selected')
+    alias.set('')
+    key_pass.set('')
+    store_pass.set('')
+
+    print('Build completed in ' + str(time.time() - start_time) + ' seconds.')
+
+    open_build_folder()
 
 # version details
 version_info = open('VERSION', 'r')
@@ -606,10 +1129,10 @@ version = version_info.read()
 
 # tkinter ui
 root = tk.Tk()
-icon = PhotoImage(file = 'images/logo.png')
-root.iconphoto(False, icon)
-root.title('Spyxpo Web To App Builder | ' + version)
-root.geometry('480x670')
+app_icon = PhotoImage(file = 'images/logo.png')
+root.iconphoto(False, app_icon)
+root.title('SWAB | ' + version)
+root.geometry('480x690')
 root.resizable(0, 0)
 
 menubar = Menu(root)
@@ -625,9 +1148,150 @@ menubar.add_cascade(
     underline=0
 )
 
+def new_project():
+    if app_name == '' and app_description == '' and app_package_name == '' and app_version == '' and app_build_number == '' and web_url == '' and icon_path_label.cget('text') == 'No file selected' and keystore_path_label.cget('text') == 'No file selected' and alias == '' and key_pass == '' and store_pass == '':
+        app_name.set('')
+        app_description.set('')
+        app_package_name.set('')
+        app_version.set('')
+        app_build_number.set('')
+        web_url.set('')
+        icon_path_label.config(text='No file selected')
+        keystore_path_label.config(text = 'No file selected')
+        alias.set('')
+        key_pass.set('')
+        store_pass.set('')
+    else:
+        save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
+        if save_project_answer == True:
+            save_as_project()
+        else:
+            app_name.set('')
+            app_description.set('')
+            app_package_name.set('')
+            app_version.set('')
+            app_build_number.set('')
+            web_url.set('')
+            icon_path_label.config(text='No file selected')
+            keystore_path_label.config(text = 'No file selected')
+            alias.set('')
+            key_pass.set('')
+            store_pass.set('')
+
 file_menu.add_command(
-    label='Open Build Folder',
-    command=lambda: openBuildfolder(),
+    label='New',
+    command=lambda: new_project(),
+)
+
+def open_project():
+    if app_name == '' and app_description == '' and app_package_name == '' and app_version == '' and app_build_number == '' and web_url == '' and icon_path_label.cget('text') == 'No file selected' and keystore_path_label.cget('text') == 'No file selected' and alias == '' and key_pass == '' and store_pass == '':
+        pass
+    else:
+        save_project_answer = messagebox.askyesno("Save Project", "Do you want to save the current project?")
+        if save_project_answer == True:
+            save_as_project()
+        else:
+            file = filedialog.askopenfilename(filetypes=[("SWAB Project Files", "*.swab")])
+            if file == '':
+                pass
+            else:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    app_name.set(data['app_name'])
+                    app_description.set(data['app_description'])
+                    app_package_name.set(data['app_package_name'])
+                    app_version.set(data['app_version'])
+                    app_build_number.set(data['app_build_number'])
+                    web_url.set(data['web_url'])
+                    icon_path_label.config(text=data['icon_path'])
+                    keystore_path_label.config(text=data['keystore_path'])
+                    alias.set(data['alias'])
+                    key_pass.set(data['key_pass'])
+                    store_pass.set(data['store_pass'])   
+
+                size = 512, 512
+                image = Image.open(icon_path_label.cget('text'))
+                image_resized = image.resize(size)
+                image_resized.save("assets/favicon.png", "PNG")
+
+                ico = Image.open('assets/favicon.png')
+                ico.save('assets/favicon.ico')
+
+                icns = icnsutil.IcnsFile()
+                icns.add_media(file='assets/favicon.png')
+                icns.write('assets/favicon.icns')       
+
+                key_file = open('assets/key.properties', 'w')
+                key_file.write('storeFile=' + keystore_path_label.cget('text') + '\n')
+                key_file.close()            
+
+file_menu.add_command(
+    label='Open Project',
+    command=lambda: open_project(),
+)
+
+file_menu.add_separator()
+
+def save_as_project():
+    if app_name.get() == '':
+        messagebox.showerror("Error", "Please enter app name.")
+        return False
+    elif app_description.get() == '':
+        messagebox.showerror("Error", "Please enter app description.")
+        return False
+    elif app_package_name.get() == '':
+        messagebox.showerror("Error", "Please enter app package name.")
+        return False
+    elif app_version.get() == '':
+        messagebox.showerror("Error", "Please enter app version.")
+        return False
+    elif app_build_number.get() == '':
+        messagebox.showerror("Error", "Please enter app build number.")
+        return False
+    elif web_url.get() == '':
+        messagebox.showerror("Error", "Please enter web url.")
+        return False
+    elif icon_path_label.cget('text') == 'No file selected':
+        messagebox.showerror("Error", "Please select icon.")
+        return False
+    elif keystore_path_label.cget('text') == 'No file selected':
+        messagebox.showerror("Error", "Please select keystore.")
+        return False
+    elif alias.get() == '':
+        messagebox.showerror("Error", "Please enter alias.")
+        return False
+    elif key_pass.get() == '':
+        messagebox.showerror("Error", "Please enter key password.")
+        return False
+    elif store_pass.get() == '':
+        messagebox.showerror("Error", "Please enter store password.")
+        return False
+    else:
+        project = {
+            'app_name': app_name.get(),
+            'app_description': app_description.get(),
+            'app_package_name': app_package_name.get(),
+            'app_version': app_version.get(),
+            'app_build_number': app_build_number.get(),
+            'web_url': web_url.get(),
+            'icon_path': icon_path_label.cget('text'),
+            'keystore_path': keystore_path_label.cget('text'),
+            'alias': alias.get(),
+            'key_pass': key_pass.get(),
+            'store_pass': store_pass.get()
+        }
+
+        file = filedialog.asksaveasfile(mode='w', defaultextension=".swab")
+        if file is None:
+            json.dump(project, app_name_info + '.swab', indent=4)
+            file.close()
+        else:
+            json.dump(project, file, indent=4)
+            file.close()
+
+file_menu.add_command(
+    label='Save As...',
+    command=lambda: save_as_project(),
 )
 
 file_menu.add_separator()
@@ -644,8 +1308,11 @@ menubar.add_cascade(
 )
 commands_menu.add_command(
     label='Build',
-    command=lambda: saveData(),
+    command=lambda: save_data(),
 )
+
+commands_menu.add_separator()
+
 commands_menu.add_command(
     label='Clean',
     command=lambda: clean_dir(),
@@ -653,6 +1320,95 @@ commands_menu.add_command(
 commands_menu.add_command(
     label='Clean Build',
     command=lambda: clean_build(),
+)
+
+commands_menu.add_separator()
+
+def create_keystore():
+    create_keystore_window = Toplevel(root)
+    create_keystore_window.title('Create a Keystore')
+    keystore_app_icon = PhotoImage(file = 'images/logo.png')
+    create_keystore_window.iconphoto(False, keystore_app_icon)
+    create_keystore_window.geometry('400x440')
+    create_keystore_window.resizable(False, False)
+
+    alias_name_label = Label(create_keystore_window, text="Alias Name")
+    alias_name_label.pack()
+    alias_name = StringVar()
+    Entry(create_keystore_window, textvariable=alias_name, width=35).pack()
+
+    keystore_password_label = Label(create_keystore_window, text="Keystore Password")
+    keystore_password_label.pack()
+    keystore_password = StringVar()
+    Entry(create_keystore_window, textvariable=keystore_password, width=35).pack()
+
+    your_name_label = Label(create_keystore_window, text="Your Name")
+    your_name_label.pack()
+    your_name = StringVar()
+    Entry(create_keystore_window, textvariable=your_name, width=35).pack()
+
+    your_organization_unit_label = Label(create_keystore_window, text="Your Organization Unit")
+    your_organization_unit_label.pack()
+    your_organization_unit = StringVar()
+    Entry(create_keystore_window, textvariable=your_organization_unit, width=35).pack()
+
+    your_organization_label = Label(create_keystore_window, text="Your Organization")
+    your_organization_label.pack()
+    your_organization = StringVar()
+    Entry(create_keystore_window, textvariable=your_organization, width=35).pack()
+
+    your_city_or_locality_label = Label(create_keystore_window, text="Your City or Locality")
+    your_city_or_locality_label.pack()
+    your_city_or_locality = StringVar()
+    Entry(create_keystore_window, textvariable=your_city_or_locality, width=35).pack()
+
+    your_state_or_province_label = Label(create_keystore_window, text="Your State or Province")
+    your_state_or_province_label.pack()
+    your_state_or_province = StringVar()
+    Entry(create_keystore_window, textvariable=your_state_or_province, width=35).pack()
+
+    your_two_letter_country_code_label = Label(create_keystore_window, text="Your Two-Letter Country Code")
+    your_two_letter_country_code_label.pack()
+    your_two_letter_country_code = StringVar()
+    Entry(create_keystore_window, textvariable=your_two_letter_country_code, width=35).pack()
+
+    def save_keystore():
+        if alias_name.get() == '':
+            messagebox.showerror("Error", "Please enter alias name.")
+            return False
+        elif keystore_password.get() == '':
+            messagebox.showerror("Error", "Please enter keystore password.")
+            return False
+        elif your_name.get() == '':
+            messagebox.showerror("Error", "Please enter your name.")
+            return False
+        else:
+            pass
+
+        file = filedialog.asksaveasfile(mode='w')
+        if file is None:
+            return
+        else:
+            os.system(f'keytool -genkey -noprompt -v -keystore {file.name}.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias {alias_name.get()} -storetype PKCS12 -storepass {keystore_password.get()} -keypass {keystore_password.get()} -dname "CN={your_name.get()}, OU={your_organization_unit.get()}, O={your_organization.get()}, L={your_city_or_locality.get()}, S={your_state_or_province.get()}, C={your_two_letter_country_code.get()}"')
+            file.close()
+            os.remove(file.name)
+            print('Keystore created successfully.')
+            create_keystore_window.destroy()
+            messagebox.showinfo("Success", "Keystore created successfully.")
+
+    create_keystore_button = Button(create_keystore_window, text='Create', command=lambda: save_keystore())
+    create_keystore_button.pack()
+
+commands_menu.add_command(
+    label='Create a Keystore',
+    command=lambda: create_keystore(),
+)
+
+commands_menu.add_separator()
+
+commands_menu.add_command(
+    label='Open Build Folder',
+    command=lambda: open_build_folder(),
 )
 
 # help menu item
@@ -712,7 +1468,10 @@ Entry(root, textvariable=web_url, width=35).pack()
 
 icon_label = Label(root, text="Icon (Choose .png image only (recommended 512x512))")
 icon_label.pack()
-Button(tk.Button(root, text='Choose an Icon', command=uploadIconAction).pack())
+Button(tk.Button(root, text=f'Choose an Icon', command=upload_icon_action).pack())
+
+icon_path_label = Label(root, text="No file selected", fg='grey')
+icon_path_label.pack()
 
 if running_on == 'Darwin':
     device_label = Label(root, text="Running on macOS", fg='green')
@@ -729,12 +1488,12 @@ elif running_on == 'Linux':
 else:
     pass
 
-keystore_label = Label(root, text="Keystore (Choose .jks file only)")
+keystore_label = Label(root, text="Keystore File")
 keystore_label.pack()
-Button(tk.Button(root, text='Choose a Keystore', command=uploadKeystoreAction).pack())
+Button(tk.Button(root, text='Choose a Keystore', command=upload_keystore_action).pack())
 
-keystore_label = Label(root, text="-Keystore file information-")
-keystore_label.pack()
+keystore_path_label = Label(root, text="No file selected", fg='grey')
+keystore_path_label.pack()
 
 alias_label = Label(root, text="Key Alias")
 alias_label.pack()
@@ -754,7 +1513,7 @@ Entry(root, textvariable=key_pass, width=35, show="\u2022").pack()
 blank_label = Label(root, text="\nVerify the details before building")
 blank_label.pack()
 
-build_button = Button(root, text='Build', command=lambda: saveData())
+build_button = Button(root, text='Build', command=lambda: save_data())
 build_button.pack()
 
 root.mainloop()

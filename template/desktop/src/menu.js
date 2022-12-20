@@ -38,7 +38,6 @@ exports.createTemplate = (name) => {
     template.unshift({
       label: name,
       submenu: [
-        // { role: "about" },
         { type: "separator" },
         { role: "services", submenu: [] },
         { type: "separator" },
@@ -50,7 +49,6 @@ exports.createTemplate = (name) => {
       ],
     });
 
-    // Edit menu
     template[1].submenu.push(
       { type: "separator" },
       {
@@ -59,7 +57,6 @@ exports.createTemplate = (name) => {
       }
     );
 
-    // Window menu
     template[3].submenu = [
       { role: "close" },
       { role: "minimize" },

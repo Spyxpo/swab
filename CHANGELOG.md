@@ -14,4 +14,5 @@
 - [X] Loading Indicator
 - [X] Splash Screen
 - [X] Desktop apps custom icon
-- [X] Console Requirements Checker
+- [X] Auto Prerequisites installation for Windows
+- [X] Create custom Keystore for Android App
