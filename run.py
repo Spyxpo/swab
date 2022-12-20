@@ -98,7 +98,8 @@ def check_requirements(name, success_text, error_text):
             pass
         else:
             print(f'{bcolors.WARNING}{error_text}\n')
-            print(f'{bcolors.FAIL}Please install \"{name}\" then try again.\n')
+            print(f'{bcolors.FAIL}Please install \"{name}\" then try again.\n') 
+            input(f'{bcolors.ENDC}Press ENTER to exit.')
             exit()
     else:        
         program = subprocess.call(['which', name])
@@ -138,44 +139,45 @@ def check_flutter():
             print("Flutter installed successfully.")
         
     else:
-        program = subprocess.call(['which', 'flutter'])
-        if program == 0:
-            print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
+        # program = subprocess.call(['which', 'flutter'])
+        # if program == 0:
+        #     print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
+        #     clear()
+        #     pass
+        # else:
+        #     print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
+        #     print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
           
-            if running_on == 'Darwin':
-                url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
-                print("Downloading Flutter for macOS...")
-                wget.download(url, 'flutter.zip', bar=custom_bar)
-                print("\nExtracting Flutter.....")
-                with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
-                    zip_ref.extractall(f"/Users/{getpass.getuser()}/Documents/")
-                location = f"/Users/{getpass.getuser()}/Documents/flutter/bin/"
-                userpath.append(location)
-                os.system(f"chmod +x {location}/flutter")
-                os.system(f"chmod +x {location}/dart")
-                os.system(f"chmod +x {location}/flutter.bat")
-                os.system(f"chmod +x {location}/dart.bat")
-                os.system(f"chmod +x {location}/internal/shared.sh")
-                os.system(f"chmod +x {location}/internal/update_dart_sdk.sh")
-                os.remove('flutter.zip')
-                print("Flutter installed successfully.")    
-            elif running_on == 'Darwin':
-                url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
-                print("Downloading Flutter for Linux...")
-                wget.download(url, 'flutter.tar.xz', bar=custom_bar)
-                print("\nExtracting Flutter.....")
-                os.system('tar xf flutter.tar.xz')
-                location = "flutter/bin"
-                userpath.append(location)
-                os.remove('flutter.tar.xz')
-                print("Flutter installed successfully.")
-            else:
-                pass
+        #     if running_on == 'Darwin':
+        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
+        #         print("Downloading Flutter for macOS...")
+        #         wget.download(url, 'flutter.zip', bar=custom_bar)
+        #         print("\nExtracting Flutter.....")
+        #         with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
+        #             zip_ref.extractall(f"/Users/{getpass.getuser()}/Documents/")
+        #         location = f"/Users/{getpass.getuser()}/Documents/flutter/bin/"
+        #         userpath.append(location)
+        #         os.system(f"chmod +x {location}/flutter")
+        #         os.system(f"chmod +x {location}/dart")
+        #         os.system(f"chmod +x {location}/flutter.bat")
+        #         os.system(f"chmod +x {location}/dart.bat")
+        #         os.system(f"chmod +x {location}/internal/shared.sh")
+        #         os.system(f"chmod +x {location}/internal/update_dart_sdk.sh")
+        #         os.remove('flutter.zip')
+        #         print("Flutter installed successfully.")    
+        #     elif running_on == 'Darwin':
+        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
+        #         print("Downloading Flutter for Linux...")
+        #         wget.download(url, 'flutter.tar.xz', bar=custom_bar)
+        #         print("\nExtracting Flutter.....")
+        #         os.system('tar xf flutter.tar.xz')
+        #         location = "flutter/bin"
+        #         userpath.append(location)
+        #         os.remove('flutter.tar.xz')
+        #         print("Flutter installed successfully.")
+        #     else:
+        #         pass
+        pass
 
 def check_nodejs():
     if running_on == 'Windows':
@@ -195,59 +197,60 @@ def check_nodejs():
             os.remove('nodejs.msi')
             print("NodeJS installed successfully.")
             
-    else:
-        nodejs = subprocess.call(['which', 'node'])
-        if nodejs == 0:
-            print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
-            if running_on == 'Darwin':
-                if machine_architecture == 'arm64':
-                    url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-arm64.tar.gz"
-                    print(f"Downloading NodeJS for macOS...")
-                    wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
-                    print("\nInstalling NodeJS.....")
+    # else:
+    #     nodejs = subprocess.call(['which', 'node'])
+    #     if nodejs == 0:
+    #         print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-arm64.tar.gz"
+    #                 print(f"Downloading NodeJS for macOS...")
+    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling NodeJS.....")
                     
-                    with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
-                        tar.extractall()
+    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
 
-                    os.rename(f"node-v{nodejs_version}-darwin-arm64", "nodejs")
+    #                 os.rename(f"node-v{nodejs_version}-darwin-arm64", "nodejs")
 
-                    location = os.getcwd() + "/nodejs/bin/"
-                    userpath.append(location)
-                    os.remove('nodejs.tar.gz')
-                    print("NodeJS installed successfully.")
+    #                 location = os.getcwd() + "/nodejs/bin/"
+    #                 userpath.append(location)
+    #                 os.remove('nodejs.tar.gz')
+    #                 print("NodeJS installed successfully.")
 
-                else:
-                    url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-x64.tar.gz"
-                    print(f"Downloading NodeJS for macOS...")
-                    wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
-                    print("\nInstalling NodeJS.....")
+    #             else:
+    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-x64.tar.gz"
+    #                 print(f"Downloading NodeJS for macOS...")
+    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling NodeJS.....")
                     
-                    with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
-                        tar.extractall()
+    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
 
-                    os.rename(f"node-v{nodejs_version}-darwin-x64", "nodejs")
+    #                 os.rename(f"node-v{nodejs_version}-darwin-x64", "nodejs")
 
-                    location = os.getcwd() + "/nodejs/bin/"
-                    userpath.append(location)
-                    os.remove('nodejs.tar.gz')
-                    print("NodeJS installed successfully.")
+    #                 location = os.getcwd() + "/nodejs/bin/"
+    #                 userpath.append(location)
+    #                 os.remove('nodejs.tar.gz')
+    #                 print("NodeJS installed successfully.")
                     
-            elif running_on == 'Linux':
-                url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
-                print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
-                wget.download(url, 'nodejs.tar.xz', bar=custom_bar)
-                print("\nExtracting NodeJS.....")
-                os.system('tar xf nodejs.tar.xz')
-                location = os.getcwd() + "/nodejs/bin"
-                userpath.append(location)
-                os.remove('nodejs.tar.xz')
-            else:
-                pass    
+    #         elif running_on == 'Linux':
+    #             url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
+    #             print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
+    #             wget.download(url, 'nodejs.tar.xz', bar=custom_bar)
+    #             print("\nExtracting NodeJS.....")
+    #             os.system('tar xf nodejs.tar.xz')
+    #             location = os.getcwd() + "/nodejs/bin"
+    #             userpath.append(location)
+    #             os.remove('nodejs.tar.xz')
+    #         else:
+    #             pass    
+    pass
 
 def check_java():
     if running_on == 'Windows':
@@ -269,60 +272,61 @@ def check_java():
             os.remove('java.exe')
             print("Java installed successfully.")
             
-    else:
-        java = subprocess.call(['which', 'java'])
-        if java == 0:
-            print(f'{bcolors.OKGREEN}Java is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
-            if running_on == 'Darwin':
-                if machine_architecture == 'arm64':
-                    url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-aarch64_bin.tar.gz"
-                    print(f"Downloading Java for macOS...")
-                    wget.download(url, 'java.tar.gz', bar=custom_bar)
-                    print("\nInstalling Java.....")
+    # else:
+    #     java = subprocess.call(['which', 'java'])
+    #     if java == 0:
+    #         print(f'{bcolors.OKGREEN}Java is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-aarch64_bin.tar.gz"
+    #                 print(f"Downloading Java for macOS...")
+    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling Java.....")
                     
-                    with tarfile.open('java.tar.gz', 'r:gz') as tar:
-                        tar.extractall()
+    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
                         
-                    os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
+    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
 
-                    location = os.getcwd() + '/java/Contents/Home/bin'  
-                    userpath.append(location)
-                    os.remove('java.tar.gz')
-                    print("Java installed successfully.")
+    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
+    #                 userpath.append(location)
+    #                 os.remove('java.tar.gz')
+    #                 print("Java installed successfully.")
 
-                else:
-                    url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.tar.gz"   
-                    print(f"Downloading Java for macOS...")
-                    wget.download(url, 'java.tar.gz', bar=custom_bar)
-                    print("\nInstalling Java.....")
+    #             else:
+    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.tar.gz"   
+    #                 print(f"Downloading Java for macOS...")
+    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #                 print("\nInstalling Java.....")
                     
-                    with tarfile.open('java.tar.gz', 'r:gz') as tar:
-                        tar.extractall()
+    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
+    #                     tar.extractall()
 
-                    os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
+    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
 
-                    location = os.getcwd() + '/java/Contents/Home/bin'  
-                    userpath.append(location)
-                    os.remove('java.tar.gz')
-                    print("Java installed successfully.")
+    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
+    #                 userpath.append(location)
+    #                 os.remove('java.tar.gz')
+    #                 print("Java installed successfully.")
 
-            elif running_on == 'Linux':
-                url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
-                print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
-                wget.download(url, 'java.tar.gz', bar=custom_bar)
-                print("\nExtracting Java.....")
-                os.system('tar xf java.tar.gz')
-                location = os.getcwd() + f"/jdk-{jdk_version}/bin"
-                userpath.append(location)
-                os.remove('java.tar.gz')
-                print("Java installed successfully.")
-            else:
-                pass    
+    #         elif running_on == 'Linux':
+    #             url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
+    #             print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
+    #             wget.download(url, 'java.tar.gz', bar=custom_bar)
+    #             print("\nExtracting Java.....")
+    #             os.system('tar xf java.tar.gz')
+    #             location = os.getcwd() + f"/jdk-{jdk_version}/bin"
+    #             userpath.append(location)
+    #             os.remove('java.tar.gz')
+    #             print("Java installed successfully.")
+    #         else:
+    #             pass   
+    pass 
 
 def check_jre():
     if running_on == 'Windows':
@@ -343,37 +347,38 @@ def check_jre():
             userpath.append(location)
             os.remove('jre.exe')
             print("JRE installed successfully.")
-    else:
-        jre = subprocess.call(['which', 'keytool'])
-        if jre == 0:
-            print(f'{bcolors.OKGREEN}JRE is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
-            if running_on == 'Darwin':
-                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
-                print(f"Downloading JRE for macOS...")
-                wget.download(url, 'jre.dmg', bar=custom_bar)
-                print("\nInstalling JRE.....")
-                location = os.getcwd() + f'/jre{jre_version}/Contents/Home/bin'  
-                userpath.append(location)
-                os.remove('jre.dmg')
-                print("JRE installed successfully.")
+    # else:
+    #     jre = subprocess.call(['which', 'keytool'])
+    #     if jre == 0:
+    #         print(f'{bcolors.OKGREEN}JRE is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
+    #             print(f"Downloading JRE for macOS...")
+    #             wget.download(url, 'jre.dmg', bar=custom_bar)
+    #             print("\nInstalling JRE.....")
+    #             location = os.getcwd() + f'/jre{jre_version}/Contents/Home/bin'  
+    #             userpath.append(location)
+    #             os.remove('jre.dmg')
+    #             print("JRE installed successfully.")
 
-            elif running_on == 'Linux':
-                url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247127_10e8cce67c7843478f41411b7003171c"
-                print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
-                wget.download(url, 'jre.tar.gz', bar=custom_bar)
-                print("\nExtracting JRE.....")
-                os.system('tar xf jre.tar.gz')
-                location = os.getcwd() + f"/jre{jre_version}/bin"
-                userpath.append(location)
-                os.remove('jre.tar.gz')
-                print("JRE installed successfully.")
-            else:
-                pass
+    #         elif running_on == 'Linux':
+    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247127_10e8cce67c7843478f41411b7003171c"
+    #             print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
+    #             wget.download(url, 'jre.tar.gz', bar=custom_bar)
+    #             print("\nExtracting JRE.....")
+    #             os.system('tar xf jre.tar.gz')
+    #             location = os.getcwd() + f"/jre{jre_version}/bin"
+    #             userpath.append(location)
+    #             os.remove('jre.tar.gz')
+    #             print("JRE installed successfully.")
+    #         else:
+    #             pass
+    pass
 
 def check_git():
     if running_on == 'Windows':
@@ -393,50 +398,51 @@ def check_git():
             os.remove('git.exe')
             print("Git installed successfully.")
             
-    else:
-        git = subprocess.call(['which', 'git'])
-        if git == 0:
-            print(f'{bcolors.OKGREEN}Git is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
-            if running_on == 'Darwin':
-                if machine_architecture == 'arm64':
-                    brew = subprocess.call(['which', 'brew'])
-                    if brew == 0:
-                        print("Installing Git...")
-                        subprocess.call(['brew', 'install', 'git'])
-                        print("Git installed successfully.")
-                    else:
-                        subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
-                        subprocess.call(['brew', 'install', 'git'])
-                        print("Git installed successfully.")
+    # else:
+    #     git = subprocess.call(['which', 'git'])
+    #     if git == 0:
+    #         print(f'{bcolors.OKGREEN}Git is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             if machine_architecture == 'arm64':
+    #                 brew = subprocess.call(['which', 'brew'])
+    #                 if brew == 0:
+    #                     print("Installing Git...")
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+    #                 else:
+    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
 
-                else:
-                    brew = subprocess.call(['which', 'brew'])
-                    if brew == 0:
-                        print("Installing Git...")
-                        subprocess.call(['brew', 'install', 'git'])
-                        print("Git installed successfully.")
-                    else:
-                        subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
-                        subprocess.call(['brew', 'install', 'git'])
-                        print("Git installed successfully.")
+    #             else:
+    #                 brew = subprocess.call(['which', 'brew'])
+    #                 if brew == 0:
+    #                     print("Installing Git...")
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
+    #                 else:
+    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
+    #                     subprocess.call(['brew', 'install', 'git'])
+    #                     print("Git installed successfully.")
 
-            elif running_on == 'Linux':
-                url = f"https://www.kernel.org/pub/software/scm/git/git-{git_version}.tar.gz"
-                print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
-                wget.download(url, 'git.tar.gz', bar=custom_bar)
-                print("\nExtracting Git.....")
-                os.system('tar xf git.tar.gz')
-                location = os.getcwd() + f"/git/bin"
-                userpath.append(location)
-                os.remove('git.tar.gz')
-                print("Git installed successfully.")
-            else:
-                pass    
+    #         elif running_on == 'Linux':
+    #             url = f"https://www.kernel.org/pub/software/scm/git/git-{git_version}.tar.gz"
+    #             print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
+    #             wget.download(url, 'git.tar.gz', bar=custom_bar)
+    #             print("\nExtracting Git.....")
+    #             os.system('tar xf git.tar.gz')
+    #             location = os.getcwd() + f"/git/bin"
+    #             userpath.append(location)
+    #             os.remove('git.tar.gz')
+    #             print("Git installed successfully.")
+    #         else:
+    #             pass    
+    pass
 
 def check_cmdline_tools():
     if running_on == 'Windows':
@@ -465,47 +471,48 @@ def check_cmdline_tools():
             print("Android SDK installed successfully.")
             input("Press Enter to exit and restart the program...")
             exit()
-    else:
-        cmdline_tools = subprocess.call(['which', 'sdkmanager'])
-        if cmdline_tools == 0:
-            print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
-            if running_on == 'Darwin':
-                url = f"https://dl.google.com/android/repository/commandlinetools-mac-{android_sdk_version}_latest.zip"
-                print(f"Downloading Android SDK for macOS...")
-                wget.download(url, 'android-sdk.zip', bar=custom_bar)
-                print("\nExtracting Android SDK.....")
+    # else:
+    #     cmdline_tools = subprocess.call(['which', 'sdkmanager'])
+    #     if cmdline_tools == 0:
+    #         print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
+    #         clear()
+    #         pass
+    #     else:
+    #         print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
+    #         print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
+    #         if running_on == 'Darwin':
+    #             url = f"https://dl.google.com/android/repository/commandlinetools-mac-{android_sdk_version}_latest.zip"
+    #             print(f"Downloading Android SDK for macOS...")
+    #             wget.download(url, 'android-sdk.zip', bar=custom_bar)
+    #             print("\nExtracting Android SDK.....")
 
-                with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
-                    zip_ref.extractall()
+    #             with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
+    #                 zip_ref.extractall()
 
-                location = os.getcwd() + f"/cmdline-tools/bin"
+    #             location = os.getcwd() + f"/cmdline-tools/bin"
 
-                os.system(f"chmod +x {location}/sdkmanager")
-                os.system(f"chmod +x {location}/avdmanager")
-                os.system(f"chmod +x {location}/apkanalyser")
-                os.system(f"chmod +x {location}/lint")
-                os.system(f"chmod +x {location}/profgen")
-                os.system(f"chmod +x {location}/retrace")
-                os.system(f"chmod +x {location}/screenshot2")
+    #             os.system(f"chmod +x {location}/sdkmanager")
+    #             os.system(f"chmod +x {location}/avdmanager")
+    #             os.system(f"chmod +x {location}/apkanalyser")
+    #             os.system(f"chmod +x {location}/lint")
+    #             os.system(f"chmod +x {location}/profgen")
+    #             os.system(f"chmod +x {location}/retrace")
+    #             os.system(f"chmod +x {location}/screenshot2")
 
-                userpath.append(location)
-                os.remove('android-sdk.zip')
-                print("Android SDK installed successfully.")
-                input("Press Enter to exit and restart the program...")
-                exit()
-            elif running_on == 'Linux':
-                os.system('sudo apt install snapd')
-                os.system('sudo snap install android-studio --classic')
-                print("Android SDK installed successfully.")
-                input("Press Enter to exit and restart the program...")
-                exit()
-            else:
-                pass    
+    #             userpath.append(location)
+    #             os.remove('android-sdk.zip')
+    #             print("Android SDK installed successfully.")
+    #             input("Press Enter to exit and restart the program...")
+    #             exit()
+    #         elif running_on == 'Linux':
+    #             os.system('sudo apt install snapd')
+    #             os.system('sudo snap install android-studio --classic')
+    #             print("Android SDK installed successfully.")
+    #             input("Press Enter to exit and restart the program...")
+    #             exit()
+    #         else:
+    #             pass    
+    pass
 
 if running_on == 'Windows':
     pass
