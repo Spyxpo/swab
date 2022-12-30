@@ -32,7 +32,7 @@ This is a preview build for testing purposes major update coming soon.
 
 ## Requirements
 
-Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashrc/.zshrc.
+Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashrc/.zshrc. (If you are using binary release then you don't have to add anything in environment variables/.bashrc/.zshrc.)
 
 > Do restart your computer before installing the app.
 
@@ -50,6 +50,9 @@ Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashr
 ```bash
 pip3 install pillow 
 pip3 install icnsutil
+pip3 install userpath
+pip3 install wget
+pip3 install GitPython
 ```
 
 or
@@ -57,6 +60,9 @@ or
 ```bash
 pip install pillow 
 pip install icnsutil
+pip install userpath
+pip install wget
+pip install GitPython
 ```
 
 ## Installation
@@ -112,22 +118,49 @@ cd swab
 python clean.py
 ```
 
-## Known Issues
-
-All issues that are known to us are listed here, we are working on fixing them.
-
-- "build.py" only builds executable for Windows OS.
-- "Not Responding" while building apps, this occurs when you are building apps so this does not affect your build process.
-
 ## Release
 
 > Create a Keystore (For signing app and uploading on Play Store)
 
-Keep your keystore file backed up(backup .jks file, alias name and passwords of your keystore file)
+Keep your keystore file backed up(backup your_file_name.keystore file, alias name and passwords of your keystore file).
+
+Change everything that is inside ``, e.g. \`File_Name.keystore\` to my_keystore.keystore. You can create your keystore easily using SWAB.
 
 ```bash
-keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storetype JKS
+keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias `Alias_Name` -storetype PKCS12 -storepass `Store_Pass` -keypass `Key_Pass` -dname "CN=`Your_Name`, OU=`Your_Organization_Unit`, O=`Organization`, L=`Your_City_Or_Locality`, S=`Your_State_Or_Province`, C=`Two_Letter_Country_Code`"
 ```
+
+## Menu Bar
+
+- [File](#file)
+  - [New](#new)
+     - Create a new project.
+  - [Open](#open)
+    - Open a project.
+  - [Save As](#save-as)
+    - Save a project.
+  - [Exit](#exit)
+    - Exit the app.
+- [Commands](#commands)
+  - [Build](#build)
+    - Build the app.
+  - [Clean](#clean)
+    - Clean the project folder.
+  - [Clean Build](#clean-build)
+    - Clean the build folder.
+  - [Create a Keystore](#create-a-keystore)
+    - Create a keystore file.
+  - [Open Build Folder](#open-build-folder)
+    - Open the build folder.
+- [About](#about)
+  - [Visit Website](#visit-website)
+    - Visit the website.
+  - [Changelog](#changelog)
+    - View the changelog.
+  - [Source Code](#source-code)
+    - View the source code.
+  - [View License](#view-license)
+    - View the license.
 
 ## Features
 
@@ -145,17 +178,25 @@ keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -va
 - [X] Loading Indicator
 - [X] Splash Screen
 - [X] Desktop apps custom icon
-- [X] Console Requirements Checker
+- [X] Auto Prerequisites installation for Windows
+- [X] Create custom Keystore for Android App
 
 ## Coming soon
 
-- [ ] iOS apps
-- [ ] Admin App
-- [ ] Deep Linking 2
-- [ ] Pull to refresh
+- [ ] Auto Prerequisites installation
+- [ ] Dessktop app installer
+- [ ] Desktop app update popup
+- [ ] Desktop app Splash Screen
+- [ ] Desktop app External url opener
+- [ ] Desktop app Deep Linking
+- [ ] Desktop app Loading Indicator
 - [ ] Notifications
-- [ ] Admob support
 - [ ] Local HTML website
+- [ ] Admob support
+- [ ] Admin app
+- [ ] Deep Linking enhancements
+- [ ] Pull to refresh
+- [ ] iOS app
 
 ## Authors
 

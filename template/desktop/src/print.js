@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require("electron"); // https://www.electronjs.org/docs/api/browser-window
+const { ipcMain, BrowserWindow } = require("electron");
 
 ipcMain.handle("print", async (event, arg) => {
   let printWindow = new BrowserWindow({ "auto-hide-menu-bar": true });

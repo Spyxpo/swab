@@ -1,3 +1,16 @@
-import os
+import time
+import git
 
-os.system("git pull")
+def update():
+    try:
+        print('Updating SWAB...')
+        git.Git().pull()
+        print('Updated successfully.')
+        time.sleep(5)
+        exit()
+    except:
+        print('Error updating SWAB.')
+        time.sleep(5)
+        exit()
+
+update()

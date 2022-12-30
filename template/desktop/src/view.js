@@ -1,5 +1,5 @@
 const electron = require("electron");
-const { BrowserView } = electron; // https://www.electronjs.org/docs/api/browser-view
+const { BrowserView } = electron;
 
 exports.createBrowserView = (mainWindow) => {
   const view = new BrowserView();
