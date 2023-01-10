@@ -5,7 +5,6 @@ Project Description: This is a tool which is used to convert a website into an a
 '''
 
 import json
-import tarfile
 import time
 from tkinter import *
 import tkinter as tk
@@ -27,6 +26,8 @@ import getpass
 
 running_on = platform.system()
 machine_architecture = platform.machine()
+
+current_user = getpass.getuser()
 
 if running_on == 'Darwin':
     print("Running on macOS")
@@ -179,79 +180,6 @@ def check_flutter():
         #         pass
         pass
 
-def check_nodejs():
-    if running_on == 'Windows':
-        nodejs = subprocess.call(['where', 'node'])
-        if nodejs == 0:
-            print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
-            url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-x64.msi"
-            print(f"{bcolors.OKGREEN}Downloading NodeJS for Windows...")
-            wget.download(url, 'nodejs.msi', bar=custom_bar)
-            print("\nInstalling NodeJS.....")
-            os.system('nodejs.msi')
-            os.remove('nodejs.msi')
-            print("NodeJS installed successfully.")
-            
-    # else:
-    #     nodejs = subprocess.call(['which', 'node'])
-    #     if nodejs == 0:
-    #         print(f'{bcolors.OKGREEN}NodeJS is already installed.\n')
-    #         clear()
-    #         pass
-    #     else:
-    #         print(f'{bcolors.WARNING}NodeJS is not in the PATH or is installed on this device.\n')
-    #         print(f'{bcolors.FAIL}Please install \"nodejs\" then set PATH and try again.\n')
-    #         if running_on == 'Darwin':
-    #             if machine_architecture == 'arm64':
-    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-arm64.tar.gz"
-    #                 print(f"Downloading NodeJS for macOS...")
-    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
-    #                 print("\nInstalling NodeJS.....")
-                    
-    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
-    #                     tar.extractall()
-
-    #                 os.rename(f"node-v{nodejs_version}-darwin-arm64", "nodejs")
-
-    #                 location = os.getcwd() + "/nodejs/bin/"
-    #                 userpath.append(location)
-    #                 os.remove('nodejs.tar.gz')
-    #                 print("NodeJS installed successfully.")
-
-    #             else:
-    #                 url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-darwin-x64.tar.gz"
-    #                 print(f"Downloading NodeJS for macOS...")
-    #                 wget.download(url, 'nodejs.tar.gz', bar=custom_bar)
-    #                 print("\nInstalling NodeJS.....")
-                    
-    #                 with tarfile.open('nodejs.tar.gz', 'r:gz') as tar:
-    #                     tar.extractall()
-
-    #                 os.rename(f"node-v{nodejs_version}-darwin-x64", "nodejs")
-
-    #                 location = os.getcwd() + "/nodejs/bin/"
-    #                 userpath.append(location)
-    #                 os.remove('nodejs.tar.gz')
-    #                 print("NodeJS installed successfully.")
-                    
-    #         elif running_on == 'Linux':
-    #             url = f"https://nodejs.org/dist/v{nodejs_version}/node-v{nodejs_version}-linux-x64.tar.xz"
-    #             print(f"{bcolors.OKGREEN}Downloading NodeJS for Linux...")
-    #             wget.download(url, 'nodejs.tar.xz', bar=custom_bar)
-    #             print("\nExtracting NodeJS.....")
-    #             os.system('tar xf nodejs.tar.xz')
-    #             location = os.getcwd() + "/nodejs/bin"
-    #             userpath.append(location)
-    #             os.remove('nodejs.tar.xz')
-    #         else:
-    #             pass    
-    pass
-
 def check_java():
     if running_on == 'Windows':
         java = subprocess.call(['where', 'java'])
@@ -380,70 +308,6 @@ def check_jre():
     #             pass
     pass
 
-def check_git():
-    if running_on == 'Windows':
-        git = subprocess.call(['where', 'git'])
-        if git == 0:
-            print(f'{bcolors.OKGREEN}Git is already installed.\n')
-            clear()
-            pass
-        else:
-            print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
-            print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
-            url = f"https://github.com/git-for-windows/git/releases/download/v{git_version}.windows.1/Git-{git_version}-64-bit.exe"
-            print(f"{bcolors.OKGREEN}Downloading Git for Windows...")
-            wget.download(url, 'git.exe', bar=custom_bar)
-            print("\nInstalling Git.....")
-            os.system('git.exe')
-            os.remove('git.exe')
-            print("Git installed successfully.")
-            
-    # else:
-    #     git = subprocess.call(['which', 'git'])
-    #     if git == 0:
-    #         print(f'{bcolors.OKGREEN}Git is already installed.\n')
-    #         clear()
-    #         pass
-    #     else:
-    #         print(f'{bcolors.WARNING}Git is not in the PATH or is installed on this device.\n')
-    #         print(f'{bcolors.FAIL}Please install \"Git\" then set PATH and try again.\n')
-    #         if running_on == 'Darwin':
-    #             if machine_architecture == 'arm64':
-    #                 brew = subprocess.call(['which', 'brew'])
-    #                 if brew == 0:
-    #                     print("Installing Git...")
-    #                     subprocess.call(['brew', 'install', 'git'])
-    #                     print("Git installed successfully.")
-    #                 else:
-    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
-    #                     subprocess.call(['brew', 'install', 'git'])
-    #                     print("Git installed successfully.")
-
-    #             else:
-    #                 brew = subprocess.call(['which', 'brew'])
-    #                 if brew == 0:
-    #                     print("Installing Git...")
-    #                     subprocess.call(['brew', 'install', 'git'])
-    #                     print("Git installed successfully.")
-    #                 else:
-    #                     subprocess.call(['/bin/bash', '-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'])     
-    #                     subprocess.call(['brew', 'install', 'git'])
-    #                     print("Git installed successfully.")
-
-    #         elif running_on == 'Linux':
-    #             url = f"https://www.kernel.org/pub/software/scm/git/git-{git_version}.tar.gz"
-    #             print(f"{bcolors.OKGREEN}Downloading Git for Linux...")
-    #             wget.download(url, 'git.tar.gz', bar=custom_bar)
-    #             print("\nExtracting Git.....")
-    #             os.system('tar xf git.tar.gz')
-    #             location = os.getcwd() + f"/git/bin"
-    #             userpath.append(location)
-    #             os.remove('git.tar.gz')
-    #             print("Git installed successfully.")
-    #         else:
-    #             pass    
-    pass
-
 def check_cmdline_tools():
     if running_on == 'Windows':
         cmdline_tools = subprocess.call(['where', 'sdkmanager'])
@@ -534,10 +398,8 @@ else:
     pass
 
 check_flutter()
-check_nodejs()
 check_java()
 check_jre()
-check_git()
 check_cmdline_tools()
 
 if os.path.exists("assets"):
@@ -829,13 +691,13 @@ def save_data():
                     f'projects/{app_name_info}/mobile/assets/images/favicon.png')    
 
     shutil.copy('assets/favicon.ico',
-                    f'projects/{app_name_info}/desktop/assets/icons/win/favicon.ico')    
+                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.ico')    
 
     shutil.copy('assets/favicon.icns',
-                    f'projects/{app_name_info}/desktop/assets/icons/mac/favicon.icns')    
+                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.icns')    
 
     shutil.copy('assets/favicon.png',
-                    f'projects/{app_name_info}/desktop/assets/icons/png/favicon.png')    
+                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.png')    
 
     shutil.copy('assets/key.properties',
                     f'projects/{app_name_info}/mobile/android/key.properties')                        
@@ -921,47 +783,75 @@ def save_data():
 
     # for desktop app
 
-    # add app name in package.json
-    with open(f'projects/{app_name_info}/desktop/package.json')as desktop_name_file:
-        desktop_name = desktop_name_file.read().replace("app_name", str(app_name_info).lower(), 1)
+    # add app name in tauri.conf.json
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file:
+        desktop_name = desktop_name_file.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_name_file:
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file:
         new_desktop_name_file.write(desktop_name)
 
-    # add website url in index.html
-    with open(f'projects/{app_name_info}/desktop/index.html')as desktop_url_file:
-        desktop_url = desktop_url_file.read().replace("WEBSITE", str(app_web_url), 1)
-
-    with open(f'projects/{app_name_info}/desktop/index.html', "w") as new_desktop_url_file:
-        new_desktop_url_file.write(desktop_url)
-        
-    # add app name in package.json
-    with open(f'projects/{app_name_info}/desktop/package.json')as desktop_name_file_2:
+    # add app name in tauri.conf.json
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file_2:
         desktop_name_2 = desktop_name_file_2.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_name_file_2:
-        new_desktop_name_file_2.write(desktop_name_2)    
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file_2:
+        new_desktop_name_file_2.write(desktop_name_2)
 
-    # add app version in package.json
-    with open(f'projects/{app_name_info}/desktop/package.json')as desktop_version_file:
+    # add app version in tauri.conf.json
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_version_file:
         desktop_version = desktop_version_file.read().replace("VERSION", str(app_version_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_version_file:
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_version_file:
         new_desktop_version_file.write(desktop_version)    
 
     # add app description in package.json
-    with open(f'projects/{app_name_info}/desktop/package.json')as desktop_description_file:
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_description_file:
         desktop_description = desktop_description_file.read().replace("DESCRIPTION", str(app_description_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/package.json', "w") as new_desktop_description_file:
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_description_file:
         new_desktop_description_file.write(desktop_description)    
 
-    # add app name in view.js
-    with open(f'projects/{app_name_info}/desktop/src/view.js')as desktop_view_file:
+    # add web url in main.rs
+    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
         desktop_view = desktop_view_file.read().replace("WEBSITE", str(app_web_url), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src/view.js', "w") as new_desktop_view_file:
+    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
         new_desktop_view_file.write(desktop_view)
+
+    # add app name in main.rs
+    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
+        desktop_view = desktop_view_file.read().replace("APP_NAME", str(app_name_info), 1)
+
+    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
+        new_desktop_view_file.write(desktop_view)
+    
+    # add desktop package name in tauri.conf.json
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as main_file_desktop_package_name:
+        desktop_package_name = main_file_desktop_package_name.read().replace("PACKAGE_NAME", str(app_package_info), 1)
+
+    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_main_file_desktop_package_name:
+        new_main_file_desktop_package_name.write(desktop_package_name)
+    
+    # add app name in cargo.toml
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_name_file:
+        desktop_name = desktop_name_file.read().replace("APP_NAME", str(app_name_info.lower()), 1)
+
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_name_file:
+        new_desktop_name_file.write(desktop_name)
+
+    # add app version in cargo.toml
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_version_file:
+        desktop_version = desktop_version_file.read().replace("VERSION", str(app_version_info), 1)
+
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_version_file:
+        new_desktop_version_file.write(desktop_version)
+
+    # add app description in cargo.toml
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_description_file:
+        desktop_description = desktop_description_file.read().replace("DESCRIPTION", str(app_description_info), 1)
+
+    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_description_file:
+        new_desktop_description_file.write(desktop_description)
 
     os.chdir(f"projects/{app_name_info}/mobile/")
 
@@ -987,22 +877,7 @@ def save_data():
 
     os.chdir("desktop/")
 
-    os.system("npm install")
-
-    if (running_on == "Darwin"):
-        os.system("npm run package-mac -y")
-    else:
-        pass
-
-    if (running_on == "Windows"):
-        os.system("npm run package-win -y")
-    else:
-        pass
-
-    if (running_on == "Linux"):
-        os.system("npm run package-linux -y")
-    else:
-        pass
+    os.system("cargo tauri build")
 
     os.chdir(os.path.dirname(os.getcwd()))
     os.chdir(os.path.dirname(os.getcwd()))
@@ -1030,19 +905,19 @@ def save_data():
                              r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.aab')                  
 
     mac_desktop_original_build_location = (r'projects/' + app_name_info +
-                               r'/desktop/release-builds/' + app_name_info + r'-darwin-x64/' + app_name_info + r'.app')  
+                               r'/desktop/src-tauri/target/release/bundle/macos/' + app_name_info + r'.app')  
     mac_desktop_target_build_location = (r'build/' + app_name_info +
                              r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.app') 
 
     win_desktop_original_build_location = (r'projects/' + app_name_info +
-                               r'/desktop/release-builds/' + app_name_info + r'-win32-x64/')  
+                                 r'/desktop/src-tauri/target/release/bundle/windows/' + app_name_info + r'.exe')
     win_desktop_target_build_location = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_windows_x64') 
+                             r'/' + app_name_info + r'_' + app_version_info + r'_windows') 
 
     linux_desktop_original_build_location = (r'projects/' + app_name_info +
-                               r'/desktop/release-builds/' + app_name_info + r'-linux-x64/')  
+                              r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'.AppImage')
     linux_desktop_target_build_location = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_linux_x64') 
+                             r'/' + app_name_info + r'_' + app_version_info + r'_linux') 
 
     # copy original app to new location
     shutil.copyfile(original_build_location_apk, target_build_location_apk)
@@ -1183,6 +1058,8 @@ file_menu.add_command(
     command=lambda: new_project(),
 )
 
+root.bind('<Control-n>', lambda event: new_project())
+
 def open_project():
     if app_name == '' and app_description == '' and app_package_name == '' and app_version == '' and app_build_number == '' and web_url == '' and icon_path_label.cget('text') == 'No file selected' and keystore_path_label.cget('text') == 'No file selected' and alias == '' and key_pass == '' and store_pass == '':
         pass
@@ -1229,6 +1106,8 @@ file_menu.add_command(
     label='Open Project',
     command=lambda: open_project(),
 )
+
+root.bind('<Control-o>', lambda event: open_project())
 
 file_menu.add_separator()
 
@@ -1293,6 +1172,8 @@ file_menu.add_command(
     label='Save As...',
     command=lambda: save_as_project(),
 )
+
+root.bind('<Control-s>', lambda event: save_as_project())
 
 file_menu.add_separator()
 

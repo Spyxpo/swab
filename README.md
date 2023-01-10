@@ -24,7 +24,6 @@ This is a preview build for testing purposes major update coming soon.
 - [Update](#update)
 - [Clean](#clean)
 - [Release](#release)
-- [Known Issues](#known-issues)
 
 ## Screenshots
 
@@ -36,12 +35,10 @@ Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashr
 
 > Do restart your computer before installing the app.
 
-- [Git](https://git-scm.com/downloads/)
 - [Flutter](https://flutter.dev/docs/get-started/install/)
-- [NodeJS](https://nodejs.org/en/download/)
+- [Rust](https://www.rust-lang.org/tools/install)
 - [Python 3.8 or above](https://www.python.org/downloads/)
 - [Android Studio](https://developer.android.com/studio)
-- [Xcode (only for macOS)](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
 - [JDK](https://www.oracle.com/java/technologies/downloads/)
 - [JRE](https://www.java.com/en/download/)
 
@@ -52,7 +49,6 @@ pip3 install pillow
 pip3 install icnsutil
 pip3 install userpath
 pip3 install wget
-pip3 install GitPython
 ```
 
 or
@@ -62,7 +58,6 @@ pip install pillow
 pip install icnsutil
 pip install userpath
 pip install wget
-pip install GitPython
 ```
 
 ## Installation
@@ -86,20 +81,6 @@ python run.py
 ```bash
 cd swab
 git pull
-```
-
-or
-
-```bash
-cd swab
-python3 update.py
-```
-
-or
-
-```bash
-cd swab
-python update.py
 ```
 
 ## Clean
