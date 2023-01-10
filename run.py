@@ -22,12 +22,9 @@ import userpath
 import zipfile
 import subprocess
 import socket
-import getpass
 
 running_on = platform.system()
 machine_architecture = platform.machine()
-
-current_user = getpass.getuser()
 
 documents_path = os.path.expanduser('~/Documents')
 swab_path = documents_path + '/Spyxpo/swab'
@@ -383,7 +380,7 @@ def upload_icon_action(event=None):
         showinfo("No app name", "No app name, please enter an app name.")
         return False
     elif icon_path_label.cget("text") == "No file selected": 
-        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon = filedialog.askopenfilename(filetypes=[("PNG Files", "*.png")])
         icon_path_label['text'] = icon
         print(f'{bcolors.ENDC}Icon image: {icon}')
 
@@ -404,7 +401,7 @@ def upload_icon_action(event=None):
             icns.add_media(file=f'{swab_path}/assets/favicon.png')
             icns.write(f'{swab_path}/assets/favicon.icns')
     else:
-        icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
+        icon = filedialog.askopenfilename(filetypes=[("PNG Files", "*.png")])
         icon_path_label['text'] = icon
         print(f'{bcolors.ENDC}Icon image: {icon}')
 
@@ -433,7 +430,7 @@ def upload_keystore_action():
         showinfo("No app name", "No app name, please enter an app name.")
         return False
     elif keystore_path_label.cget("text") == "No file selected": 
-        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path = filedialog.askopenfilename(filetypes=[("Keystore Files", "*.jks"), ("Keystore Files", "*.keystore")])
         keystore_path_label['text'] = keystore_path
 
         if keystore_path == '':
@@ -447,7 +444,7 @@ def upload_keystore_action():
             key_file.write(f'storeFile={keystore_path}\n')
             key_file.close()
     else:
-        keystore_path = filedialog.askopenfilename(filetypes=[("keystore files", "*.jks"), ("keystore files", "*.keystore")])
+        keystore_path = filedialog.askopenfilename(filetypes=[("Keystore Files", "*.jks"), ("Keystore Files", "*.keystore")])
         keystore_path_label['text'] = keystore_path
 
         if keystore_path == '':
@@ -781,18 +778,18 @@ def save_data():
                              r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.aab')                  
 
     mac_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
-                               r'/desktop/src-tauri/target/release/bundle/macos/' + app_name_info + r'.app')  
+                               r'/desktop/src-tauri/target/release/bundle/dmg/' + app_name_info + r'_' + app_version_info + '_x64' + r'.dmg')  
     mac_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.app') 
+                             r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.dmg') 
 
-    win_desktop_original_build_location = (r'projects/' + app_name_info +
-                                 r'/desktop/src-tauri/target/release/bundle/msi/' + app_name_info + r'.msi')
-    win_desktop_target_build_location = (r'build/' + app_name_info +
+    win_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
+                                 r'/desktop/src-tauri/target/release/bundle/msi/' + app_name_info + r'_' + app_version_info + '_x64_en-US' + r'.msi').replace('/', '\\')
+    win_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
                              r'/' + app_name_info + r'_' + app_version_info + r'_windows.msi') 
 
-    linux_desktop_original_build_location = (r'projects/' + app_name_info +
-                              r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'.AppImage')
-    linux_desktop_target_build_location = (r'build/' + app_name_info +
+    linux_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
+                              r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'_' + app_version_info + '_x64' + r'.AppImage')
+    linux_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
                              r'/' + app_name_info + r'_' + app_version_info + r'_linux.AppImage') 
 
     # copy original app to new location
@@ -800,17 +797,18 @@ def save_data():
     shutil.copyfile(original_build_location_aab, target_build_location_aab)
 
     if (running_on == "Darwin"):
-        shutil.copytree(mac_desktop_original_build_location, mac_desktop_target_build_location)
+        shutil.copyfile(mac_desktop_original_build_location, mac_desktop_target_build_location)
     else:
         pass
     
     if (running_on == "Windows"):
-        shutil.copytree(win_desktop_original_build_location, win_desktop_target_build_location)
+        shutil.copyfile(win_desktop_original_build_location, win_desktop_target_build_location)
     else:
         pass
 
     if (running_on == "Linux"):
-        shutil.copytree(linux_desktop_original_build_location, linux_desktop_target_build_location)
+        shutil.copyfile(linux_desktop_original_build_location, linux_desktop_target_build_location)
+        os.system(f"chmod a+x {linux_desktop_target_build_location}")
     else:
         pass
     
