@@ -362,14 +362,14 @@ def open_build_folder():
         if (os.path.exists(swab_path + "/build/")):
             os.system(f"open {swab_path}/build/")
         else:
-            os.mkdir("build")
+            os.mkdir(f"{swab_path}/build")
             os.system(f"open {swab_path}/build/")
     elif running_on == 'Windows':
-        if (os.path.exists(swab_path + "/build/")):
-            os.system(f"start {swab_path}/build/")
+        if (os.path.exists(swab_path + "\\build\\")):
+            os.system('start ' + swab_path.replace('/', '\\') + r'\\build\\')
         else:
-            os.mkdir("build")
-            os.system(f"start {swab_path}/build/")
+            os.mkdir(f"{swab_path}\\build\\")
+            os.system(f"start {swab_path}\\build\\")
     else:
         pass
 
