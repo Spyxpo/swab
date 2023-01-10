@@ -60,6 +60,12 @@ pip install userpath
 pip install wget
 ```
 
+> Rust modules that are required.
+
+```bash
+cargo install create-tauri-app
+```
+
 ## Installation
 
 ```bash
