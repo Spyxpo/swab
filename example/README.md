@@ -12,8 +12,7 @@ flutter run
 
 ```bash
 cd example/desktop
-npm install
-npm start
+cargo tauri dev
 ```
 
 > Example App Project File
