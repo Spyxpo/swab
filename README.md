@@ -63,7 +63,7 @@ pip install wget
 > Rust modules that are required.
 
 ```bash
-cargo install create-tauri-app
+cargo install tauri-cli
 ```
 
 ## Installation
