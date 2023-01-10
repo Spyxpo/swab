@@ -786,14 +786,14 @@ def save_data():
                              r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.app') 
 
     win_desktop_original_build_location = (r'projects/' + app_name_info +
-                                 r'/desktop/src-tauri/target/release/bundle/windows/' + app_name_info + r'.exe')
+                                 r'/desktop/src-tauri/target/release/bundle/msi/' + app_name_info + r'.msi')
     win_desktop_target_build_location = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_windows') 
+                             r'/' + app_name_info + r'_' + app_version_info + r'_windows.msi') 
 
     linux_desktop_original_build_location = (r'projects/' + app_name_info +
                               r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'.AppImage')
     linux_desktop_target_build_location = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_linux') 
+                             r'/' + app_name_info + r'_' + app_version_info + r'_linux.AppImage') 
 
     # copy original app to new location
     shutil.copyfile(original_build_location_apk, target_build_location_apk)
