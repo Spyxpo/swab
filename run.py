@@ -29,6 +29,9 @@ machine_architecture = platform.machine()
 
 current_user = getpass.getuser()
 
+documents_path = os.path.expanduser('~/Documents')
+swab_path = documents_path + '/Spyxpo/swab'
+
 if running_on == 'Darwin':
     print("Running on macOS")
 elif running_on == 'Linux':
@@ -66,16 +69,18 @@ def clear():
 clear()
 check_internet()
 
+
+get_cwd = os.getcwd()
+
 # packages version details
 packages_version_info = open('.packages', 'r')
 line = packages_version_info.readlines()
 
 flutter_version = line[0]
-nodejs_version = line[1]
+rust_version = line[1]
 jdk_version = line[2]
 jre_version = line[3]
-git_version = line[4]
-android_sdk_version = line[5]
+android_sdk_version = line[4]
 
 packages_version_info.close()
 
@@ -138,46 +143,7 @@ def check_flutter():
             userpath.append(location)
             os.remove('flutter.zip')
             print("Flutter installed successfully.")
-        
     else:
-        # program = subprocess.call(['which', 'flutter'])
-        # if program == 0:
-        #     print(f'{bcolors.OKGREEN}Flutter is already installed.\n')
-        #     clear()
-        #     pass
-        # else:
-        #     print(f'{bcolors.WARNING}Flutter is not in the PATH or is installed on this device.\n')
-        #     print(f'{bcolors.FAIL}Please install \"flutter\" then set PATH and try again.\n')
-          
-        #     if running_on == 'Darwin':
-        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_{flutter_version}-stable.zip"
-        #         print("Downloading Flutter for macOS...")
-        #         wget.download(url, 'flutter.zip', bar=custom_bar)
-        #         print("\nExtracting Flutter.....")
-        #         with zipfile.ZipFile('flutter.zip', "r") as zip_ref:
-        #             zip_ref.extractall(f"/Users/{getpass.getuser()}/Documents/")
-        #         location = f"/Users/{getpass.getuser()}/Documents/flutter/bin/"
-        #         userpath.append(location)
-        #         os.system(f"chmod +x {location}/flutter")
-        #         os.system(f"chmod +x {location}/dart")
-        #         os.system(f"chmod +x {location}/flutter.bat")
-        #         os.system(f"chmod +x {location}/dart.bat")
-        #         os.system(f"chmod +x {location}/internal/shared.sh")
-        #         os.system(f"chmod +x {location}/internal/update_dart_sdk.sh")
-        #         os.remove('flutter.zip')
-        #         print("Flutter installed successfully.")    
-        #     elif running_on == 'Darwin':
-        #         url = f"https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{flutter_version}-stable.tar.xz"
-        #         print("Downloading Flutter for Linux...")
-        #         wget.download(url, 'flutter.tar.xz', bar=custom_bar)
-        #         print("\nExtracting Flutter.....")
-        #         os.system('tar xf flutter.tar.xz')
-        #         location = "flutter/bin"
-        #         userpath.append(location)
-        #         os.remove('flutter.tar.xz')
-        #         print("Flutter installed successfully.")
-        #     else:
-        #         pass
         pass
 
 def check_java():
@@ -199,62 +165,8 @@ def check_java():
             userpath.append(location)
             os.remove('java.exe')
             print("Java installed successfully.")
-            
-    # else:
-    #     java = subprocess.call(['which', 'java'])
-    #     if java == 0:
-    #         print(f'{bcolors.OKGREEN}Java is already installed.\n')
-    #         clear()
-    #         pass
-    #     else:
-    #         print(f'{bcolors.WARNING}Java is not in the PATH or is installed on this device.\n')
-    #         print(f'{bcolors.FAIL}Please install \"java\" then set PATH and try again.\n')
-    #         if running_on == 'Darwin':
-    #             if machine_architecture == 'arm64':
-    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-aarch64_bin.tar.gz"
-    #                 print(f"Downloading Java for macOS...")
-    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
-    #                 print("\nInstalling Java.....")
-                    
-    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
-    #                     tar.extractall()
-                        
-    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
-
-    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
-    #                 userpath.append(location)
-    #                 os.remove('java.tar.gz')
-    #                 print("Java installed successfully.")
-
-    #             else:
-    #                 url = f"https://download.oracle.com/java/{jdk_version}/latest/jdk-{jdk_version}_macos-x64_bin.tar.gz"   
-    #                 print(f"Downloading Java for macOS...")
-    #                 wget.download(url, 'java.tar.gz', bar=custom_bar)
-    #                 print("\nInstalling Java.....")
-                    
-    #                 with tarfile.open('java.tar.gz', 'r:gz') as tar:
-    #                     tar.extractall()
-
-    #                 os.rename(f'jdk-{jdk_version}.0.1.jdk', 'java')    
-
-    #                 location = os.getcwd() + '/java/Contents/Home/bin'  
-    #                 userpath.append(location)
-    #                 os.remove('java.tar.gz')
-    #                 print("Java installed successfully.")
-
-    #         elif running_on == 'Linux':
-    #             url = f"https://download.oracle.com/otn/java/{jdk_version}/latest/jdk-{jdk_version}_linux-x64_bin.tar.gz"
-    #             print(f"{bcolors.OKGREEN}Downloading Java for Linux...")
-    #             wget.download(url, 'java.tar.gz', bar=custom_bar)
-    #             print("\nExtracting Java.....")
-    #             os.system('tar xf java.tar.gz')
-    #             location = os.getcwd() + f"/jdk-{jdk_version}/bin"
-    #             userpath.append(location)
-    #             os.remove('java.tar.gz')
-    #             print("Java installed successfully.")
-    #         else:
-    #             pass   
-    pass 
+    else:
+        pass
 
 def check_jre():
     if running_on == 'Windows':
@@ -275,38 +187,27 @@ def check_jre():
             userpath.append(location)
             os.remove('jre.exe')
             print("JRE installed successfully.")
-    # else:
-    #     jre = subprocess.call(['which', 'keytool'])
-    #     if jre == 0:
-    #         print(f'{bcolors.OKGREEN}JRE is already installed.\n')
-    #         clear()
-    #         pass
-    #     else:
-    #         print(f'{bcolors.WARNING}JRE is not in the PATH or is installed on this device.\n')
-    #         print(f'{bcolors.FAIL}Please install \"jre\" then set PATH and try again.\n')
-    #         if running_on == 'Darwin':
-    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247128_10e8cce67c7843478f41411b7003171c"
-    #             print(f"Downloading JRE for macOS...")
-    #             wget.download(url, 'jre.dmg', bar=custom_bar)
-    #             print("\nInstalling JRE.....")
-    #             location = os.getcwd() + f'/jre{jre_version}/Contents/Home/bin'  
-    #             userpath.append(location)
-    #             os.remove('jre.dmg')
-    #             print("JRE installed successfully.")
+    else:
+        pass
 
-    #         elif running_on == 'Linux':
-    #             url = f"https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247127_10e8cce67c7843478f41411b7003171c"
-    #             print(f"{bcolors.OKGREEN}Downloading JRE for Linux...")
-    #             wget.download(url, 'jre.tar.gz', bar=custom_bar)
-    #             print("\nExtracting JRE.....")
-    #             os.system('tar xf jre.tar.gz')
-    #             location = os.getcwd() + f"/jre{jre_version}/bin"
-    #             userpath.append(location)
-    #             os.remove('jre.tar.gz')
-    #             print("JRE installed successfully.")
-    #         else:
-    #             pass
-    pass
+def check_rust():
+    if running_on == 'Windows':
+        rust = subprocess.call(['where', 'rustc'])
+        if rust == 0:
+            print(f'{bcolors.OKGREEN}Rust is already installed.\n')
+            clear()
+            pass
+        else:
+            print(f'{bcolors.WARNING}Rust is not in the PATH or is installed on this device.\n')
+            print(f'{bcolors.FAIL}Please install \"rust\" then set PATH and try again.\n')
+            url = f'https://static.rust-lang.org/dist/rust-{rust_version}-x86_64-pc-windows-msvc.msi'
+            print(f"{bcolors.OKGREEN}Downloading Rust for Windows...")
+            wget.download(url, 'rust.msi', bar=custom_bar)
+            print("\nInstalling Rust.....")
+            os.system('rust.msi')
+            os.remove('rust.msi')
+            os.system('cargo install tauri-cli')
+            print("Rust installed successfully.")
 
 def check_cmdline_tools():
     if running_on == 'Windows':
@@ -335,48 +236,8 @@ def check_cmdline_tools():
             print("Android SDK installed successfully.")
             input("Press Enter to exit and restart the program...")
             exit()
-    # else:
-    #     cmdline_tools = subprocess.call(['which', 'sdkmanager'])
-    #     if cmdline_tools == 0:
-    #         print(f'{bcolors.OKGREEN}Android SDK is already installed.\n')
-    #         clear()
-    #         pass
-    #     else:
-    #         print(f'{bcolors.WARNING}Android SDK is not in the PATH or is installed on this device.\n')
-    #         print(f'{bcolors.FAIL}Please install \"Android SDK\" then set PATH and try again.\n')
-    #         if running_on == 'Darwin':
-    #             url = f"https://dl.google.com/android/repository/commandlinetools-mac-{android_sdk_version}_latest.zip"
-    #             print(f"Downloading Android SDK for macOS...")
-    #             wget.download(url, 'android-sdk.zip', bar=custom_bar)
-    #             print("\nExtracting Android SDK.....")
-
-    #             with zipfile.ZipFile('android-sdk.zip', 'r') as zip_ref:
-    #                 zip_ref.extractall()
-
-    #             location = os.getcwd() + f"/cmdline-tools/bin"
-
-    #             os.system(f"chmod +x {location}/sdkmanager")
-    #             os.system(f"chmod +x {location}/avdmanager")
-    #             os.system(f"chmod +x {location}/apkanalyser")
-    #             os.system(f"chmod +x {location}/lint")
-    #             os.system(f"chmod +x {location}/profgen")
-    #             os.system(f"chmod +x {location}/retrace")
-    #             os.system(f"chmod +x {location}/screenshot2")
-
-    #             userpath.append(location)
-    #             os.remove('android-sdk.zip')
-    #             print("Android SDK installed successfully.")
-    #             input("Press Enter to exit and restart the program...")
-    #             exit()
-    #         elif running_on == 'Linux':
-    #             os.system('sudo apt install snapd')
-    #             os.system('sudo snap install android-studio --classic')
-    #             print("Android SDK installed successfully.")
-    #             input("Press Enter to exit and restart the program...")
-    #             exit()
-    #         else:
-    #             pass    
-    pass
+    else:
+        pass
 
 if running_on == 'Windows':
     pass
@@ -398,45 +259,56 @@ else:
     pass
 
 check_flutter()
+check_rust()
 check_java()
 check_jre()
 check_cmdline_tools()
 
-if os.path.exists("assets"):
+if os.path.exists(documents_path + '/Spyxpo'):
     pass
 else:
-    os.mkdir("assets")
+    os.mkdir(documents_path + '/Spyxpo')
 
-if os.path.exists("assets/favicon.png"):
-    os.remove("assets/favicon.png")
+if os.path.exists(documents_path + '/Spyxpo/swab'):
+    pass
+else:
+    os.mkdir(documents_path + '/Spyxpo/swab')
+
+if os.path.exists(swab_path + "/assets"):
+    pass
+else:
+    os.mkdir(swab_path + "/assets")
+
+if os.path.exists(swab_path + "/assets/favicon.png"):
+    os.remove(swab_path + "/assets/favicon.png")
 else:
     pass
 
-if os.path.exists("assets/favicon.ico"):
-    os.remove("assets/favicon.ico")
+if os.path.exists(swab_path + "/assets/favicon.ico"):
+    os.remove(swab_path + "/assets/favicon.ico")
 else:
     pass
 
-if os.path.exists("assets/favicon.icns"):
-    os.remove("assets/favicon.icns")
+if os.path.exists(swab_path + "/assets/favicon.icns"):
+    os.remove(swab_path + "/assets/favicon.icns")
 else:
     pass
 
-if os.path.exists("assets/key.properties"):
-    os.remove("assets/key.properties")
+if os.path.exists(swab_path + "/assets/key.properties"):
+    os.remove(swab_path + "/assets/key.properties")
 else:
     pass
 
 def remove_assets():
-    if os.path.exists("assets"):
-        shutil.rmtree("assets")
+    if os.path.exists(swab_path + "/assets/"):
+        shutil.rmtree(swab_path + "/assets/")
         print(f"{bcolors.ENDC}Assets folder cleaned.")
     else:
         pass   
 
 def remove_projects():
-    if os.path.exists("projects"):
-        shutil.rmtree("projects")
+    if os.path.exists(swab_path + "/projects/"):
+        shutil.rmtree(swab_path + "/projects/")
         print(f"{bcolors.ENDC}Projects folder cleaned.")
     else:
         pass
@@ -467,13 +339,13 @@ def clean_dir():
     remove_pycache()
     remove_dist()
     remove_run_spec()
-    os.mkdir("assets/")
+    os.mkdir(swab_path + "/assets/")
     
 def clean_build():
     try:
 
-        if os.path.exists("build"):
-            shutil.rmtree("build/")
+        if os.path.exists(swab_path + "/build/"):
+            shutil.rmtree(swab_path + "/build/")
             print("Build folder cleaned.")
         else:
             pass
@@ -484,23 +356,23 @@ def clean_build():
 
 def open_build_folder():
     if running_on == 'Darwin':
-        if (os.path.exists("build")):
-            os.system("open build")
+        if (os.path.exists(swab_path + "/build/")):
+            os.system(f"open {swab_path}/build/")
         else:
-            os.mkdir("build")
-            os.system("open build")
+            os.mkdir(f"{swab_path}/build")
+            os.system(f"open {swab_path}/build/")
     elif running_on == 'Linux':
-        if (os.path.exists("build")):
-            os.system("open build")
+        if (os.path.exists(swab_path + "/build/")):
+            os.system(f"open {swab_path}/build/")
         else:
             os.mkdir("build")
-            os.system("open build")
+            os.system(f"open {swab_path}/build/")
     elif running_on == 'Windows':
-        if (os.path.exists("build")):
-            os.system("start build")
+        if (os.path.exists(swab_path + "/build/")):
+            os.system(f"start {swab_path}/build/")
         else:
             os.mkdir("build")
-            os.system("start build")
+            os.system(f"start {swab_path}/build/")
     else:
         pass
 
@@ -523,14 +395,14 @@ def upload_icon_action(event=None):
             size = 512, 512
             image = Image.open(icon)
             image_resized = image.resize(size)
-            image_resized.save("assets/favicon.png", "PNG")
+            image_resized.save(f"{swab_path}/assets/favicon.png", "PNG")
 
-            ico = Image.open('assets/favicon.png')
-            ico.save('assets/favicon.ico')
+            ico = Image.open(f'{swab_path}/assets/favicon.png')
+            ico.save(f'{swab_path}/assets/favicon.ico')
 
             icns = icnsutil.IcnsFile()
-            icns.add_media(file='assets/favicon.png')
-            icns.write('assets/favicon.icns')
+            icns.add_media(file=f'{swab_path}/assets/favicon.png')
+            icns.write(f'{swab_path}/assets/favicon.icns')
     else:
         icon = filedialog.askopenfilename(filetypes=[("png files", "*.png")])
         icon_path_label['text'] = icon
@@ -544,16 +416,17 @@ def upload_icon_action(event=None):
             size = 512, 512
             image = Image.open(icon)
             image_resized = image.resize(size)
-            image_resized.save("assets/favicon.png", "PNG")
+            image_resized.save(f"{swab_path}/assets/favicon.png", "PNG")
 
-            ico = Image.open('assets/favicon.png')
-            ico.save('assets/favicon.ico')
+            ico = Image.open(f'{swab_path}/assets/favicon.png')
+            ico.save(f'{swab_path}/assets/favicon.ico')
 
             icns = icnsutil.IcnsFile()
-            icns.add_media(file='assets/favicon.png')
-            icns.write('assets/favicon.icns')
+            icns.add_media(file=f'{swab_path}/assets/favicon.png')
+            icns.write(f'{swab_path}/assets/favicon.icns')
 
 def upload_keystore_action():
+
     app_name_info = app_name.get()
 
     if app_name_info == "":
@@ -570,7 +443,7 @@ def upload_keystore_action():
         else:
             print('Keystore file:', keystore_path)
             keystore_path_label['text'] = keystore_path
-            key_file = open('assets/key.properties', 'w')
+            key_file = open(f'{swab_path}/assets/key.properties', 'w')
             key_file.write(f'storeFile={keystore_path}\n')
             key_file.close()
     else:
@@ -584,11 +457,16 @@ def upload_keystore_action():
         else:
             print('Keystore file:', keystore_path)
             keystore_path_label['text'] = keystore_path
-            key_file = open('assets/key.properties', 'w')
+            key_file = open(f'{swab_path}/assets/key.properties', 'w')
             key_file.write(f'storeFile={keystore_path}\n')
             key_file.close()
 
 def save_data():
+
+    if os.getcwd == get_cwd:
+        pass
+    else:
+        os.chdir(get_cwd)
 
     start_time = time.time()
 
@@ -602,23 +480,23 @@ def save_data():
     key_pass_info = key_pass.get()
     store_pass_info = store_pass.get()
 
-    if os.path.exists("projects"):
+    if os.path.exists(f"{swab_path}/projects"):
         pass
     else:
-        os.mkdir("projects")
+        os.mkdir(f"{swab_path}/projects")
 
-    if os.path.exists(f"build/{app_name_info}/"):
-        shutil.rmtree(f"build/{app_name_info}/")
-    else:
-        pass
-
-    if os.path.exists(f"projects/{app_name_info}/"):
-        shutil.rmtree(f"projects/{app_name_info}/")
+    if os.path.exists(f"{swab_path}/build/{app_name_info}/"):
+        shutil.rmtree(f"{swab_path}/build/{app_name_info}/")
     else:
         pass
 
-    if os.path.exists(f"projects/"):
-        shutil.rmtree(f"projects/")
+    if os.path.exists(f"{swab_path}/projects/{app_name_info}/"):
+        shutil.rmtree(f"{swab_path}/projects/{app_name_info}/")
+    else:
+        pass
+
+    if os.path.exists(f"{swab_path}/projects/"):
+        shutil.rmtree(f"{swab_path}/projects/")
     else:
         pass
 
@@ -634,13 +512,13 @@ def save_data():
         showinfo("Build Number", "Build Number must be a number.")
         return False
 
-    if os.path.exists("assets/favicon.png"):
+    if os.path.exists(f"{swab_path}/assets/favicon.png"):
         pass
     else:
         showinfo("No icon selected", "No icon selected, please select an icon for your app.")
         return False
     
-    if os.path.exists("assets/key.properties"):
+    if os.path.exists(f"{swab_path}/assets/key.properties"):
         pass
     else:
         showinfo("No keystore selected", "No keystore selected, please select a keystore for your app.")
@@ -663,7 +541,7 @@ def save_data():
     elif app_web_url == "":
         showinfo("No web url", "No web url, please enter a web url.")
         return False
-    elif os.path.exists(f"projects/{app_name_info}/mobile"):
+    elif os.path.exists(f"{swab_path}/projects/{app_name_info}/mobile"):
         showinfo("App already exists",
                  "App already exists, please try another name for your app.")
         return False 
@@ -680,103 +558,103 @@ def save_data():
                  "Keystore password is required.")
         return False       
     else:
-        shutil.copytree("template/mobile", f"projects/{app_name_info}/mobile")
-        shutil.copytree("template/desktop", f"projects/{app_name_info}/desktop")
+        shutil.copytree("template/mobile", f"{swab_path}/projects/{app_name_info}/mobile")
+        shutil.copytree("template/desktop", f"{swab_path}/projects/{app_name_info}/desktop")
     
-    key_file = open('assets/key.properties', 'a+')
+    key_file = open(f'{swab_path}/assets/key.properties', 'a+')
     key_file.write(f'storePassword={store_pass_info}\nkeyPassword={key_pass_info}\nkeyAlias={key_alias_info}\n')
     key_file.close()
 
-    shutil.copy('assets/favicon.png',
-                    f'projects/{app_name_info}/mobile/assets/images/favicon.png')    
+    shutil.copy(f'{swab_path}/assets/favicon.png',
+                    f'{swab_path}/projects/{app_name_info}/mobile/assets/images/favicon.png')    
 
-    shutil.copy('assets/favicon.ico',
-                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.ico')    
+    shutil.copy(f'{swab_path}/assets/favicon.ico',
+                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.ico')    
 
-    shutil.copy('assets/favicon.icns',
-                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.icns')    
+    shutil.copy(f'{swab_path}/assets/favicon.icns',
+                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.icns')    
 
-    shutil.copy('assets/favicon.png',
-                    f'projects/{app_name_info}/desktop/src-tauri/icons/favicon.png')    
+    shutil.copy(f'{swab_path}/assets/favicon.png',
+                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.png')    
 
-    shutil.copy('assets/key.properties',
-                    f'projects/{app_name_info}/mobile/android/key.properties')                        
+    shutil.copy(f'{swab_path}/assets/key.properties',
+                    f'{swab_path}/projects/{app_name_info}/mobile/android/key.properties')                        
                 
     # add app name in main.dart
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart')as main_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as main_file:
         name = main_file.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file:
         new_main_file.write(name)
 
     # add ios package name in main.dart
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart')as main_file_ios_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as main_file_ios_package_name:
         ios_package_name = main_file_ios_package_name.read().replace("IOS_APP_ID", str(app_package_info), 1)
 
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file_ios_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file_ios_package_name:
         new_main_file_ios_package_name.write(ios_package_name)
 
     # add android package name in main.dart
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart')as main_file_android_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as main_file_android_package_name:
         android_package_name = main_file_android_package_name.read().replace("ANDROID_PACKAGE_NAME", str(app_package_info), 1)
 
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file_android_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart', "w") as new_main_file_android_package_name:
         new_main_file_android_package_name.write(android_package_name)
 
     # add deep link in Android projects
-    with open(f'projects/{app_name_info}/mobile/android/app/src/main/AndroidManifest.xml')as deep_link_url_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/android/app/src/main/AndroidManifest.xml')as deep_link_url_name:
         deep_link_url = deep_link_url_name.read().replace("website.com", str(app_web_url), 1)
 
-    with open(f'projects/{app_name_info}/mobile/android/app/src/main/AndroidManifest.xml', "w") as new_deep_link_url_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/android/app/src/main/AndroidManifest.xml', "w") as new_deep_link_url_name:
         new_deep_link_url_name.write(deep_link_url)
 
     # add app website url in main.dart
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart')as home_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as home_file:
         website_name = home_file.read().replace("WEBSITE", str(app_web_url), 1)
 
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart', "w") as new_home_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart', "w") as new_home_file:
         new_home_file.write(website_name)
 
     # add android app package name in main.dart
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart')as android_package_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as android_package_name_file:
         android_package_name = android_package_name_file.read().replace("ANDROID_PACKAGE_NAME", str(app_web_url), 1)
 
-    with open(f'projects/{app_name_info}/mobile/lib/main.dart', "w") as new_android_package_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart', "w") as new_android_package_name_file:
         new_android_package_name_file.write(android_package_name)    
 
     # add project name in pubspec.yaml
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml')as pubspec_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml')as pubspec_file:
         new_app_name_info = app_name_info.replace(" ", "")
         new_name = pubspec_file.read().replace("APP_NAME", str(new_app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file:
         new_pubspec_file.write(new_name)
 
     # add app description in pubspec.yaml
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml')as pubspec_file_description:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml')as pubspec_file_description:
         description = pubspec_file_description.read().replace(
             "DESCRIPTION", str(app_description_info), 1)
 
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_description:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_description:
         new_pubspec_file_description.write(description)
 
     # add app name in pubspec.yaml
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml') as pubspec_file_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml') as pubspec_file_name:
         new_app_name = pubspec_file_name.read().replace(
             "APP_NAME", f"{app_name_info}", 1)
 
-    with open(f'projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_name:
+    with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_name:
         new_pubspec_file_name.write(new_app_name)
 
-    pubspec_file = open(f"projects/{app_name_info}/mobile/pubspec.yaml", "r")
+    pubspec_file = open(f"{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml", "r")
     list_of_lines = pubspec_file.readlines()
     list_of_lines[5] = f"version: {app_version_info}+{app_build_info}" + "\n"
 
-    pubspec_file = open(f"projects/{app_name_info}/mobile/pubspec.yaml", "w")
+    pubspec_file = open(f"{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml", "w")
     pubspec_file.writelines(list_of_lines)
     pubspec_file.close()
 
-    readme_file = open(f"projects/{app_name_info}/mobile/README.md", "w")
+    readme_file = open(f"{swab_path}/projects/{app_name_info}/mobile/README.md", "w")
     readme_file.write(
         f"{app_name_info}\n{app_package_info}\n{app_version_info}\n{app_build_info}")
     readme_file.close()
@@ -784,90 +662,88 @@ def save_data():
     # for desktop app
 
     # add app name in tauri.conf.json
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file:
         desktop_name = desktop_name_file.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file:
         new_desktop_name_file.write(desktop_name)
 
     # add app name in tauri.conf.json
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file_2:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_name_file_2:
         desktop_name_2 = desktop_name_file_2.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file_2:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_name_file_2:
         new_desktop_name_file_2.write(desktop_name_2)
 
     # add app version in tauri.conf.json
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_version_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_version_file:
         desktop_version = desktop_version_file.read().replace("VERSION", str(app_version_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_version_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_version_file:
         new_desktop_version_file.write(desktop_version)    
 
     # add app description in package.json
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_description_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as desktop_description_file:
         desktop_description = desktop_description_file.read().replace("DESCRIPTION", str(app_description_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_description_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_desktop_description_file:
         new_desktop_description_file.write(desktop_description)    
 
     # add web url in main.rs
-    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
         desktop_view = desktop_view_file.read().replace("WEBSITE", str(app_web_url), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
         new_desktop_view_file.write(desktop_view)
 
     # add app name in main.rs
-    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/src/main.rs')as desktop_view_file:
         desktop_view = desktop_view_file.read().replace("APP_NAME", str(app_name_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/src/main.rs', "w") as new_desktop_view_file:
         new_desktop_view_file.write(desktop_view)
     
     # add desktop package name in tauri.conf.json
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as main_file_desktop_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json')as main_file_desktop_package_name:
         desktop_package_name = main_file_desktop_package_name.read().replace("PACKAGE_NAME", str(app_package_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_main_file_desktop_package_name:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/tauri.conf.json', "w") as new_main_file_desktop_package_name:
         new_main_file_desktop_package_name.write(desktop_package_name)
     
     # add app name in cargo.toml
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_name_file:
         desktop_name = desktop_name_file.read().replace("APP_NAME", str(app_name_info.lower()), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_name_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_name_file:
         new_desktop_name_file.write(desktop_name)
 
     # add app version in cargo.toml
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_version_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_version_file:
         desktop_version = desktop_version_file.read().replace("VERSION", str(app_version_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_version_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_version_file:
         new_desktop_version_file.write(desktop_version)
 
     # add app description in cargo.toml
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_description_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml')as desktop_description_file:
         desktop_description = desktop_description_file.read().replace("DESCRIPTION", str(app_description_info), 1)
 
-    with open(f'projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_description_file:
+    with open(f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/Cargo.toml', "w") as new_desktop_description_file:
         new_desktop_description_file.write(desktop_description)
 
-    os.chdir(f"projects/{app_name_info}/mobile/")
+    os.chdir(f"{swab_path}/projects/{app_name_info}/mobile/")
 
     os.system("flutter clean")  # clean the project
 
-    os.system("flutter pub get")  # install plugin
+    os.system("flutter pub get")  # install plugins
+
     os.system("flutter pub run flutter_app_name")  # change app name
         
-    os.system("flutter pub get")  # install plugins
     os.system(
         f"flutter pub run change_app_package_name:main {app_package_info}")  # change app package name
 
-    os.system("flutter pub get")  # install plugin
     os.system("flutter pub run flutter_launcher_icons:main")  # change app icon
     
-    os.system("flutter pub get")  # install plugin
     os.system("flutter pub run splash_screen_view:create")  # change splash screen
 
     os.system("flutter build apk --release")
@@ -883,16 +759,16 @@ def save_data():
     os.chdir(os.path.dirname(os.getcwd()))
     os.chdir(os.path.dirname(os.getcwd()))
     
-    if os.path.exists("build"):
+    if os.path.exists(f"{swab_path}/build"):
         pass
     else:
-        os.mkdir("build")
+        os.mkdir(f"{swab_path}/build")
 
-    if os.path.exists(f"build/{app_name_info}"):
+    if os.path.exists(f"{swab_path}/build/{app_name_info}"):
         print('Build already exists.')
         pass
     else:
-        os.mkdir(f"build/{app_name_info}")
+        os.mkdir(f"{swab_path}/build/{app_name_info}")
 
     original_build_location_apk = (r'projects/' + app_name_info +
                                r'/mobile/build/app/outputs/apk/release/app-release.apk') 
@@ -904,9 +780,9 @@ def save_data():
     target_build_location_aab = (r'build/' + app_name_info +
                              r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.aab')                  
 
-    mac_desktop_original_build_location = (r'projects/' + app_name_info +
+    mac_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
                                r'/desktop/src-tauri/target/release/bundle/macos/' + app_name_info + r'.app')  
-    mac_desktop_target_build_location = (r'build/' + app_name_info +
+    mac_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
                              r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.app') 
 
     win_desktop_original_build_location = (r'projects/' + app_name_info +
@@ -938,25 +814,25 @@ def save_data():
     else:
         pass
     
-    shutil.rmtree(f"projects/{app_name_info}/")
+    shutil.rmtree(f"{swab_path}/projects/{app_name_info}/")
 
-    if os.path.exists("assets/favicon.png"):
-        os.remove("assets/favicon.png")
+    if os.path.exists(f"{swab_path}/assets/favicon.png"):
+        os.remove(f"{swab_path}/assets/favicon.png")
     else:
         pass
 
-    if os.path.exists("assets/favicon.ico"):
-        os.remove("assets/favicon.ico")
+    if os.path.exists(f"{swab_path}/assets/favicon.ico"):
+        os.remove(f"{swab_path}/assets/favicon.ico")
     else:
         pass
 
-    if os.path.exists("assets/favicon.icns"):
-        os.remove("assets/favicon.icns")
+    if os.path.exists(f"{swab_path}/assets/favicon.icns"):
+        os.remove(f"{swab_path}/assets/favicon.icns")
     else:
         pass
 
-    if os.path.exists("assets/key.properties"):
-        os.remove("assets/key.properties")
+    if os.path.exists(f"{swab_path}/assets/key.properties"):
+        os.remove(f"{swab_path}/assets/key.properties")
     else:
         pass
 
@@ -1089,16 +965,16 @@ def open_project():
                 size = 512, 512
                 image = Image.open(icon_path_label.cget('text'))
                 image_resized = image.resize(size)
-                image_resized.save("assets/favicon.png", "PNG")
+                image_resized.save(f"{swab_path}/assets/favicon.png", "PNG")
 
-                ico = Image.open('assets/favicon.png')
-                ico.save('assets/favicon.ico')
+                ico = Image.open(f'{swab_path}/assets/favicon.png')
+                ico.save(f'{swab_path}/assets/favicon.ico')
 
                 icns = icnsutil.IcnsFile()
-                icns.add_media(file='assets/favicon.png')
-                icns.write('assets/favicon.icns')       
+                icns.add_media(file=f'{swab_path}/assets/favicon.png')
+                icns.write(f'{swab_path}/assets/favicon.icns')       
 
-                key_file = open('assets/key.properties', 'w')
+                key_file = open(f'{swab_path}/assets/key.properties', 'w')
                 key_file.write('storeFile=' + keystore_path_label.cget('text') + '\n')
                 key_file.close()            
 

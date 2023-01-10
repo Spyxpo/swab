@@ -170,6 +170,7 @@ keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize
 
 ## Coming soon
 
+- [ ] Migrate to Rust Completely
 - [ ] Auto Prerequisites installation
 - [ ] Dessktop app installer
 - [ ] Desktop app update popup

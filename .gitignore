@@ -1,10 +1,13 @@
-/projects
-/build
-/assets
+# Miscellaneous
 .DS_Store
 run.spec
-__pycache__
-/dist
+dist/
+__pycache__/
+cmdline-tools/
+java/
+flutter/
+jre/
+jdk/
 *.tmp
 *.exe
 *.msi
@@ -14,11 +17,12 @@ __pycache__
 *.log
 *.dmg
 *.pkg
-cmdline-tools/
-java/
-nodejs/
-flutter/
-jre/
-jdk/
+
+# Project
+/projects
+/build
+/assets
+
+# Android
 *.jks
 *.keystore
