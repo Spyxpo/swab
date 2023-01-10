@@ -17,6 +17,16 @@ This is a preview build for testing purposes major update coming soon.
 - macOS
 - Linux
 
+## Build
+
+You can build the app for any platform using SWAB, on Windows you can build for Android, Windows & Linux(using WSL), on macOS you can build for Android & macOS, on Linux you can build for Android & Linux.
+
+| Platform | Build |
+| :---: | :---: |
+| Windows | Androd, Windows & Linux(using WSL) |
+| macOS | Android, macOS |
+| Linux | Android, Linux |
+
 ## Steps
 
 - [Requirements](#requirements)
