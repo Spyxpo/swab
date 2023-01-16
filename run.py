@@ -1,9 +1,3 @@
-'''
-Author: Mantresh Khurana | Spyxpo
-Project Name: Spyxpo Web To App Builder
-Project Description: This is a tool which is used to convert a website into an app for iOS, Android, Windows, macOS and Linux.
-'''
-
 import json
 import time
 from tkinter import *
