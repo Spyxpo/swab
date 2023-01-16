@@ -21,11 +21,23 @@ This is a preview build for testing purposes major update coming soon.
 
 You can build the app for any platform using SWAB, on Windows you can build for Android, Windows & Linux(using WSL), on macOS you can build for Android & macOS, on Linux you can build for Android & Linux.
 
-| Platform | Build | Status |
+| App | Built on | Status |
 | :---: | :---: | :---: |
-| Windows | Android, Windows & Linux(using WSL) | ❎ |
-| macOS | Android, macOS | ✅ |
-| Linux | Android, Linux | ❎ |
+| Android App | Windows | ✅ |
+| Android App | macOS | ✅ |
+| Android App | Linux | ✅ |
+| Windows App | Windows | ✅ |
+| Windows App | macOS(Wine) | 🔴 |
+| Windows App | Linux(Wine) | 🔴 |
+| macOS App | Windows | 🔴 |
+| macOS App | macOS | ✅ |
+| macOS App | Linux | 🔴 |
+| Linux App | Windows(WSL) | 🔴 |
+| Linux App | macOS | 🔴 |
+| Linux App | Linux | ✅ |
+
+> ✅ - Supported <br>
+> 🔴 - Not Supported/Under Development
 
 ## Steps
 
