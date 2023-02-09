@@ -33,12 +33,12 @@ else:
     print("Platform can't be detected.")            
 
 def check_internet():
-  try:
+    try:
         host = socket.gethostbyname('www.google.com')
         s = socket.create_connection((host, 80), 2)
         s.close()
         return True
-  except Exception:
+    except Exception:
         no_internet = tk.Tk()
         no_internet_app_icon = PhotoImage(file = 'images/logo.png')
         no_internet.iconphoto(False, no_internet_app_icon)
@@ -519,34 +519,28 @@ def save_data():
         showinfo("No description", "No description, please enter a description.")
         return False
     elif app_package_info == "":
-        showinfo("No package name",
-                 "No package name, please enter a package name.")
+        showinfo("No package name", "No package name, please enter a package name.")
         return False
     elif app_version_info == "":
         showinfo("No version", "No version, please enter a version.")
         return False
     elif app_build_info == "":
-        showinfo("No build number",
-                 "No build number, please enter a build number.")
+        showinfo("No build number", "No build number, please enter a build number.")
         return False
     elif app_web_url == "":
         showinfo("No web url", "No web url, please enter a web url.")
         return False
     elif os.path.exists(f"{swab_path}/projects/{app_name_info}/mobile"):
-        showinfo("App already exists",
-                 "App already exists, please try another name for your app.")
+        showinfo("App already exists", "App already exists, please try another name for your app.")
         return False 
     elif key_alias_info == "":
-        showinfo("Keystore Alias",
-                 "Keystore alias is required.")
+        showinfo("Keystore Alias", "Keystore alias is required.")
         return False
     elif key_pass_info == "":
-        showinfo("Keystore Key Password",
-                 "Keystore key password is required.")
+        showinfo("Keystore Key Password", "Keystore key password is required.")
         return False
     elif store_pass_info == "":
-        showinfo("Keystore Password",
-                 "Keystore password is required.")
+        showinfo("Keystore Password", "Keystore password is required.")
         return False       
     else:
         shutil.copytree("template/mobile", f"{swab_path}/projects/{app_name_info}/mobile")
@@ -556,21 +550,16 @@ def save_data():
     key_file.write(f'storePassword={store_pass_info}\nkeyPassword={key_pass_info}\nkeyAlias={key_alias_info}\n')
     key_file.close()
 
-    shutil.copy(f'{swab_path}/assets/favicon.png',
-                    f'{swab_path}/projects/{app_name_info}/mobile/assets/images/favicon.png')    
+    shutil.copy(f'{swab_path}/assets/favicon.png', f'{swab_path}/projects/{app_name_info}/mobile/assets/images/favicon.png')    
 
-    shutil.copy(f'{swab_path}/assets/favicon.ico',
-                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.ico')    
+    shutil.copy(f'{swab_path}/assets/favicon.ico', f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.ico')    
 
-    shutil.copy(f'{swab_path}/assets/favicon.icns',
-                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.icns')    
+    shutil.copy(f'{swab_path}/assets/favicon.icns', f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.icns')    
 
-    shutil.copy(f'{swab_path}/assets/favicon.png',
-                    f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.png')    
+    shutil.copy(f'{swab_path}/assets/favicon.png', f'{swab_path}/projects/{app_name_info}/desktop/src-tauri/icons/favicon.png')    
 
-    shutil.copy(f'{swab_path}/assets/key.properties',
-                    f'{swab_path}/projects/{app_name_info}/mobile/android/key.properties')                        
-                
+    shutil.copy(f'{swab_path}/assets/key.properties', f'{swab_path}/projects/{app_name_info}/mobile/android/key.properties')                        
+
     # add app name in main.dart
     with open(f'{swab_path}/projects/{app_name_info}/mobile/lib/main.dart')as main_file:
         name = main_file.read().replace("APP_NAME", str(app_name_info), 1)
@@ -623,16 +612,14 @@ def save_data():
 
     # add app description in pubspec.yaml
     with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml')as pubspec_file_description:
-        description = pubspec_file_description.read().replace(
-            "DESCRIPTION", str(app_description_info), 1)
+        description = pubspec_file_description.read().replace("DESCRIPTION", str(app_description_info), 1)
 
     with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_description:
         new_pubspec_file_description.write(description)
 
     # add app name in pubspec.yaml
     with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml') as pubspec_file_name:
-        new_app_name = pubspec_file_name.read().replace(
-            "APP_NAME", f"{app_name_info}", 1)
+        new_app_name = pubspec_file_name.read().replace("APP_NAME", f"{app_name_info}", 1)
 
     with open(f'{swab_path}/projects/{app_name_info}/mobile/pubspec.yaml', "w") as new_pubspec_file_name:
         new_pubspec_file_name.write(new_app_name)
@@ -646,8 +633,7 @@ def save_data():
     pubspec_file.close()
 
     readme_file = open(f"{swab_path}/projects/{app_name_info}/mobile/README.md", "w")
-    readme_file.write(
-        f"{app_name_info}\n{app_package_info}\n{app_version_info}\n{app_build_info}")
+    readme_file.write(f"{app_name_info}\n{app_package_info}\n{app_version_info}\n{app_build_info}")
     readme_file.close()
 
     # for desktop app
@@ -730,8 +716,7 @@ def save_data():
 
     os.system("flutter pub run flutter_app_name")  # change app name
         
-    os.system(
-        f"flutter pub run change_app_package_name:main {app_package_info}")  # change app package name
+    os.system(f"flutter pub run change_app_package_name:main {app_package_info}")  # change app package name
 
     os.system("flutter pub run flutter_launcher_icons:main")  # change app icon
     
@@ -761,30 +746,20 @@ def save_data():
     else:
         os.mkdir(f"{swab_path}/build/{app_name_info}")
 
-    original_build_location_apk = (r'projects/' + app_name_info +
-                               r'/mobile/build/app/outputs/apk/release/app-release.apk') 
-    target_build_location_apk = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.apk')  
+    original_build_location_apk = (r'projects/' + app_name_info + r'/mobile/build/app/outputs/apk/release/app-release.apk') 
+    target_build_location_apk = (r'build/' + app_name_info + r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.apk')  
 
-    original_build_location_aab = (r'projects/' + app_name_info +
-                               r'/mobile/build/app/outputs/bundle/release/app-release.aab') 
-    target_build_location_aab = (r'build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.aab')                  
+    original_build_location_aab = (r'projects/' + app_name_info + r'/mobile/build/app/outputs/bundle/release/app-release.aab') 
+    target_build_location_aab = (r'build/' + app_name_info + r'/' + app_name_info + r'_' + app_version_info + r'_android' + r'.aab')                  
 
-    mac_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
-                               r'/desktop/src-tauri/target/release/bundle/dmg/' + app_name_info + r'_' + app_version_info + '_x64' + r'.dmg')  
-    mac_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.dmg') 
+    mac_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info + r'/desktop/src-tauri/target/release/bundle/dmg/' + app_name_info + r'_' + app_version_info + '_x64' + r'.dmg')  
+    mac_desktop_target_build_location = (swab_path + r'/build/' + app_name_info + r'/' + app_name_info + r'_' + app_version_info + r'_macos' +  r'.dmg') 
 
-    win_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
-                                 r'/desktop/src-tauri/target/release/bundle/msi/' + app_name_info + r'_' + app_version_info + '_x64_en-US' + r'.msi').replace('/', '\\')
-    win_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_windows.msi') 
+    win_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info + r'/desktop/src-tauri/target/release/bundle/msi/' + app_name_info + r'_' + app_version_info + '_x64_en-US' + r'.msi').replace('/', '\\')
+    win_desktop_target_build_location = (swab_path + r'/build/' + app_name_info + r'/' + app_name_info + r'_' + app_version_info + r'_windows.msi') 
 
-    linux_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info +
-                              r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'_' + app_version_info + '_x64' + r'.AppImage')
-    linux_desktop_target_build_location = (swab_path + r'/build/' + app_name_info +
-                             r'/' + app_name_info + r'_' + app_version_info + r'_linux.AppImage') 
+    linux_desktop_original_build_location = (swab_path + r'/projects/' + app_name_info + r'/desktop/src-tauri/target/release/bundle/linux/' + app_name_info + r'_' + app_version_info + '_x64' + r'.AppImage')
+    linux_desktop_target_build_location = (swab_path + r'/build/' + app_name_info + r'/' + app_name_info + r'_' + app_version_info + r'_linux.AppImage') 
 
     # copy original app to new location
     shutil.copyfile(original_build_location_apk, target_build_location_apk)
@@ -1194,8 +1169,7 @@ description_label.pack()
 app_description = StringVar()
 Entry(root, textvariable=app_description, width=35).pack()
 
-package_name_label = Label(
-    root, text="Package Name (e.g. com.companyname.appname)")
+package_name_label = Label(root, text="Package Name (e.g. com.companyname.appname)")
 package_name_label.pack()
 app_package_name = StringVar()
 Entry(root, textvariable=app_package_name, width=35).pack()

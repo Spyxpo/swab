@@ -17,28 +17,6 @@ This is a preview build for testing purposes major update coming soon.
 - macOS
 - Linux
 
-## Build
-
-You can build the app for any platform using SWAB, on Windows you can build for Android, Windows & Linux(using WSL), on macOS you can build for Android & macOS, on Linux you can build for Android & Linux.
-
-| App | Built on | Status |
-| :---: | :---: | :---: |
-| Android App | Windows | ✅ |
-| Android App | macOS | ✅ |
-| Android App | Linux | ✅ |
-| Windows App | Windows | ✅ |
-| Windows App | macOS(Wine) | 🔴 |
-| Windows App | Linux(Wine) | 🔴 |
-| macOS App | Windows | 🔴 |
-| macOS App | macOS | ✅ |
-| macOS App | Linux | 🔴 |
-| Linux App | Windows(WSL) | 🔴 |
-| Linux App | macOS | 🔴 |
-| Linux App | Linux | ✅ |
-
-> ✅ - Supported <br>
-> 🔴 - Not Supported/Under Development
-
 ## Steps
 
 - [Requirements](#requirements)
@@ -148,7 +126,7 @@ keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize
 
 - [File](#file)
   - [New](#new)
-     - Create a new project.
+    - Create a new project.
   - [Open](#open)
     - Open a project.
   - [Save As](#save-as)
