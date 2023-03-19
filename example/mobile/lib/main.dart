@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:app_updater/app_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
@@ -52,7 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     if (Platform.isIOS) WebView.platform = CupertinoWebView();
-    checkAppUpdate(context, 'com.spyxpo.example', 'com.spyxpo.example');
+    checkAppUpdate(
+      context,
+      appName: 'Google',
+      iosAppId: '12345678',
+      androidAppBundleId: 'com.example.app',
+    );
   }
 
   WebViewController? controllerGlobal;
