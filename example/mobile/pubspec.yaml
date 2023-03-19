@@ -14,8 +14,7 @@ dependencies:
 
   flutter_webview_pro: ^3.0.1+2
   url_launcher: ^6.1.5
-  flutter_app_version_checker: ^0.3.1
-  open_store: ^0.2.4
+  app_updater: ^1.0.4
   internet_connection_checker: ^0.0.1+4
   flutter_bounceable: ^1.0.3
   splash_screen_view: ^3.0.0

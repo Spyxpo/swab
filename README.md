@@ -24,11 +24,15 @@ This is a preview build for testing purposes major update coming soon.
 - [Update](#update)
 - [Clean](#clean)
 - [Release](#release)
-- [Known Issues](#known-issues)
 
 ## Screenshots
 
 ![App Screenshot](https://raw.githubusercontent.com/Spyxpo/swab/dev/screenshots/screenshot-1.png)
+
+## What's new*
+
+- Desktop app size reduction `(~10000%)`.
+- Desktop app size is now `<1.8MB`.
 
 ## Requirements
 
@@ -36,12 +40,10 @@ Add Flutter, Python, Android Studio, JDK and JRE in environment variables/.bashr
 
 > Do restart your computer before installing the app.
 
-- [Git](https://git-scm.com/downloads/)
 - [Flutter](https://flutter.dev/docs/get-started/install/)
-- [NodeJS](https://nodejs.org/en/download/)
+- [Rust](https://www.rust-lang.org/tools/install)
 - [Python 3.8 or above](https://www.python.org/downloads/)
 - [Android Studio](https://developer.android.com/studio)
-- [Xcode (only for macOS)](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
 - [JDK](https://www.oracle.com/java/technologies/downloads/)
 - [JRE](https://www.java.com/en/download/)
 
@@ -52,7 +54,6 @@ pip3 install pillow
 pip3 install icnsutil
 pip3 install userpath
 pip3 install wget
-pip3 install GitPython
 ```
 
 or
@@ -62,7 +63,12 @@ pip install pillow
 pip install icnsutil
 pip install userpath
 pip install wget
-pip install GitPython
+```
+
+> Rust modules that are required.
+
+```bash
+cargo install tauri-cli
 ```
 
 ## Installation
@@ -86,20 +92,6 @@ python run.py
 ```bash
 cd swab
 git pull
-```
-
-or
-
-```bash
-cd swab
-python3 update.py
-```
-
-or
-
-```bash
-cd swab
-python update.py
 ```
 
 ## Clean
@@ -134,7 +126,7 @@ keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize
 
 - [File](#file)
   - [New](#new)
-     - Create a new project.
+    - Create a new project.
   - [Open](#open)
     - Open a project.
   - [Save As](#save-as)
@@ -164,39 +156,40 @@ keytool -genkey -noprompt -v -keystore `File_Name`.keystore -keyalg RSA -keysize
 
 ## Features
 
-- [X] Android Support (.apk & .aab)
-- [X] macOS Support
-- [X] Windows Support
-- [X] Linux Support
-- [X] App works without internet
-- [X] Javascript enabled
-- [X] Play Store ready app
-- [X] Your own keystore
-- [X] External url opener
-- [X] Deep Linking
-- [X] App update popup
-- [X] Loading Indicator
-- [X] Splash Screen
-- [X] Desktop apps custom icon
-- [X] Auto Prerequisites installation for Windows
-- [X] Create custom Keystore for Android App
+- [X] Android Support (.apk & .aab).
+- [X] macOS Support.
+- [X] Windows Support.
+- [X] Linux Support.
+- [X] App works without internet.
+- [X] Javascript enabled.
+- [X] Play Store ready app.
+- [X] Your own keystore.
+- [X] External url opener.
+- [X] Deep Linking.
+- [X] App update popup.
+- [X] Loading Indicator.
+- [X] Splash Screen.
+- [X] Desktop apps custom icon.
+- [X] Auto Prerequisites installation for Windows.
+- [X] Create custom Keystore for Android App.
 
 ## Coming soon
 
-- [ ] Auto Prerequisites installation
-- [ ] Dessktop app installer
-- [ ] Desktop app update popup
-- [ ] Desktop app Splash Screen
-- [ ] Desktop app External url opener
-- [ ] Desktop app Deep Linking
-- [ ] Desktop app Loading Indicator
-- [ ] Notifications
-- [ ] Local HTML website
-- [ ] Admob support
-- [ ] Admin app
-- [ ] Deep Linking enhancements
-- [ ] Pull to refresh
-- [ ] iOS app
+- [ ] Migrate to Rust Completely.
+- [ ] Auto Prerequisites installation.
+- [ ] Dessktop app installer.
+- [ ] Desktop app update popup.
+- [ ] Desktop app Splash Screen.
+- [ ] Desktop app External url opener.
+- [ ] Desktop app Deep Linking.
+- [ ] Desktop app Loading Indicator.
+- [ ] Notifications.
+- [ ] Local HTML website.
+- [ ] Admob support.
+- [ ] Admin app.
+- [ ] Deep Linking enhancements.
+- [ ] Pull to refresh.
+- [ ] iOS app.
 
 ## Authors
 
