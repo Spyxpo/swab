@@ -12,7 +12,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int activeTab = 0;
+
+  late TextEditingController appNameController = TextEditingController();
+  late TextEditingController appPackageController = TextEditingController();
   late TextEditingController urlController = TextEditingController();
+  late TextEditingController appDescriptionController = TextEditingController();
+  late TextEditingController contactEmailController = TextEditingController();
+  late TextEditingController privacyPolicyController = TextEditingController();
+  late TextEditingController termsAndConditionController =
+      TextEditingController();
 
   final List<SidebarItem> items = [
     SidebarItem(
@@ -56,7 +64,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    urlController = TextEditingController();
+    setState(() {
+      urlController = TextEditingController(text: "https://");
+    });
   }
 
   @override
@@ -108,10 +118,10 @@ class _HomeState extends State<Home> {
                 width: 1,
               ),
             ),
-            child: SingleChildScrollView(
+            child: const SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                child: Simulator(url: urlController.text),
+                padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Simulator(url: 'https://www.spyxpo.com'),
               ),
             ),
           ),
@@ -136,7 +146,328 @@ class _HomeState extends State<Home> {
           child: IndexedStack(
             index: activeTab,
             children: [
-              Container(),
+              Center(
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(scrollbars: false),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Overview',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Configure your app\'s basic settings',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'App Name',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.app_badge,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: appNameController,
+                            placeholder: 'Enter App Name',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'App Package Name',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.cube_box,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: appPackageController,
+                            placeholder: 'com.example.app',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Website URL',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            padding: const EdgeInsets.all(10),
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.link,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: urlController,
+                            placeholder: 'https://www.example.com',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            onSubmitted: (value) {
+                              setState(() {
+                                urlController.text = value;
+                              });
+                            },
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'App Description',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            padding: const EdgeInsets.all(10),
+                            prefix: const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 10.0, bottom: 23.0),
+                              child: Icon(
+                                CupertinoIcons.text_bubble,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: appDescriptionController,
+                            placeholder: 'Enter App Description',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            maxLines: 2,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Contact Email',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.mail,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            controller: contactEmailController,
+                            placeholder: 'contact@example.com',
+                            keyboardType: TextInputType.emailAddress,
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Privacy Policy URL',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            padding: const EdgeInsets.all(10),
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.doc,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: privacyPolicyController,
+                            placeholder: 'Privacy Policy URL',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Terms & Conditions URL',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoTextField(
+                            padding: const EdgeInsets.all(10),
+                            prefix: const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Icon(
+                                CupertinoIcons.doc,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            controller: termsAndConditionController,
+                            placeholder: 'Terms & Conditions URL',
+                            placeholderStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: CupertinoButton(
+                            padding: const EdgeInsets.all(10),
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
+                            onPressed: () {
+                              setState(() {});
+                            },
+                            child: const Text(
+                              'Next',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
