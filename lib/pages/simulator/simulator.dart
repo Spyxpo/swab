@@ -18,10 +18,9 @@ class Simulator extends StatelessWidget {
       children: [
         Column(
           children: [
-            const SizedBox(height: 20),
             SizedBox(
               height: MediaQuery.of(context).size.height,
-              width: 360,
+              width: 320,
               child: DeviceFrame(
                 device: Devices.ios.iPhone13ProMax,
                 isFrameVisible: true,
@@ -45,8 +44,8 @@ class Simulator extends StatelessWidget {
           ],
         ),
         Positioned(
-          right: 85,
-          top: 10,
+          right: 70,
+          top: 20,
           child: Column(
             children: [
               Row(

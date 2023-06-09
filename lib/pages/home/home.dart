@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:swab/pages/pages.dart';
 import 'package:swab/widgets/widgets.dart';
 
@@ -79,51 +80,103 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Stack(
         children: [
-          AnimatedSidebar(
-            switchIconCollapsed: CupertinoIcons.chevron_right_circle,
-            switchIconExpanded: CupertinoIcons.chevron_left_circle,
-            expanded: false,
-            items: items,
-            selectedIndex: activeTab,
-            autoSelectedIndex: false,
-            onItemSelected: (index) => setState(() => activeTab = index),
-            duration: const Duration(milliseconds: 200),
-            minSize: 90,
-            maxSize: 230,
-            itemIconSize: 18,
-            itemIconColor: Colors.white,
-            itemHoverColor: Colors.grey.withOpacity(0.3),
-            itemSelectedColor: Colors.grey.withOpacity(0.3),
-            itemTextStyle: const TextStyle(color: Colors.white, fontSize: 16),
-            itemSelectedBorder: const BorderRadius.all(
-              Radius.circular(10),
-            ),
-            itemMargin: 16,
-            itemSpaceBetween: 8,
-            header: Image.asset(
-              'assets/images/logo.png',
-              width: 50,
-              height: 50,
-            ),
-            headerText: ' Example',
+          Column(
+            children: [
+              const SizedBox(height: 50),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AnimatedSidebar(
+                      switchIconCollapsed: CupertinoIcons.chevron_right_circle,
+                      switchIconExpanded: CupertinoIcons.chevron_left_circle,
+                      expanded: false,
+                      items: items,
+                      selectedIndex: activeTab,
+                      autoSelectedIndex: false,
+                      onItemSelected: (index) =>
+                          setState(() => activeTab = index),
+                      duration: const Duration(milliseconds: 200),
+                      minSize: 90,
+                      maxSize: 230,
+                      itemIconSize: 18,
+                      itemIconColor: Colors.white,
+                      itemHoverColor: Colors.grey.withOpacity(0.3),
+                      itemSelectedColor: Colors.grey.withOpacity(0.3),
+                      itemTextStyle:
+                          const TextStyle(color: Colors.white, fontSize: 16),
+                      itemSelectedBorder: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      itemMargin: 16,
+                      itemSpaceBetween: 8,
+                      header: Image.asset(
+                        'assets/images/logo.png',
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                    mainScreen(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20.0, bottom: 15.0, right: 15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(166, 57, 57, 57),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: const SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                            child: Simulator(url: 'https://www.spyxpo.com'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          mainScreen(),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.3),
-                width: 1,
+          Stack(
+            children: [
+              Container(
+                height: 50,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(166, 57, 57, 57),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(12, 12, 12, 0.749),
+                      spreadRadius: 0,
+                      blurRadius: 5,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            child: const SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                child: Simulator(url: 'https://www.spyxpo.com'),
+              const Positioned(
+                top: 8,
+                left: 20,
+                child: Text(
+                  'SWAB',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -146,42 +199,65 @@ class _HomeState extends State<Home> {
           child: IndexedStack(
             index: activeTab,
             children: [
-              Center(
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context)
-                      .copyWith(scrollbars: false),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Overview',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+              // Overview
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Overview',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Text(
+                                  'Configure your app\'s basic settings',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Configure your app\'s basic settings',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'App Name',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'App Name',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             prefix: const Padding(
                               padding: EdgeInsets.only(left: 10.0),
@@ -208,18 +284,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'App Package Name',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'App Package Name',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             prefix: const Padding(
                               padding: EdgeInsets.only(left: 10.0),
@@ -235,6 +319,11 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             controller: appPackageController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r"\s\b|\b\s"),
+                              ),
+                            ],
                             placeholder: 'com.example.app',
                             placeholderStyle: const TextStyle(
                               color: Colors.grey,
@@ -246,18 +335,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Website URL',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Website URL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             padding: const EdgeInsets.all(10),
                             prefix: const Padding(
@@ -272,6 +369,11 @@ class _HomeState extends State<Home> {
                               color: Colors.grey.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r"\s\b|\b\s"),
+                              ),
+                            ],
                             controller: urlController,
                             placeholder: 'https://www.example.com',
                             placeholderStyle: const TextStyle(
@@ -289,18 +391,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'App Description',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'App Description',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             padding: const EdgeInsets.all(10),
                             prefix: const Padding(
@@ -317,6 +427,7 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             controller: appDescriptionController,
+                            maxLength: 200,
                             placeholder: 'Enter App Description',
                             placeholderStyle: const TextStyle(
                               color: Colors.grey,
@@ -329,18 +440,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Contact Email',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Contact Email',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
@@ -357,6 +476,11 @@ class _HomeState extends State<Home> {
                             ),
                             controller: contactEmailController,
                             placeholder: 'contact@example.com',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r"\s\b|\b\s"),
+                              ),
+                            ],
                             keyboardType: TextInputType.emailAddress,
                             placeholderStyle: const TextStyle(
                               color: Colors.grey,
@@ -368,18 +492,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Privacy Policy URL',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Privacy Policy URL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             padding: const EdgeInsets.all(10),
                             prefix: const Padding(
@@ -396,6 +528,11 @@ class _HomeState extends State<Home> {
                             ),
                             controller: privacyPolicyController,
                             placeholder: 'Privacy Policy URL',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r"\s\b|\b\s"),
+                              ),
+                            ],
                             placeholderStyle: const TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
@@ -406,18 +543,26 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Terms & Conditions URL',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Terms & Conditions URL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoTextField(
                             padding: const EdgeInsets.all(10),
                             prefix: const Padding(
@@ -434,6 +579,11 @@ class _HomeState extends State<Home> {
                             ),
                             controller: termsAndConditionController,
                             placeholder: 'Terms & Conditions URL',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r"\s\b|\b\s"),
+                              ),
+                            ],
                             placeholderStyle: const TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
@@ -444,9 +594,17 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
+                      ),
+                      const SizedBox(height: 30),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 30),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: CupertinoButton(
                             padding: const EdgeInsets.all(10),
                             color: Colors.blue,
@@ -463,8 +621,242 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+              // Branding
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Branding',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Text(
+                                  'Customize the look and feel of your app',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'App Icon',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Upload 512x512px PNG file',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      CupertinoIcons.add,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Upload',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Splash Screen',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Upload 1125x2436px PNG file',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 300,
+                                  height: 550,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      CupertinoIcons.add,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Upload',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 30),
+                      Center(
+                        child: Wrap(
+                          runSpacing: 20,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: CupertinoButton(
+                                  padding: const EdgeInsets.all(10),
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                  onPressed: () {
+                                    setState(() {});
+                                  },
+                                  child: const Text(
+                                    'Back',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: CupertinoButton(
+                                  padding: const EdgeInsets.all(10),
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                  onPressed: () {
+                                    setState(() {});
+                                  },
+                                  child: const Text(
+                                    'Next',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
               ),
