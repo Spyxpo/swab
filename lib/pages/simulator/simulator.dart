@@ -15,7 +15,7 @@ class Simulator extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      width: 375,
+      width: 360,
       child: DeviceFrame(
         device: Devices.ios.iPhone13ProMax,
         isFrameVisible: true,

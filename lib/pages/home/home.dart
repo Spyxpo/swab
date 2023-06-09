@@ -17,19 +17,39 @@ class _HomeState extends State<Home> {
   final List<SidebarItem> items = [
     SidebarItem(
       icon: CupertinoIcons.home,
-      text: 'Home',
+      text: 'Overview',
     ),
     SidebarItem(
-      icon: CupertinoIcons.bell,
-      text: 'Notifications',
+      icon: CupertinoIcons.paintbrush,
+      text: 'Branding',
     ),
     SidebarItem(
-      icon: CupertinoIcons.alarm,
-      text: 'Integrations',
+      icon: CupertinoIcons.link,
+      text: 'Link Handling',
     ),
     SidebarItem(
-      icon: CupertinoIcons.settings,
-      text: 'Settings',
+      icon: CupertinoIcons.square_stack,
+      text: 'Interface',
+    ),
+    SidebarItem(
+      icon: CupertinoIcons.globe,
+      text: 'Website Overrides',
+    ),
+    SidebarItem(
+      icon: CupertinoIcons.lock,
+      text: 'Permissions',
+    ),
+    SidebarItem(
+      icon: CupertinoIcons.location,
+      text: 'Native Navigation',
+    ),
+    SidebarItem(
+      icon: CupertinoIcons.plus_app,
+      text: 'Plugins',
+    ),
+    SidebarItem(
+      icon: CupertinoIcons.cloud_download,
+      text: 'Build & Download',
     ),
   ];
 
@@ -53,26 +73,26 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           AnimatedSidebar(
-            switchIconCollapsed: CupertinoIcons.chevron_right_square,
-            switchIconExpanded: CupertinoIcons.chevron_left_square,
-            expanded: MediaQuery.of(context).size.width > 600,
+            switchIconCollapsed: CupertinoIcons.chevron_right_circle,
+            switchIconExpanded: CupertinoIcons.chevron_left_circle,
+            expanded: false,
             items: items,
             selectedIndex: activeTab,
             autoSelectedIndex: false,
             onItemSelected: (index) => setState(() => activeTab = index),
             duration: const Duration(milliseconds: 200),
             minSize: 90,
-            maxSize: 250,
+            maxSize: 230,
             itemIconSize: 18,
             itemIconColor: Colors.white,
             itemHoverColor: Colors.grey.withOpacity(0.3),
             itemSelectedColor: Colors.grey.withOpacity(0.3),
             itemTextStyle: const TextStyle(color: Colors.white, fontSize: 16),
             itemSelectedBorder: const BorderRadius.all(
-              Radius.circular(5),
+              Radius.circular(10),
             ),
             itemMargin: 16,
-            itemSpaceBetween: 5,
+            itemSpaceBetween: 8,
             header: Image.asset(
               'assets/images/logo.png',
               width: 50,
@@ -80,18 +100,7 @@ class _HomeState extends State<Home> {
             ),
             headerText: ' Example',
           ),
-          SizedBox(
-            width: 120,
-            child: CupertinoTextField(
-              controller: urlController,
-              onSubmitted: (value) {
-                setState(() {
-                  urlController.clear();
-                  urlController.text = value;
-                });
-              },
-            ),
-          ),
+          mainScreen(),
           Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -111,9 +120,27 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildPage(int idx) {
-    return Wrap(
-      children: [],
+  Widget mainScreen() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 15.0, top: 18.0, bottom: 18.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(166, 57, 57, 57),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.grey.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: IndexedStack(
+            index: activeTab,
+            children: [
+              Container(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

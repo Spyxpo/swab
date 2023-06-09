@@ -8,9 +8,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+        primaryColor: const Color(0xFF1E1E1E),
+        scaffoldBackgroundColor: const Color(0xFF1E1E1E),
+      ),
+      home: const Scaffold(
         body: Home(),
       ),
     );

@@ -7,6 +7,10 @@
 
 This is a preview build for testing purposes major update coming soon.
 
+## Screenshots
+
+![Screenshot 1](./screenshots/screenshot-1.png)
+
 ## Authors
 
 - [Mantresh Khurana](https://github.com/mantreshkhurana/)

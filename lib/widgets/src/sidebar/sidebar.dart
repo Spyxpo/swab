@@ -80,13 +80,13 @@ class AnimatedSidebar extends StatefulWidget {
     this.switchIconExpanded = Icons.arrow_back_rounded,
     this.switchIconCollapsed = Icons.arrow_forward_rounded,
     this.frameDecoration = const BoxDecoration(
-      color: Colors.black,
-      borderRadius: BorderRadius.all(Radius.circular(10)),
+      color: Color.fromARGB(255, 44, 44, 44),
+      borderRadius: BorderRadius.all(Radius.circular(35)),
       boxShadow: [
         BoxShadow(
-          color: Color.fromRGBO(66, 66, 66, 0.75),
+          color: Color.fromRGBO(12, 12, 12, 0.749),
           spreadRadius: 0,
-          blurRadius: 20,
+          blurRadius: 10,
           offset: Offset(0, 10),
         ),
       ],
@@ -108,7 +108,7 @@ class AnimatedSidebar extends StatefulWidget {
 class _AnimatedSidebarState extends State<AnimatedSidebar>
     with TickerProviderStateMixin {
   bool _inAnimation = false;
-  bool _expanded = true;
+  bool _expanded = false;
   int _onHoverIndex = -1;
   int _selectedIndex = 0;
   int _expanedIndex = -1;
@@ -209,7 +209,10 @@ class _AnimatedSidebarState extends State<AnimatedSidebar>
               );
             }),
           ),
-          _buildSwitchButton(),
+          Align(
+            alignment: _expanded ? Alignment.bottomRight : Alignment.center,
+            child: _buildSwitchButton(),
+          ),
         ],
       ),
     );
@@ -224,8 +227,10 @@ class _AnimatedSidebarState extends State<AnimatedSidebar>
           });
         },
         icon: Icon(
-            _expanded ? widget.switchIconExpanded : widget.switchIconCollapsed,
-            color: _inAnimation ? Colors.transparent : widget.itemIconColor));
+          _expanded ? widget.switchIconExpanded : widget.switchIconCollapsed,
+          color: _inAnimation ? Colors.transparent : widget.itemIconColor,
+          size: widget.itemIconSize,
+        ));
   }
 
   Widget _buildIconTextHeader() {
@@ -307,9 +312,9 @@ class _AnimatedSidebarState extends State<AnimatedSidebar>
       onExit: (_) => _setExitHover(),
       child: GestureDetector(
         child: Container(
-          width: double.infinity,
+          width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(
-            vertical: 4,
+            vertical: 8,
           ),
           decoration: BoxDecoration(
               borderRadius: widget.itemSelectedBorder,
