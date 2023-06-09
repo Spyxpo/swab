@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int activeTab = 0;
+  bool deepLinking = false;
 
   late TextEditingController appNameController = TextEditingController();
   late TextEditingController appPackageController = TextEditingController();
@@ -610,7 +611,9 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10),
                             onPressed: () {
-                              setState(() {});
+                              setState(() {
+                                activeTab = 1;
+                              });
                             },
                             child: const Text(
                               'Next',
@@ -797,7 +800,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
                       Divider(
                         color: Colors.grey.withOpacity(0.3),
                         thickness: 1,
@@ -817,7 +820,9 @@ class _HomeState extends State<Home> {
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                   onPressed: () {
-                                    setState(() {});
+                                    setState(() {
+                                      activeTab = 0;
+                                    });
                                   },
                                   child: const Text(
                                     'Back',
@@ -840,7 +845,178 @@ class _HomeState extends State<Home> {
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                   onPressed: () {
-                                    setState(() {});
+                                    setState(() {
+                                      activeTab = 2;
+                                    });
+                                  },
+                                  child: const Text(
+                                    'Next',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+              // Link Handling
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Link Handling',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Text(
+                                  'Configure deep linking for your app',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Deep Linking',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Deep linking allows users to navigate directly to content\n in your app. You can configure deep linking\n for your app by adding intent filters to your AndroidManifest.xml\n and by setting up URL scheme support for your iOS app.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            leading: const Icon(
+                              CupertinoIcons.link,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                            title: const Text(
+                              'Deep Linking',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            trailing: Transform.scale(
+                              scale: 0.7,
+                              child: CupertinoSwitch(
+                                value: deepLinking,
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (deepLinking == false) {
+                                      deepLinking = true;
+                                    } else {
+                                      deepLinking = false;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 30),
+                      Center(
+                        child: Wrap(
+                          runSpacing: 20,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: CupertinoButton(
+                                  padding: const EdgeInsets.all(10),
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                  onPressed: () {
+                                    setState(() {
+                                      activeTab = 1;
+                                    });
+                                  },
+                                  child: const Text(
+                                    'Back',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: CupertinoButton(
+                                  padding: const EdgeInsets.all(10),
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                  onPressed: () {
+                                    setState(() {
+                                      activeTab = 3;
+                                    });
                                   },
                                   child: const Text(
                                     'Next',
