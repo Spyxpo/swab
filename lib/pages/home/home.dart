@@ -144,3 +144,38 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+class NotSupported extends StatelessWidget {
+  const NotSupported({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image(
+            image: AssetImage('assets/images/not-supported.png'),
+            width: 400,
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Please use a larger screen',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 24,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            'The screen size is too small to display the content',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

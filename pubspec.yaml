@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   fwfh_webview: ^0.7.0+2
   device_frame: ^1.1.0
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:
