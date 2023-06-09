@@ -21,7 +21,8 @@ jdk/
 # Project
 /projects
 /build
-/assets
+# /assets
+.dart_tool/
 
 # Android
 *.jks
