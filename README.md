@@ -57,13 +57,79 @@ https://github.com/user-attachments/assets/7bbd267e-6391-4d23-b0f1-55d98281cf0a
 
 ## TODO
 
+### High Priority
+
 - [ ] Add iOS code signing support
 - [ ] Implement user authentication for build management
-- [ ] Add more WebView configuration options
-- [ ] Improve error handling and logging
-- [ ] Optimize build times with caching
 - [ ] Deploy a hosted version of SWAB
-- [ ] Add support for push notifications
+- [ ] Add support for push notifications (Firebase/APNs)
+
+### App Customization
+
+- [ ] Custom splash screen with configurable duration and animation
+- [ ] App icon generator from uploaded image (auto-resize for all platforms)
+- [ ] Custom loading indicator styles (spinner, progress bar, skeleton)
+- [ ] Offline mode with custom offline page
+- [ ] Deep linking / URL scheme support
+- [ ] Custom user agent string configuration
+- [ ] Inject custom CSS/JavaScript into WebView
+- [ ] Dark mode support with auto-detection
+
+### Security & Authentication
+
+- [ ] SSL certificate pinning for enhanced security
+- [ ] Biometric authentication (Face ID / Touch ID / Fingerprint)
+- [ ] App password/PIN lock feature
+- [ ] Secure storage for sensitive data
+
+### Platform Features
+
+- [ ] Native share functionality
+- [ ] File download manager with progress tracking
+- [ ] Camera and gallery access from web
+- [ ] QR code / barcode scanner integration
+- [ ] Native contact picker access
+- [ ] Clipboard integration
+- [ ] Local notifications support
+- [ ] Background sync capabilities
+- [ ] App shortcuts (Android) / Quick Actions (iOS)
+
+### Build & Distribution
+
+- [ ] Optimize build times with caching
+- [ ] Multi-app batch building
+- [ ] Build history and version management
+- [ ] Direct upload to App Store Connect / Google Play Console
+- [ ] Generate privacy policy and terms of service pages
+- [ ] App size optimization options
+- [ ] ProGuard/R8 configuration for Android
+
+### UI/UX Improvements
+
+- [ ] Add more WebView configuration options
+- [ ] Native navigation drawer / bottom navigation
+- [ ] Custom status bar and navigation bar colors
+- [ ] Orientation lock options (portrait/landscape/both)
+- [ ] Safe area handling for notched devices
+- [ ] Haptic feedback options
+- [ ] Native alert/confirm dialogs
+
+### Analytics & Monitoring
+
+- [ ] Firebase Analytics integration
+- [ ] Crash reporting (Crashlytics/Sentry)
+- [ ] In-app update prompts
+- [ ] Remote configuration support
+- [ ] Usage analytics dashboard
+
+### Developer Experience
+
+- [ ] Improve error handling and logging
+- [ ] API documentation with Swagger/OpenAPI
+- [ ] CLI tool for headless builds
+- [ ] Webhooks for build completion notifications
+- [ ] Docker support for consistent build environment
+- [ ] Build configuration templates/presets
 
 ---
 
