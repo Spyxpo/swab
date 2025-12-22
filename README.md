@@ -1,4 +1,4 @@
-<img src="./images/logo.png" width="80" height="80" alt="SWAB Logo">
+<img src="./assets/images/logo.png/" width="80" height="80" alt="SWAB Logo">
 
 # SWAB - Spyxpo Web to App Builder
 
@@ -37,7 +37,11 @@ SWAB (Spyxpo Web to App Builder) is a Flask-based tool that transforms websites 
 
 ## Demo Video
 
+[Demo Video Here]
 
+## Screenshots
+
+![SWAB Interface](./assets/screenshots/screenshot-1.png)
 
 ## Features
 
@@ -233,12 +237,6 @@ POST /api/upload/keystore
 ```
 
 Upload an Android keystore file for release signing.
-
----
-
-## Screenshots
-
-![SWAB Interface](./images/screenshot-1.png)
 
 ---
 
