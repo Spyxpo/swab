@@ -1,0 +1,12 @@
+.DS_Store
+venv/
+projects/
+*.swab
+/builds/
+*.log
+/__pycache__/
+*.tmp
+.env
+/uploads/
+.idea/
+*.bak
