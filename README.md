@@ -21,6 +21,7 @@ Convert any website into a native application for iOS, Android, macOS, Windows, 
 - [API Reference](#api-reference)
 - [Demo Video](#demo-video)
 - [Screenshots](#screenshots)
+- [TODO](#todo)
 - [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
@@ -38,10 +39,7 @@ SWAB (Spyxpo Web to App Builder) is a Flask-based tool that transforms websites 
 ## Demo Video
 
 
-
 https://github.com/user-attachments/assets/7bbd267e-6391-4d23-b0f1-55d98281cf0a
-
-
 
 ## Screenshots
 
@@ -56,6 +54,16 @@ https://github.com/user-attachments/assets/7bbd267e-6391-4d23-b0f1-55d98281cf0a
 - **Progress Tracking** - Real-time build progress updates
 - **Android Signing** - Support for custom keystore files for Android release builds
 - **No Coding Required** - Convert any website to an app without writing code
+
+## TODO
+
+- [ ] Add iOS code signing support
+- [ ] Implement user authentication for build management
+- [ ] Add more WebView configuration options
+- [ ] Improve error handling and logging
+- [ ] Optimize build times with caching
+- [ ] Deploy a hosted version of SWAB
+- [ ] Add support for push notifications
 
 ---
 
