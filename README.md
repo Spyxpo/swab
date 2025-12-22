@@ -24,7 +24,7 @@ Convert any website into a native application for iOS, Android, macOS, Windows, 
 - [TODO](#todo)
 - [Contributing](#contributing)
 - [License](#license)
-- [Author](#author)
+- [Authors](#authors)
 
 ---
 
@@ -96,27 +96,27 @@ Before using SWAB, ensure you have the following installed:
 
 ## Installation
 
-1. Clone the repository:
+1.Clone the repository:
 
 ```bash
 git clone https://github.com/user/swab.git
 cd swab
 ```
 
-2. Create and activate a virtual environment:
+2.Create and activate a virtual environment:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies:
+3.Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Verify Flutter is properly configured:
+4.Verify Flutter is properly configured:
 
 ```bash
 flutter doctor
@@ -169,7 +169,7 @@ The web interface will be available at `http://localhost:5000`.
 
 ## Project Structure
 
-```
+```txt
 swab/
 ├── app.py                 # Flask application and build logic
 ├── requirements.txt       # Python dependencies
@@ -190,7 +190,7 @@ swab/
 
 ### Start Build
 
-```
+```bash
 POST /api/build
 ```
 
@@ -220,7 +220,7 @@ POST /api/build
 
 ### Check Build Status
 
-```
+```bash
 GET /api/build/<build_id>/status
 ```
 
@@ -236,7 +236,7 @@ GET /api/build/<build_id>/status
 
 ### Download Build
 
-```
+```bash
 GET /api/build/<build_id>/download/<platform>
 ```
 
@@ -244,7 +244,7 @@ Returns the built application file as a download.
 
 ### Upload Keystore
 
-```
+```bash
 POST /api/upload/keystore
 ```
 
@@ -254,13 +254,19 @@ Upload an Android keystore file for release signing.
 
 ## Contributing
 
-Contributions are welcome. Please follow these steps:
+Contributions are welcome! You can contribute to this project by forking it and making a pull request.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
+After forking:
+
+```bash
+git clone https://github.com/<your-username>/swab.git
+cd swab
+git checkout -b <your-branch-name>
+# after adding your changes
+git add .
+git commit -m "your commit message"
+git push origin <your-branch-name>
+```
 
 ---
 
@@ -268,8 +274,6 @@ Contributions are welcome. Please follow these steps:
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
----
+## Authors
 
-## Author
-
-- **Mantresh Khurana** - [GitHub](https://github.com/mantreshkhurana/)
+- [Mantresh Khurana](https://github.com/mantreshkhurana)
