@@ -17,6 +17,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import logging
+from flasgger import Swagger
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -36,6 +37,25 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+# ---------------- Swagger Configuration ----------------
+
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/",
+}
+
+Swagger(app, config=swagger_config)
+
 # ---------------- Global Error Handlers ----------------
 
 @app.errorhandler(Exception)
@@ -747,6 +767,51 @@ def serve_upload(filename):
 
 @app.route('/api/build', methods=['POST'])
 def start_build():
+
+    """
+    Start a new build process
+    ---
+    tags:
+      - Build
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - app_name
+            - app_version
+            - build_number
+            - web_url
+            - platforms
+          properties:
+            app_name:
+              type: string
+            app_version:
+              type: string
+            build_number:
+              type: string
+            web_url:
+              type: string
+            platforms:
+              type: array
+              items:
+                type: string
+    responses:
+      200:
+        description: Build started successfully
+      400:
+        description: Invalid input
+      500:
+        description: Internal server error
+    """
+
+
     try:
         logger.info("Received build request")
 
