@@ -18,6 +18,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import logging
 from flasgger import Swagger
+import requests
+import time
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -37,6 +39,24 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+# ===== Webhook Helper =====
+
+def send_webhook_notification(webhook_url, payload):
+    """Send webhook notification in a safe, non-blocking way."""
+    if not webhook_url:
+        return
+
+    try:
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            timeout=5
+        )
+        response.raise_for_status()
+    except Exception as e:
+        app.logger.warning(f"Webhook notification failed: {e}")
+
 # ---------------- Swagger Configuration ----------------
 
 swagger_config = {
@@ -482,13 +502,44 @@ def run_build(build_id, config):
             final_status['keystore_info_path'] = keystore_info.get('info_path')
 
         build_progress[build_id] = final_status
+        # ✅ Webhook on success
+        webhook_url = config.get('webhook_url')
+        payload = {
+            "build_id": build_id,
+            "status": final_status.get('status'),
+            "platforms": config.get('platforms'),
+            "outputs": final_status.get('outputs')
+        }
+
+        threading.Thread(
+            target=send_webhook_notification,
+            args=(webhook_url, payload),
+            daemon=True
+        ).start()
 
     except Exception as e:
-        build_progress[build_id] = {
+        error_status = {
             'status': 'error',
             'progress': 0,
             'message': f'Build failed: {str(e)}'
         }
+        build_progress[build_id] = error_status
+
+        # ✅ Webhook on failure
+        webhook_url = config.get('webhook_url')
+        payload = {
+            "build_id": build_id,
+            "status": "error",
+            "error": str(e),
+            "platforms": config.get('platforms')
+        }
+
+        threading.Thread(
+            target=send_webhook_notification,
+            args=(webhook_url, payload),
+            daemon=True
+        ).start()
+
 
 def get_platform_display_name(platform):
     """Get display name for platform"""
@@ -863,7 +914,9 @@ def start_build():
             'key_alias': data.get('key_alias'),
             'key_password': data.get('key_password'),
             # Icon config (optional)
-            'icon_path': data.get('icon_path')
+            'icon_path': data.get('icon_path'),
+            # Web Hooks
+            'webhook_url': data.get('webhook_url')
         }
 
         thread = threading.Thread(target=run_build, args=(build_id, config))
