@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  swab:
+    build: .
+    container_name: swab-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./builds:/app/builds
+    environment:
+      - FLASK_ENV=production
