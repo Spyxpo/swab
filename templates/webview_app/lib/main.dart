@@ -16,6 +16,24 @@ void main() {
   runApp(const MyApp());
 }
 
+/// ================= Clipboard Channel (ADDED) =================
+class ClipboardChannel {
+  static const MethodChannel _channel =
+      MethodChannel('swab/clipboard');
+
+  static Future<void> copyText(String text) async {
+    await _channel.invokeMethod('copyText', {
+      'text': text,
+    });
+  }
+
+  static Future<String> pasteText() async {
+    final text = await _channel.invokeMethod<String>('pasteText');
+    return text ?? '';
+  }
+}
+/// ============================================================
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -58,25 +76,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool canGoBack = false;
   bool canGoForward = false;
 
-  // Customization options (configured from build)
-  // ignore: constant_identifier_names
-  static const bool ALLOW_ZOOM = true; // {{ALLOW_ZOOM}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_JAVASCRIPT = true; // {{ENABLE_JAVASCRIPT}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_DOM_STORAGE = true; // {{ENABLE_DOM_STORAGE}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_GEOLOCATION = true; // {{ENABLE_GEOLOCATION}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_PULL_TO_REFRESH = true; // {{ENABLE_PULL_TO_REFRESH}}
-  // ignore: constant_identifier_names
-  static const bool SHOW_NAVIGATION_BAR = true; // {{SHOW_NAVIGATION_BAR}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_FILE_ACCESS = true; // {{ENABLE_FILE_ACCESS}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_CACHE = true; // {{ENABLE_CACHE}}
-  // ignore: constant_identifier_names
-  static const bool ENABLE_MEDIA_AUTOPLAY = false; // {{ENABLE_MEDIA_AUTOPLAY}}
+  static const bool ALLOW_ZOOM = true;
+  static const bool ENABLE_JAVASCRIPT = true;
+  static const bool ENABLE_DOM_STORAGE = true;
+  static const bool ENABLE_GEOLOCATION = true;
+  static const bool ENABLE_PULL_TO_REFRESH = true;
+  static const bool SHOW_NAVIGATION_BAR = true;
+  static const bool ENABLE_FILE_ACCESS = true;
+  static const bool ENABLE_CACHE = true;
+  static const bool ENABLE_MEDIA_AUTOPLAY = false;
 
   @override
   void initState() {
@@ -152,6 +160,28 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   pullToRefreshController: pullToRefreshController,
                   onWebViewCreated: (controller) {
                     webViewController = controller;
+
+                    /// ===== Clipboard JS Bridge (ADDED) =====
+                    controller.addJavaScriptHandler(
+                      handlerName: 'clipboard',
+                      callback: (args) async {
+                        final action = args[0];
+
+                        if (action == 'copy') {
+                          final text = args[1] as String;
+                          await ClipboardChannel.copyText(text);
+                          return true;
+                        }
+
+                        if (action == 'paste') {
+                          final text = await ClipboardChannel.pasteText();
+                          return text;
+                        }
+
+                        return null;
+                      },
+                    );
+                    /// ======================================
                   },
                   onLoadStart: (controller, url) {
                     setState(() {
@@ -184,18 +214,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
                           final urlString = uri.toString();
                           if (!urlString.startsWith('http://') &&
                               !urlString.startsWith('https://')) {
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(
-                                uri,
-                                mode: LaunchMode.externalApplication,
-                              );
-                              return NavigationActionPolicy.CANCEL;
-                            }
-                          }
-                          if (urlString.contains('mailto:') ||
-                              urlString.contains('tel:') ||
-                              urlString.contains('sms:') ||
-                              urlString.contains('whatsapp:')) {
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(
                                 uri,
@@ -289,8 +307,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
                         IconButton(
                           icon: const Icon(Icons.share),
                           onPressed: () async {
-                            final currentUrl = await webViewController
-                                ?.getUrl();
+                            final currentUrl =
+                                await webViewController?.getUrl();
                             if (currentUrl != null) {
                               await share_plus.Share.share(
                                 currentUrl.toString(),
