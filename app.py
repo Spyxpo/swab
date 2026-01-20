@@ -888,6 +888,10 @@ def start_build():
         # Generate build ID
         build_id = str(uuid.uuid4())
         logger.info(f"Starting build with ID: {build_id}")
+        
+        if 'download_directory' in data and not isinstance(data['download_directory'], str):
+            return jsonify({'error': 'download_directory must be a string'}), 400
+
 
         # Start build in background thread
         config = {
@@ -908,6 +912,13 @@ def start_build():
             'enable_file_access': data.get('enable_file_access', True),
             'enable_cache': data.get('enable_cache', True),
             'enable_media_autoplay': data.get('enable_media_autoplay', False),
+
+            # Download manager config (backend support)
+            'enable_download_manager': data.get('enable_download_manager', True),
+            'download_directory': data.get('download_directory', 'Downloads'),
+            'allow_large_downloads': data.get('allow_large_downloads', True),
+
+
             # Keystore config (optional)
             'keystore_path': data.get('keystore_path'),
             'keystore_password': data.get('keystore_password'),
