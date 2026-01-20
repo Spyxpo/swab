@@ -891,7 +891,15 @@ def start_build():
         
         if 'download_directory' in data and not isinstance(data['download_directory'], str):
             return jsonify({'error': 'download_directory must be a string'}), 400
+        # Camera & Gallery config validation
+        if 'enable_camera_access' in data and not isinstance(data['enable_camera_access'], bool):
+            return jsonify({'error': 'enable_camera_access must be a boolean'}), 400
 
+        if 'enable_gallery_access' in data and not isinstance(data['enable_gallery_access'], bool):
+            return jsonify({'error': 'enable_gallery_access must be a boolean'}), 400
+
+        if 'camera_permission_prompt' in data and not isinstance(data['camera_permission_prompt'], bool):
+            return jsonify({'error': 'camera_permission_prompt must be a boolean'}), 400
 
         # Start build in background thread
         config = {
@@ -912,6 +920,12 @@ def start_build():
             'enable_file_access': data.get('enable_file_access', True),
             'enable_cache': data.get('enable_cache', True),
             'enable_media_autoplay': data.get('enable_media_autoplay', False),
+
+            # Camera & Gallery access config
+            'enable_camera_access': data.get('enable_camera_access', True),
+            'enable_gallery_access': data.get('enable_gallery_access', True),
+            'camera_permission_prompt': data.get('camera_permission_prompt', True),
+
 
             # Download manager config (backend support)
             'enable_download_manager': data.get('enable_download_manager', True),
