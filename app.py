@@ -900,6 +900,17 @@ def start_build():
 
         if 'camera_permission_prompt' in data and not isinstance(data['camera_permission_prompt'], bool):
             return jsonify({'error': 'camera_permission_prompt must be a boolean'}), 400
+        
+        # QR / Barcode scanner config validation
+        if 'enable_qr_scanner' in data and not isinstance(data['enable_qr_scanner'], bool):
+            return jsonify({'error': 'enable_qr_scanner must be a boolean'}), 400
+
+        if 'enable_barcode_scanner' in data and not isinstance(data['enable_barcode_scanner'], bool):
+            return jsonify({'error': 'enable_barcode_scanner must be a boolean'}), 400
+
+        if 'scanner_formats' in data and not isinstance(data['scanner_formats'], (list, str)):
+            return jsonify({'error': 'scanner_formats must be a list or string'}), 400
+
 
         # Start build in background thread
         config = {
@@ -925,6 +936,12 @@ def start_build():
             'enable_camera_access': data.get('enable_camera_access', True),
             'enable_gallery_access': data.get('enable_gallery_access', True),
             'camera_permission_prompt': data.get('camera_permission_prompt', True),
+
+            # QR / Barcode scanner config
+            'enable_qr_scanner': data.get('enable_qr_scanner', True),
+            'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
+            'scanner_formats': data.get('scanner_formats', []),
+
 
 
             # Download manager config (backend support)
