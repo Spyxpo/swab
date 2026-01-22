@@ -1,0 +1,95 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 10 * 1024 * 1024; // 10MB max
+    }
+
+    function isValidKeystore() {
+      return request.resource.size < 20 * 1024 * 1024; // 20MB max
+    }
+
+    function isValidCertificate() {
+      return request.resource.size < 20 * 1024 * 1024; // 20MB max
+    }
+
+    function isValidProvisioningProfile() {
+      return request.resource.size < 10 * 1024 * 1024; // 10MB max
+    }
+
+    // User's personal storage folder
+    // Each user has their own folder: /users/{userId}/
+    match /users/{userId}/{allPaths=**} {
+      // Allow read if user owns the folder
+      allow read: if isSignedIn() && isOwner(userId);
+
+      // Allow write if user owns the folder
+      allow write: if isSignedIn() && isOwner(userId);
+    }
+
+    // Project icons
+    // Path: /projects/{userId}/{projectId}/icon
+    match /projects/{userId}/{projectId}/{iconFile} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId) && isValidImage() && iconFile.matches('icon\\.(png|jpg|jpeg|webp)');
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Project assets folder
+    // Path: /projects/{userId}/{projectId}/assets/{filename}
+    match /projects/{userId}/{projectId}/assets/{filename} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Android keystores
+    // Path: /projects/{userId}/{projectId}/keystore/{filename}
+    match /projects/{userId}/{projectId}/keystore/{filename} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId) && isValidKeystore();
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Apple certificates
+    // Path: /projects/{userId}/{projectId}/certificates/{filename}
+    match /projects/{userId}/{projectId}/certificates/{filename} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId) && isValidCertificate();
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Apple provisioning profiles
+    // Path: /projects/{userId}/{projectId}/profiles/{filename}
+    match /projects/{userId}/{projectId}/profiles/{filename} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId) && isValidProvisioningProfile();
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Build outputs (temporary storage)
+    // Path: /builds/{userId}/{buildId}/{filename}
+    match /builds/{userId}/{buildId}/{filename} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

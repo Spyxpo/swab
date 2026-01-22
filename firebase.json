@@ -1,0 +1,13 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json",
+    "database": "(default)"
+  },
+  "storage": [
+    {
+      "rules": "storage.rules",
+      "bucket": "spyxpo-swab.firebasestorage.app"
+    }
+  ]
+}

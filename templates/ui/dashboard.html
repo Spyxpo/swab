@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SWAB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dashboard-body">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <a href="/dashboard" class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="SWAB" class="logo-img">
+                <h1>SWAB</h1>
+            </a>
+        </div>
+        <div class="header-center">
+            <div class="search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search projects..." id="search-input">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-menu" id="user-menu">
+                <div class="user-avatar" id="user-avatar">
+                    <img src="" alt="" id="user-avatar-img" style="display: none;">
+                    <span id="user-initials">U</span>
+                </div>
+                <div class="user-dropdown" id="user-dropdown">
+                    <div class="user-dropdown-header">
+                        <div class="user-avatar large">
+                            <img src="" alt="" id="dropdown-avatar-img" style="display: none;">
+                            <span id="dropdown-initials">U</span>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name" id="user-name">User</span>
+                            <span class="user-email" id="user-email">user@example.com</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item danger" id="logout-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Projects Section -->
+        <section class="content-section" id="projects-section">
+            <div class="section-header">
+                <div class="section-title-area">
+                    <h2>Your Projects</h2>
+                    <p class="section-subtitle" id="projects-count">0 projects</p>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" id="import-project-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Import .swab
+                    </button>
+                    <input type="file" id="import-project-file" accept=".swab" style="display: none;">
+                    <button class="btn btn-primary" id="new-project-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        New Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be loaded here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                    </svg>
+                </div>
+                <h3>No projects yet</h3>
+                <p>Create your first project to start building apps from your website</p>
+                <button class="btn btn-primary" id="empty-new-project-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create Your First Project
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loading-state">
+                <div class="spinner large"></div>
+                <p>Loading projects...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- New Project Modal -->
+    <div class="modal-overlay" id="new-project-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Project</h3>
+                <button type="button" class="modal-close" id="close-new-project-modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="new-project-form" class="modal-form">
+                <div class="form-group">
+                    <label for="new-project-name">Project Name</label>
+                    <input type="text" id="new-project-name" name="name" placeholder="My Awesome App" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-project-url">Website URL</label>
+                    <input type="url" id="new-project-url" name="url" placeholder="https://example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-project-description">Description (optional)</label>
+                    <textarea id="new-project-description" name="description" placeholder="Brief description of your app" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-new-project">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="create-project-btn">
+                        <span>Create Project</span>
+                        <svg class="btn-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Project Confirmation Modal -->
+    <div class="modal-overlay" id="delete-project-modal" style="display: none;">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3>Delete Project</h3>
+                <button type="button" class="modal-close" id="close-delete-modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="delete-project-name"></strong>?</p>
+                <p class="warning-text">This action cannot be undone. All project data and builds will be permanently deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-delete-project">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-project">
+                    <span>Delete Project</span>
+                    <svg class="btn-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="dashboard-toast" class="dashboard-toast" style="display: none;">
+        <div class="toast-icon"></div>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Firebase SDK & Dashboard JS -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            getFirestore,
+            collection,
+            doc,
+            getDoc,
+            getDocs,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            query,
+            where,
+            orderBy,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            deleteObject,
+            listAll
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "{{ firebase_config.api_key }}",
+            authDomain: "{{ firebase_config.auth_domain }}",
+            projectId: "{{ firebase_config.project_id }}",
+            storageBucket: "{{ firebase_config.storage_bucket }}",
+            messagingSenderId: "{{ firebase_config.messaging_sender_id }}",
+            appId: "{{ firebase_config.app_id }}",
+            measurementId: "{{ firebase_config.measurement_id }}"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+        let projects = [];
+        let currentDeleteProjectId = null;
+
+        // DOM Elements
+        const userMenu = document.getElementById('user-menu');
+        const userDropdown = document.getElementById('user-dropdown');
+        const projectsGrid = document.getElementById('projects-grid');
+        const emptyState = document.getElementById('empty-state');
+        const loadingState = document.getElementById('loading-state');
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('dashboard-toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+
+            toast.className = `dashboard-toast ${type}`;
+            toastMessage.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+            } else if (type === 'error') {
+                toastIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+            } else {
+                toastIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+            }
+
+            toast.style.display = 'flex';
+            toast.style.animation = 'slideIn 0.3s ease';
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.animation = '';
+                }, 300);
+            }, 4000);
+        }
+
+        // Button loading state
+        function setButtonLoading(btn, loading) {
+            const span = btn.querySelector('span');
+            const spinner = btn.querySelector('.btn-spinner');
+            btn.disabled = loading;
+
+            if (spinner) {
+                if (loading) {
+                    if (span) span.style.opacity = '0';
+                    spinner.style.display = 'block';
+                } else {
+                    if (span) span.style.opacity = '1';
+                    spinner.style.display = 'none';
+                }
+            }
+        }
+
+        // User menu toggle
+        userMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            userDropdown.classList.remove('show');
+        });
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (!user.emailVerified) {
+                    window.location.href = '/auth';
+                    return;
+                }
+
+                currentUser = user;
+                updateUserUI(user);
+                await loadProjects();
+            } else {
+                window.location.href = '/auth';
+            }
+        });
+
+        function updateUserUI(user) {
+            const initials = user.displayName
+                ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+                : user.email[0].toUpperCase();
+
+            document.getElementById('user-initials').textContent = initials;
+            document.getElementById('dropdown-initials').textContent = initials;
+            document.getElementById('user-name').textContent = user.displayName || 'User';
+            document.getElementById('user-email').textContent = user.email;
+
+            if (user.photoURL) {
+                document.getElementById('user-avatar-img').src = user.photoURL;
+                document.getElementById('user-avatar-img').style.display = 'block';
+                document.getElementById('user-initials').style.display = 'none';
+                document.getElementById('dropdown-avatar-img').src = user.photoURL;
+                document.getElementById('dropdown-avatar-img').style.display = 'block';
+                document.getElementById('dropdown-initials').style.display = 'none';
+            }
+        }
+
+        // Load projects from Firestore
+        async function loadProjects() {
+            loadingState.style.display = 'flex';
+            projectsGrid.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            try {
+                const projectsRef = collection(db, 'projects');
+                const q = query(
+                    projectsRef,
+                    where('userId', '==', currentUser.uid),
+                    orderBy('updatedAt', 'desc')
+                );
+                const snapshot = await getDocs(q);
+
+                projects = [];
+                snapshot.forEach(doc => {
+                    projects.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderProjects();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showToast('Failed to load projects', 'error');
+            }
+
+            loadingState.style.display = 'none';
+        }
+
+        function renderProjects() {
+            document.getElementById('projects-count').textContent = `${projects.length} project${projects.length !== 1 ? 's' : ''}`;
+
+            if (projects.length === 0) {
+                projectsGrid.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+
+            projectsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            projectsGrid.innerHTML = projects.map(project => `
+                <div class="project-card" data-id="${project.id}">
+                    <div class="project-icon">
+                        ${project.iconUrl
+                            ? `<img src="${project.iconUrl}" alt="${project.name}">`
+                            : `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                               </svg>`
+                        }
+                    </div>
+                    <div class="project-info">
+                        <h4 class="project-name">${project.name}</h4>
+                        <p class="project-url">${project.webUrl || 'No URL set'}</p>
+                        <span class="project-date">Updated ${formatDate(project.updatedAt)}</span>
+                    </div>
+                    <div class="project-actions">
+                        <button class="project-action-btn edit-btn" data-id="${project.id}" title="Edit">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="project-action-btn build-btn" data-id="${project.id}" title="Build">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                            </svg>
+                        </button>
+                        <button class="project-action-btn download-btn" data-id="${project.id}" title="Download .swab">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </button>
+                        <button class="project-action-btn delete-btn" data-id="${project.id}" title="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const projectId = btn.dataset.id;
+                    window.location.href = `/builder?project=${projectId}`;
+                });
+            });
+
+            document.querySelectorAll('.build-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const projectId = btn.dataset.id;
+                    window.location.href = `/builder?project=${projectId}&build=true`;
+                });
+            });
+
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const projectId = btn.dataset.id;
+                    await downloadProject(projectId);
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const projectId = btn.dataset.id;
+                    const project = projects.find(p => p.id === projectId);
+                    showDeleteModal(projectId, project.name);
+                });
+            });
+
+            // Card click to open project
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const projectId = card.dataset.id;
+                    window.location.href = `/builder?project=${projectId}`;
+                });
+            });
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Never';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+            if (diff < 604800000) return `${Math.floor(diff / 86400000)} days ago`;
+
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // New project modal
+        const newProjectModal = document.getElementById('new-project-modal');
+        const newProjectForm = document.getElementById('new-project-form');
+
+        document.getElementById('new-project-btn').addEventListener('click', () => {
+            newProjectModal.style.display = 'flex';
+        });
+
+        document.getElementById('empty-new-project-btn').addEventListener('click', () => {
+            newProjectModal.style.display = 'flex';
+        });
+
+        document.getElementById('close-new-project-modal').addEventListener('click', () => {
+            newProjectModal.style.display = 'none';
+        });
+
+        document.getElementById('cancel-new-project').addEventListener('click', () => {
+            newProjectModal.style.display = 'none';
+        });
+
+        newProjectModal.addEventListener('click', (e) => {
+            if (e.target === newProjectModal) {
+                newProjectModal.style.display = 'none';
+            }
+        });
+
+        newProjectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('create-project-btn');
+            setButtonLoading(btn, true);
+
+            const name = document.getElementById('new-project-name').value;
+            const webUrl = document.getElementById('new-project-url').value;
+            const description = document.getElementById('new-project-description').value;
+
+            try {
+                // Create project in Firestore
+                const projectData = {
+                    name,
+                    webUrl,
+                    description,
+                    userId: currentUser.uid,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    appVersion: '1.0.0',
+                    buildNumber: 1,
+                    packageName: `com.example.${name.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+                    iconUrl: null,
+                    splashUrl: null,
+                    settings: {
+                        allowZoom: true,
+                        enableJavascript: true,
+                        enableDomStorage: true,
+                        enableGeolocation: true,
+                        enablePullRefresh: true,
+                        showNavigation: true,
+                        enableFileAccess: true,
+                        enableCache: true,
+                        enableMediaAutoplay: false
+                    }
+                };
+
+                const docRef = await addDoc(collection(db, 'projects'), projectData);
+
+                showToast('Project created successfully!', 'success');
+                newProjectModal.style.display = 'none';
+                newProjectForm.reset();
+
+                // Redirect to builder
+                window.location.href = `/builder?project=${docRef.id}`;
+            } catch (error) {
+                console.error('Error creating project:', error);
+                showToast('Failed to create project', 'error');
+            }
+
+            setButtonLoading(btn, false);
+        });
+
+        // Delete project modal
+        const deleteProjectModal = document.getElementById('delete-project-modal');
+
+        function showDeleteModal(projectId, projectName) {
+            currentDeleteProjectId = projectId;
+            document.getElementById('delete-project-name').textContent = projectName;
+            deleteProjectModal.style.display = 'flex';
+        }
+
+        document.getElementById('close-delete-modal').addEventListener('click', () => {
+            deleteProjectModal.style.display = 'none';
+        });
+
+        document.getElementById('cancel-delete-project').addEventListener('click', () => {
+            deleteProjectModal.style.display = 'none';
+        });
+
+        deleteProjectModal.addEventListener('click', (e) => {
+            if (e.target === deleteProjectModal) {
+                deleteProjectModal.style.display = 'none';
+            }
+        });
+
+        document.getElementById('confirm-delete-project').addEventListener('click', async () => {
+            const btn = document.getElementById('confirm-delete-project');
+            setButtonLoading(btn, true);
+
+            try {
+                // Delete project files from Firebase Storage
+                const storageRef = ref(storage, `projects/${currentUser.uid}/${currentDeleteProjectId}`);
+                try {
+                    const listResult = await listAll(storageRef);
+                    const deletePromises = listResult.items.map(item => deleteObject(item));
+                    await Promise.all(deletePromises);
+                } catch (storageError) {
+                    console.log('No files to delete or storage error:', storageError);
+                }
+
+                // Delete project from Firestore
+                await deleteDoc(doc(db, 'projects', currentDeleteProjectId));
+
+                projects = projects.filter(p => p.id !== currentDeleteProjectId);
+                renderProjects();
+                showToast('Project deleted', 'success');
+                deleteProjectModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                showToast('Failed to delete project', 'error');
+            }
+
+            setButtonLoading(btn, false);
+        });
+
+        // Download project as .swab
+        async function downloadProject(projectId) {
+            try {
+                const idToken = await currentUser.getIdToken();
+                const response = await fetch(`/api/projects/${projectId}/download`, {
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Download failed');
+
+                const blob = await response.blob();
+                const project = projects.find(p => p.id === projectId);
+                const filename = `${project.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.swab`;
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+
+                showToast('Project downloaded', 'success');
+            } catch (error) {
+                console.error('Error downloading project:', error);
+                showToast('Failed to download project', 'error');
+            }
+        }
+
+        // Import project
+        document.getElementById('import-project-btn').addEventListener('click', () => {
+            document.getElementById('import-project-file').click();
+        });
+
+        document.getElementById('import-project-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.swab')) {
+                showToast('Please select a .swab file', 'error');
+                return;
+            }
+
+            try {
+                const idToken = await currentUser.getIdToken();
+                const formData = new FormData();
+                formData.append('project', file);
+
+                const response = await fetch('/api/projects/import', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Import failed');
+                }
+
+                const result = await response.json();
+                showToast('Project imported successfully!', 'success');
+
+                // Redirect to builder
+                window.location.href = `/builder?project=${result.projectId}`;
+            } catch (error) {
+                console.error('Error importing project:', error);
+                showToast(error.message || 'Failed to import project', 'error');
+            }
+
+            e.target.value = '';
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = '/auth';
+            } catch (error) {
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = projects.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                (p.webUrl && p.webUrl.toLowerCase().includes(query)) ||
+                (p.description && p.description.toLowerCase().includes(query))
+            );
+
+            if (query) {
+                projectsGrid.innerHTML = filtered.map(project => `
+                    <div class="project-card" data-id="${project.id}">
+                        <div class="project-icon">
+                            ${project.iconUrl
+                                ? `<img src="${project.iconUrl}" alt="${project.name}">`
+                                : `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <polyline points="21 15 16 10 5 21"/>
+                                   </svg>`
+                            }
+                        </div>
+                        <div class="project-info">
+                            <h4 class="project-name">${project.name}</h4>
+                            <p class="project-url">${project.webUrl || 'No URL set'}</p>
+                            <span class="project-date">Updated ${formatDate(project.updatedAt)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                if (filtered.length === 0) {
+                    projectsGrid.innerHTML = '<p class="no-results">No projects found matching your search.</p>';
+                }
+            } else {
+                renderProjects();
+            }
+        });
+    </script>
+</body>
+</html>

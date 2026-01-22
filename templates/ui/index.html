@@ -13,10 +13,10 @@
     <!-- Top Toolbar with Platform Selector -->
     <div class="top-toolbar">
         <div class="toolbar-left">
-            <div class="logo">
+            <a href="/dashboard" class="logo" title="Back to Dashboard">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="SWAB" class="logo-img">
                 <h1>SWAB</h1>
-            </div>
+            </a>
             <div class="toolbar-actions">
                 <button type="button" class="toolbar-btn" id="open-project-btn" title="Open Project (.swab)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -31,6 +31,12 @@
                         <polyline points="7 3 7 8 15 8"/>
                     </svg>
                     <span>Save</span>
+                </button>
+                <button type="button" class="toolbar-btn" id="save-cloud-btn" title="Save to Cloud">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>
+                    </svg>
+                    <span>Save to Cloud</span>
                 </button>
                 <input type="file" id="open-project-file" accept=".swab" style="display: none;">
             </div>
@@ -191,6 +197,111 @@
                             <label for="key-password">Key Password</label>
                             <input type="password" id="key-password" name="key_password" placeholder="Enter key password">
                         </div>
+                    </div>
+                </div>
+
+                <!-- Apple Signing Section (iOS/macOS) -->
+                <div class="section" id="apple-signing-section" style="display: none;">
+                    <h2 class="section-title">Apple Signing</h2>
+
+                    <!-- Platform availability notice -->
+                    <div class="apple-signing-notice" id="apple-signing-notice" style="display: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <div class="apple-signing-notice-text">
+                            <strong>macOS Required:</strong> Apple code signing requires building on macOS. Your build will be unsigned on other platforms.
+                        </div>
+                    </div>
+
+                    <!-- Info box about Apple signing -->
+                    <div class="keystore-info apple-info">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <div class="keystore-info-text">
+                            <strong>Required for App Store:</strong> To distribute your app on the App Store, you need an Apple Developer account ($99/year) and valid signing credentials.
+                        </div>
+                    </div>
+
+                    <!-- Distribution Certificate -->
+                    <div class="form-group">
+                        <label for="apple-certificate-file">Distribution Certificate (.p12)</label>
+                        <div class="file-upload" id="apple-certificate-upload">
+                            <input type="file" id="apple-certificate-file" name="apple_certificate" accept=".p12,.pfx">
+                            <div class="file-upload-label" id="apple-certificate-upload-label">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                </svg>
+                                <span>Click to upload or drag and drop</span>
+                                <small class="hint">.p12 file exported from Keychain Access</small>
+                            </div>
+                        </div>
+                        <small class="hint">Export your distribution certificate from Keychain Access as a .p12 file</small>
+                    </div>
+
+                    <div id="apple-certificate-details" style="display: none;">
+                        <div class="form-group">
+                            <label for="apple-certificate-password">Certificate Password</label>
+                            <input type="password" id="apple-certificate-password" name="apple_certificate_password" placeholder="Enter .p12 password">
+                            <small class="hint">The password you set when exporting the certificate</small>
+                        </div>
+
+                        <div class="certificate-info" id="certificate-info" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span id="certificate-info-text">Certificate validated</span>
+                        </div>
+                    </div>
+
+                    <!-- Provisioning Profile -->
+                    <div class="form-group" id="provisioning-profile-group">
+                        <label for="apple-profile-file">Provisioning Profile (.mobileprovision)</label>
+                        <div class="file-upload" id="apple-profile-upload">
+                            <input type="file" id="apple-profile-file" name="apple_profile" accept=".mobileprovision">
+                            <div class="file-upload-label" id="apple-profile-upload-label">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                </svg>
+                                <span>Click to upload or drag and drop</span>
+                                <small class="hint">.mobileprovision file from Apple Developer Portal</small>
+                            </div>
+                        </div>
+                        <small class="hint">Download from Apple Developer Portal → Certificates, Identifiers & Profiles</small>
+                    </div>
+
+                    <div id="apple-profile-details" style="display: none;">
+                        <div class="profile-info" id="profile-info">
+                            <div class="profile-info-row">
+                                <span class="profile-info-label">Profile Name:</span>
+                                <span class="profile-info-value" id="profile-name">-</span>
+                            </div>
+                            <div class="profile-info-row">
+                                <span class="profile-info-label">Team ID:</span>
+                                <span class="profile-info-value" id="profile-team-id">-</span>
+                            </div>
+                            <div class="profile-info-row">
+                                <span class="profile-info-label">Bundle ID:</span>
+                                <span class="profile-info-value" id="profile-bundle-id">-</span>
+                            </div>
+                            <div class="profile-info-row">
+                                <span class="profile-info-label">Expires:</span>
+                                <span class="profile-info-value" id="profile-expiration">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team ID (manual input as fallback) -->
+                    <div class="form-group" id="team-id-group" style="display: none;">
+                        <label for="team-id">Team ID (Optional)</label>
+                        <input type="text" id="team-id" name="team_id" placeholder="e.g., ABC123XYZ">
+                        <small class="hint">Found in Apple Developer account → Membership → Team ID</small>
                     </div>
                 </div>
 
@@ -372,5 +483,221 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Firebase SDK for authenticated saves -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "{{ firebase_config.api_key }}",
+            authDomain: "{{ firebase_config.auth_domain }}",
+            projectId: "{{ firebase_config.project_id }}",
+            storageBucket: "{{ firebase_config.storage_bucket }}",
+            messagingSenderId: "{{ firebase_config.messaging_sender_id }}",
+            appId: "{{ firebase_config.app_id }}",
+            measurementId: "{{ firebase_config.measurement_id }}"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let currentProjectId = null;
+
+        // Get project ID from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        currentProjectId = urlParams.get('project');
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+
+            if (user && currentProjectId) {
+                // Load project data
+                await loadProject(currentProjectId);
+            }
+
+            // Check if we should auto-build
+            if (urlParams.get('build') === 'true') {
+                document.getElementById('build-button').click();
+            }
+        });
+
+        // Load project from Firestore
+        async function loadProject(projectId) {
+            try {
+                const idToken = await currentUser.getIdToken();
+                const response = await fetch(`/api/projects/${projectId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to load project');
+                    return;
+                }
+
+                const data = await response.json();
+                const project = data.project;
+
+                // Populate form fields
+                document.getElementById('app-name').value = project.name || '';
+                document.getElementById('app-description').value = project.description || '';
+                document.getElementById('app-version').value = project.appVersion || '1.0.0';
+                document.getElementById('build-number').value = project.buildNumber || 1;
+                document.getElementById('package-name').value = project.packageName || '';
+                document.getElementById('web-url').value = project.webUrl || '';
+
+                // Populate settings
+                const settings = project.settings || {};
+                document.getElementById('allow-zoom').checked = settings.allowZoom !== false;
+                document.getElementById('enable-javascript').checked = settings.enableJavascript !== false;
+                document.getElementById('enable-dom-storage').checked = settings.enableDomStorage !== false;
+                document.getElementById('enable-geolocation').checked = settings.enableGeolocation !== false;
+                document.getElementById('enable-pull-refresh').checked = settings.enablePullRefresh !== false;
+                document.getElementById('show-navigation').checked = settings.showNavigation !== false;
+                document.getElementById('enable-file-access').checked = settings.enableFileAccess !== false;
+                document.getElementById('enable-cache').checked = settings.enableCache !== false;
+                document.getElementById('enable-media-autoplay').checked = settings.enableMediaAutoplay === true;
+
+                // Sync settings checkboxes
+                syncSettingsFromHidden();
+
+                // Trigger preview if URL is set
+                if (project.webUrl) {
+                    const urlInput = document.getElementById('web-url');
+                    urlInput.dispatchEvent(new Event('input'));
+                }
+
+                console.log('Project loaded:', project.name);
+            } catch (error) {
+                console.error('Error loading project:', error);
+            }
+        }
+
+        // Sync hidden checkboxes to settings dialog
+        function syncSettingsFromHidden() {
+            const mappings = {
+                'allow-zoom': 'setting-allow-zoom',
+                'enable-javascript': 'setting-enable-javascript',
+                'enable-dom-storage': 'setting-enable-dom-storage',
+                'enable-geolocation': 'setting-enable-geolocation',
+                'enable-pull-refresh': 'setting-enable-pull-refresh',
+                'show-navigation': 'setting-show-navigation',
+                'enable-file-access': 'setting-enable-file-access',
+                'enable-cache': 'setting-enable-cache',
+                'enable-media-autoplay': 'setting-enable-media-autoplay'
+            };
+
+            for (const [hiddenId, settingId] of Object.entries(mappings)) {
+                const hidden = document.getElementById(hiddenId);
+                const setting = document.getElementById(settingId);
+                if (hidden && setting) {
+                    setting.checked = hidden.checked;
+                }
+            }
+        }
+
+        // Save project to cloud
+        document.getElementById('save-cloud-btn').addEventListener('click', async () => {
+            if (!currentUser) {
+                alert('Please sign in to save to cloud');
+                window.location.href = '/auth';
+                return;
+            }
+
+            const btn = document.getElementById('save-cloud-btn');
+            const originalText = btn.querySelector('span').textContent;
+            btn.querySelector('span').textContent = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const projectData = {
+                    name: document.getElementById('app-name').value,
+                    description: document.getElementById('app-description').value,
+                    appVersion: document.getElementById('app-version').value,
+                    buildNumber: parseInt(document.getElementById('build-number').value) || 1,
+                    packageName: document.getElementById('package-name').value,
+                    webUrl: document.getElementById('web-url').value,
+                    settings: {
+                        allowZoom: document.getElementById('allow-zoom').checked,
+                        enableJavascript: document.getElementById('enable-javascript').checked,
+                        enableDomStorage: document.getElementById('enable-dom-storage').checked,
+                        enableGeolocation: document.getElementById('enable-geolocation').checked,
+                        enablePullRefresh: document.getElementById('enable-pull-refresh').checked,
+                        showNavigation: document.getElementById('show-navigation').checked,
+                        enableFileAccess: document.getElementById('enable-file-access').checked,
+                        enableCache: document.getElementById('enable-cache').checked,
+                        enableMediaAutoplay: document.getElementById('enable-media-autoplay').checked
+                    }
+                };
+
+                const idToken = await currentUser.getIdToken();
+
+                if (currentProjectId) {
+                    // Update existing project
+                    const response = await fetch(`/api/projects/${currentProjectId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${idToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(projectData)
+                    });
+
+                    if (!response.ok) throw new Error('Failed to save');
+                    showToast('Project saved to cloud!', 'success');
+                } else {
+                    // Create new project
+                    const response = await fetch('/api/projects', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${idToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(projectData)
+                    });
+
+                    if (!response.ok) throw new Error('Failed to create project');
+
+                    const result = await response.json();
+                    currentProjectId = result.projectId;
+
+                    // Update URL without reload
+                    const newUrl = `/builder?project=${currentProjectId}`;
+                    window.history.pushState({}, '', newUrl);
+
+                    showToast('Project saved to cloud!', 'success');
+                }
+            } catch (error) {
+                console.error('Error saving project:', error);
+                showToast('Failed to save project', 'error');
+            }
+
+            btn.querySelector('span').textContent = originalText;
+            btn.disabled = false;
+        });
+
+        // Simple toast function
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-message">${message}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn var(--transition-normal) ease reverse';
+                setTimeout(() => toast.remove(), 200);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
