@@ -910,6 +910,17 @@ def start_build():
 
         if 'scanner_formats' in data and not isinstance(data['scanner_formats'], (list, str)):
             return jsonify({'error': 'scanner_formats must be a list or string'}), 400
+        
+        # Contact picker config validation
+        if 'enable_contact_picker' in data and not isinstance(data['enable_contact_picker'], bool):
+            return jsonify({'error': 'enable_contact_picker must be a boolean'}), 400
+
+        if 'allow_multiple_contacts' in data and not isinstance(data['allow_multiple_contacts'], bool):
+            return jsonify({'error': 'allow_multiple_contacts must be a boolean'}), 400
+
+        if 'contact_fields' in data and not isinstance(data['contact_fields'], (list, str)):
+            return jsonify({'error': 'contact_fields must be a list or string'}), 400
+
 
 
         # Start build in background thread
@@ -942,7 +953,10 @@ def start_build():
             'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
             'scanner_formats': data.get('scanner_formats', []),
 
-
+            # Contact picker config
+            'enable_contact_picker': data.get('enable_contact_picker', True),
+            'allow_multiple_contacts': data.get('allow_multiple_contacts', False),
+            'contact_fields': data.get('contact_fields', []),
 
             # Download manager config (backend support)
             'enable_download_manager': data.get('enable_download_manager', True),
