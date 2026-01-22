@@ -1965,6 +1965,14 @@ def create_project():
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
 
+        # Add keystore data if provided
+        if 'keystoreData' in data:
+            project_data['keystoreData'] = data['keystoreData']
+
+        # Add Apple signing data if provided
+        if 'appleData' in data:
+            project_data['appleData'] = data['appleData']
+
         print(f"Saving project_data to Firestore: {project_data}")
         doc_ref = db.collection('projects').add(project_data)
         project_id = doc_ref[1].id

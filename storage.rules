@@ -40,40 +40,40 @@ service firebase.storage {
     }
 
     // Project icons
-    // Path: /projects/{userId}/{projectId}/icon
-    match /projects/{userId}/{projectId}/{iconFile} {
+    // Path: /projects/{userId}/icons/{filename}
+    match /projects/{userId}/icons/{filename} {
       allow read: if isSignedIn() && isOwner(userId);
-      allow write: if isSignedIn() && isOwner(userId) && isValidImage() && iconFile.matches('icon\\.(png|jpg|jpeg|webp)');
+      allow write: if isSignedIn() && isOwner(userId) && isValidImage();
       allow delete: if isSignedIn() && isOwner(userId);
     }
 
     // Project assets folder
-    // Path: /projects/{userId}/{projectId}/assets/{filename}
-    match /projects/{userId}/{projectId}/assets/{filename} {
+    // Path: /projects/{userId}/assets/{filename}
+    match /projects/{userId}/assets/{filename} {
       allow read: if isSignedIn() && isOwner(userId);
       allow write: if isSignedIn() && isOwner(userId);
       allow delete: if isSignedIn() && isOwner(userId);
     }
 
     // Android keystores
-    // Path: /projects/{userId}/{projectId}/keystore/{filename}
-    match /projects/{userId}/{projectId}/keystore/{filename} {
+    // Path: /projects/{userId}/keystores/{filename}
+    match /projects/{userId}/keystores/{filename} {
       allow read: if isSignedIn() && isOwner(userId);
       allow write: if isSignedIn() && isOwner(userId) && isValidKeystore();
       allow delete: if isSignedIn() && isOwner(userId);
     }
 
     // Apple certificates
-    // Path: /projects/{userId}/{projectId}/certificates/{filename}
-    match /projects/{userId}/{projectId}/certificates/{filename} {
+    // Path: /projects/{userId}/certificates/{filename}
+    match /projects/{userId}/certificates/{filename} {
       allow read: if isSignedIn() && isOwner(userId);
       allow write: if isSignedIn() && isOwner(userId) && isValidCertificate();
       allow delete: if isSignedIn() && isOwner(userId);
     }
 
     // Apple provisioning profiles
-    // Path: /projects/{userId}/{projectId}/profiles/{filename}
-    match /projects/{userId}/{projectId}/profiles/{filename} {
+    // Path: /projects/{userId}/profiles/{filename}
+    match /projects/{userId}/profiles/{filename} {
       allow read: if isSignedIn() && isOwner(userId);
       allow write: if isSignedIn() && isOwner(userId) && isValidProvisioningProfile();
       allow delete: if isSignedIn() && isOwner(userId);

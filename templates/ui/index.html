@@ -489,6 +489,7 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -505,9 +506,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let currentUser = null;
         let currentProjectId = null;
+
+        // Track uploaded file URLs for cloud save
+        let cloudIconUrl = null;
+        let cloudKeystoreUrl = null;
+        let cloudAppleCertUrl = null;
+        let cloudAppleProfileUrl = null;
 
         // Get project ID from URL params
         const urlParams = new URLSearchParams(window.location.search);
@@ -569,6 +577,108 @@
                 // Sync settings checkboxes
                 syncSettingsFromHidden();
 
+                // Load icon URL if available
+                if (project.iconUrl) {
+                    cloudIconUrl = project.iconUrl;
+                    const iconPreview = document.getElementById('icon-preview');
+                    if (iconPreview) {
+                        iconPreview.innerHTML = `<img src="${project.iconUrl}" alt="App Icon">`;
+                        iconPreview.classList.add('has-icon');
+                    }
+                    const iconUploadLabel = document.getElementById('icon-upload-label');
+                    if (iconUploadLabel) {
+                        iconUploadLabel.innerHTML = `
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span>Change Icon</span>
+                        `;
+                    }
+                }
+
+                // Load keystore data if available
+                if (project.keystoreData) {
+                    const keystoreData = project.keystoreData;
+                    if (keystoreData.keystoreUrl) {
+                        cloudKeystoreUrl = keystoreData.keystoreUrl;
+                        const keystoreUploadLabel = document.getElementById('keystore-upload-label');
+                        if (keystoreUploadLabel) {
+                            keystoreUploadLabel.innerHTML = `
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                <span>Keystore loaded from cloud</span>
+                                <small class="hint">Click to change file</small>
+                            `;
+                            keystoreUploadLabel.style.borderColor = 'var(--success)';
+                            keystoreUploadLabel.style.background = 'var(--success-bg)';
+                        }
+                        const keystoreDetails = document.getElementById('keystore-details');
+                        if (keystoreDetails) {
+                            keystoreDetails.style.display = 'block';
+                        }
+                    }
+                    if (keystoreData.keystorePassword) {
+                        const keystorePasswordInput = document.getElementById('keystore-password');
+                        if (keystorePasswordInput) keystorePasswordInput.value = keystoreData.keystorePassword;
+                    }
+                    if (keystoreData.keyAlias) {
+                        const keyAliasInput = document.getElementById('key-alias');
+                        if (keyAliasInput) keyAliasInput.value = keystoreData.keyAlias;
+                    }
+                    if (keystoreData.keyPassword) {
+                        const keyPasswordInput = document.getElementById('key-password');
+                        if (keyPasswordInput) keyPasswordInput.value = keystoreData.keyPassword;
+                    }
+                }
+
+                // Load Apple signing data if available
+                if (project.appleData) {
+                    const appleData = project.appleData;
+                    if (appleData.certificateUrl) {
+                        cloudAppleCertUrl = appleData.certificateUrl;
+                        const appleCertUploadLabel = document.getElementById('apple-certificate-upload-label');
+                        if (appleCertUploadLabel) {
+                            appleCertUploadLabel.innerHTML = `
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                <span>Certificate loaded from cloud</span>
+                                <small class="hint">Click to change file</small>
+                            `;
+                            appleCertUploadLabel.style.borderColor = 'var(--success)';
+                            appleCertUploadLabel.style.background = 'var(--success-bg)';
+                        }
+                    }
+                    if (appleData.certificatePassword) {
+                        const certPasswordInput = document.getElementById('apple-certificate-password');
+                        if (certPasswordInput) certPasswordInput.value = appleData.certificatePassword;
+                    }
+                    if (appleData.provisioningProfileUrl) {
+                        cloudAppleProfileUrl = appleData.provisioningProfileUrl;
+                        const appleProfileUploadLabel = document.getElementById('apple-profile-upload-label');
+                        if (appleProfileUploadLabel) {
+                            appleProfileUploadLabel.innerHTML = `
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                <span>Profile loaded from cloud</span>
+                                <small class="hint">Click to change file</small>
+                            `;
+                            appleProfileUploadLabel.style.borderColor = 'var(--success)';
+                            appleProfileUploadLabel.style.background = 'var(--success-bg)';
+                        }
+                    }
+                    if (appleData.teamId) {
+                        const teamIdInput = document.getElementById('team-id');
+                        if (teamIdInput) teamIdInput.value = appleData.teamId;
+                    }
+                }
+
                 // Trigger preview if URL is set
                 if (project.webUrl) {
                     const urlInput = document.getElementById('web-url');
@@ -604,6 +714,13 @@
             }
         }
 
+        // Helper function to upload file to Firebase Storage
+        async function uploadFileToStorage(file, path) {
+            const storageRef = ref(storage, path);
+            const snapshot = await uploadBytes(storageRef, file);
+            return await getDownloadURL(snapshot.ref);
+        }
+
         // Save project to cloud
         document.getElementById('save-cloud-btn').addEventListener('click', async () => {
             if (!currentUser) {
@@ -618,6 +735,44 @@
             btn.disabled = true;
 
             try {
+                const userId = currentUser.uid;
+                const timestamp = Date.now();
+
+                // Upload icon to Firebase Storage if selected
+                const iconFileInput = document.getElementById('icon-file');
+                if (iconFileInput && iconFileInput.files && iconFileInput.files.length > 0) {
+                    const iconFile = iconFileInput.files[0];
+                    const ext = iconFile.name.split('.').pop().toLowerCase();
+                    const iconPath = `projects/${userId}/icons/${timestamp}_icon.${ext}`;
+                    cloudIconUrl = await uploadFileToStorage(iconFile, iconPath);
+                }
+
+                // Upload keystore to Firebase Storage if selected
+                const keystoreFileInput = document.getElementById('keystore-file');
+                if (keystoreFileInput && keystoreFileInput.files && keystoreFileInput.files.length > 0) {
+                    const keystoreFile = keystoreFileInput.files[0];
+                    const keystorePath = `projects/${userId}/keystores/${timestamp}_keystore.jks`;
+                    cloudKeystoreUrl = await uploadFileToStorage(keystoreFile, keystorePath);
+                }
+
+                // Upload Apple certificate to Firebase Storage if selected
+                const appleCertFileInput = document.getElementById('apple-certificate-file');
+                if (appleCertFileInput && appleCertFileInput.files && appleCertFileInput.files.length > 0) {
+                    const certFile = appleCertFileInput.files[0];
+                    const ext = certFile.name.split('.').pop().toLowerCase();
+                    const certPath = `projects/${userId}/certificates/${timestamp}_certificate.${ext}`;
+                    cloudAppleCertUrl = await uploadFileToStorage(certFile, certPath);
+                }
+
+                // Upload Apple provisioning profile to Firebase Storage if selected
+                const appleProfileFileInput = document.getElementById('apple-profile-file');
+                if (appleProfileFileInput && appleProfileFileInput.files && appleProfileFileInput.files.length > 0) {
+                    const profileFile = appleProfileFileInput.files[0];
+                    const profilePath = `projects/${userId}/profiles/${timestamp}_profile.mobileprovision`;
+                    cloudAppleProfileUrl = await uploadFileToStorage(profileFile, profilePath);
+                }
+
+                // Build project data with file URLs
                 const projectData = {
                     name: document.getElementById('app-name').value,
                     description: document.getElementById('app-description').value,
@@ -637,6 +792,36 @@
                         enableMediaAutoplay: document.getElementById('enable-media-autoplay').checked
                     }
                 };
+
+                // Add icon URL if uploaded
+                if (cloudIconUrl) {
+                    projectData.iconUrl = cloudIconUrl;
+                }
+
+                // Add keystore data if available
+                const keystorePassword = document.getElementById('keystore-password')?.value;
+                const keyAlias = document.getElementById('key-alias')?.value;
+                const keyPassword = document.getElementById('key-password')?.value;
+                if (cloudKeystoreUrl || keystorePassword || keyAlias) {
+                    projectData.keystoreData = {
+                        keystoreUrl: cloudKeystoreUrl || null,
+                        keystorePassword: keystorePassword || '',
+                        keyAlias: keyAlias || '',
+                        keyPassword: keyPassword || ''
+                    };
+                }
+
+                // Add Apple signing data if available
+                const appleCertPassword = document.getElementById('apple-certificate-password')?.value;
+                const teamId = document.getElementById('team-id')?.value;
+                if (cloudAppleCertUrl || cloudAppleProfileUrl || appleCertPassword || teamId) {
+                    projectData.appleData = {
+                        certificateUrl: cloudAppleCertUrl || null,
+                        certificatePassword: appleCertPassword || '',
+                        provisioningProfileUrl: cloudAppleProfileUrl || null,
+                        teamId: teamId || ''
+                    };
+                }
 
                 const idToken = await currentUser.getIdToken();
 
@@ -677,7 +862,7 @@
                 }
             } catch (error) {
                 console.error('Error saving project:', error);
-                showToast('Failed to save project', 'error');
+                showToast('Failed to save project: ' + error.message, 'error');
             }
 
             btn.querySelector('span').textContent = originalText;
