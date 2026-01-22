@@ -302,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (iconResponse.ok) {
                     const iconResult = await iconResponse.json();
                     formData.icon_path = iconResult.path;
+                    currentIconPath = iconResult.path;
                 }
             } catch (error) {
                 console.error('Icon upload error:', error);
@@ -322,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (uploadResponse.ok) {
                     const uploadResult = await uploadResponse.json();
                     formData.keystore_path = uploadResult.path;
+                    currentKeystorePath = uploadResult.path;
                     formData.keystore_password = document.getElementById('keystore-password').value;
                     formData.key_alias = document.getElementById('key-alias').value;
                     formData.key_password = document.getElementById('key-password').value;
@@ -1030,11 +1032,11 @@ document.addEventListener('DOMContentLoaded', function() {
             saveProjectBtn.disabled = false;
             saveProjectBtn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                    <polyline points="17 21 17 13 7 13 7 21"/>
-                    <polyline points="7 3 7 8 15 8"/>
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                <span>Save</span>
+                <span>Download</span>
             `;
         }
     });

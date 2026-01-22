@@ -26,7 +26,7 @@ load_dotenv()
 
 # Firebase Admin SDK
 import firebase_admin
-from firebase_admin import credentials, auth as firebase_auth, firestore
+from firebase_admin import credentials, auth as firebase_auth, firestore, storage as firebase_storage
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -75,6 +75,14 @@ def get_firebase_config():
         'app_id': os.getenv('FIREBASE_APP_ID', ''),
         'measurement_id': os.getenv('FIREBASE_MEASUREMENT_ID', '')
     }
+
+# Get Firebase Storage bucket
+def get_storage_bucket():
+    """Get Firebase Storage bucket for file operations"""
+    bucket_name = os.getenv('FIREBASE_STORAGE_BUCKET', '')
+    if bucket_name and firebase_initialized:
+        return firebase_storage.bucket(bucket_name)
+    return None
 
 # Authentication decorator
 def firebase_auth_required(f):
@@ -2046,7 +2054,8 @@ def update_project(project_id):
         # Update allowed fields
         update_data = {'updatedAt': firestore.SERVER_TIMESTAMP}
         allowed_fields = ['name', 'webUrl', 'description', 'appVersion', 'buildNumber',
-                          'packageName', 'iconUrl', 'settings', 'keystoreData', 'appleData']
+                          'packageName', 'iconUrl', 'settings', 'keystoreData', 'appleData',
+                          'iconStoragePath', 'keystoreStoragePath', 'appleCertStoragePath', 'appleProfileStoragePath']
         for field in allowed_fields:
             if field in data:
                 update_data[field] = data[field]
@@ -2088,10 +2097,104 @@ def delete_project(project_id):
     except Exception as e:
         return jsonify({'error': f'Failed to delete project: {str(e)}'}), 500
 
+@app.route('/api/projects/<project_id>/assets', methods=['POST'])
+@firebase_auth_required
+def upload_project_assets(project_id):
+    """Upload assets (icon, keystore) for a project to Firebase Storage"""
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
+    bucket = get_storage_bucket()
+    if not bucket:
+        return jsonify({'error': 'Storage not configured'}), 503
+
+    try:
+        user_id = request.user['uid']
+
+        # Verify project ownership
+        doc_ref = db.collection('projects').document(project_id)
+        doc = doc_ref.get()
+
+        if not doc.exists:
+            return jsonify({'error': 'Project not found'}), 404
+
+        project = doc.to_dict()
+        if project.get('userId') != user_id:
+            return jsonify({'error': 'Access denied'}), 403
+
+        update_data = {'updatedAt': firestore.SERVER_TIMESTAMP}
+        response_data = {}
+
+        # Handle icon upload
+        if 'icon' in request.files:
+            icon_file = request.files['icon']
+            if icon_file.filename:
+                ext = os.path.splitext(icon_file.filename)[1].lower()
+                if ext not in ['.png', '.jpg', '.jpeg']:
+                    return jsonify({'error': 'Invalid icon type. Use PNG or JPG'}), 400
+
+                # Upload to Firebase Storage
+                icon_path = f"projects/{user_id}/{project_id}/icon{ext}"
+                blob = bucket.blob(icon_path)
+                blob.upload_from_file(icon_file, content_type=icon_file.content_type)
+                blob.make_public()
+
+                update_data['iconStoragePath'] = icon_path
+                update_data['iconUrl'] = blob.public_url
+                response_data['iconUrl'] = blob.public_url
+                response_data['iconStoragePath'] = icon_path
+
+        # Handle keystore upload
+        if 'keystore' in request.files:
+            keystore_file = request.files['keystore']
+            if keystore_file.filename:
+                # Upload to Firebase Storage (private, not public)
+                keystore_path = f"projects/{user_id}/{project_id}/keystore.jks"
+                blob = bucket.blob(keystore_path)
+                blob.upload_from_file(keystore_file, content_type='application/octet-stream')
+
+                update_data['keystoreStoragePath'] = keystore_path
+                response_data['keystoreStoragePath'] = keystore_path
+
+        # Handle Apple certificate upload
+        if 'apple_certificate' in request.files:
+            cert_file = request.files['apple_certificate']
+            if cert_file.filename:
+                ext = os.path.splitext(cert_file.filename)[1].lower()
+                if ext not in ['.p12', '.pfx']:
+                    return jsonify({'error': 'Invalid certificate type. Use .p12 or .pfx'}), 400
+
+                cert_path = f"projects/{user_id}/{project_id}/certificate{ext}"
+                blob = bucket.blob(cert_path)
+                blob.upload_from_file(cert_file, content_type='application/octet-stream')
+
+                update_data['appleCertStoragePath'] = cert_path
+                response_data['appleCertStoragePath'] = cert_path
+
+        # Handle Apple provisioning profile upload
+        if 'provisioning_profile' in request.files:
+            profile_file = request.files['provisioning_profile']
+            if profile_file.filename:
+                profile_path = f"projects/{user_id}/{project_id}/profile.mobileprovision"
+                blob = bucket.blob(profile_path)
+                blob.upload_from_file(profile_file, content_type='application/octet-stream')
+
+                update_data['appleProfileStoragePath'] = profile_path
+                response_data['appleProfileStoragePath'] = profile_path
+
+        # Update project with new storage paths
+        if len(update_data) > 1:  # More than just updatedAt
+            doc_ref.update(update_data)
+
+        return jsonify({'success': True, **response_data})
+
+    except Exception as e:
+        return jsonify({'error': f'Failed to upload assets: {str(e)}'}), 500
+
 @app.route('/api/projects/<project_id>/download', methods=['GET'])
 @firebase_auth_required
 def download_project_swab(project_id):
-    """Download project as .swab file"""
+    """Download project as .swab file with assets from Firebase Storage"""
     if not db:
         return jsonify({'error': 'Database not available'}), 503
 
@@ -2136,6 +2239,19 @@ def download_project_swab(project_id):
                 'enable_media_autoplay': settings.get('enableMediaAutoplay', False),
             })
 
+            # Add keystore credentials if available
+            keystore_data = project.get('keystoreData', {})
+            if keystore_data:
+                project_data['keystore_password'] = keystore_data.get('keystorePassword', '')
+                project_data['key_alias'] = keystore_data.get('keyAlias', '')
+                project_data['key_password'] = keystore_data.get('keyPassword', '')
+
+            # Add Apple signing credentials if available
+            apple_data = project.get('appleData', {})
+            if apple_data:
+                project_data['apple_certificate_password'] = apple_data.get('certificatePassword', '')
+                project_data['team_id'] = apple_data.get('teamId', '')
+
             # Save project.json
             project_json_path = os.path.join(temp_dir, 'project.json')
             with open(project_json_path, 'w') as f:
@@ -2144,6 +2260,51 @@ def download_project_swab(project_id):
             # Create assets directory
             assets_dir = os.path.join(temp_dir, 'assets')
             os.makedirs(assets_dir, exist_ok=True)
+
+            # Download assets from Firebase Storage if available
+            bucket = get_storage_bucket()
+            if bucket:
+                # Download icon
+                icon_storage_path = project.get('iconStoragePath')
+                if icon_storage_path:
+                    try:
+                        ext = os.path.splitext(icon_storage_path)[1]
+                        blob = bucket.blob(icon_storage_path)
+                        icon_local_path = os.path.join(assets_dir, f'icon{ext}')
+                        blob.download_to_filename(icon_local_path)
+                    except Exception as e:
+                        print(f"Failed to download icon: {e}")
+
+                # Download keystore
+                keystore_storage_path = project.get('keystoreStoragePath')
+                if keystore_storage_path:
+                    try:
+                        blob = bucket.blob(keystore_storage_path)
+                        keystore_local_path = os.path.join(assets_dir, 'keystore.jks')
+                        blob.download_to_filename(keystore_local_path)
+                    except Exception as e:
+                        print(f"Failed to download keystore: {e}")
+
+                # Download Apple certificate
+                apple_cert_storage_path = project.get('appleCertStoragePath')
+                if apple_cert_storage_path:
+                    try:
+                        ext = os.path.splitext(apple_cert_storage_path)[1]
+                        blob = bucket.blob(apple_cert_storage_path)
+                        cert_local_path = os.path.join(assets_dir, f'certificate{ext}')
+                        blob.download_to_filename(cert_local_path)
+                    except Exception as e:
+                        print(f"Failed to download Apple certificate: {e}")
+
+                # Download Apple provisioning profile
+                apple_profile_storage_path = project.get('appleProfileStoragePath')
+                if apple_profile_storage_path:
+                    try:
+                        blob = bucket.blob(apple_profile_storage_path)
+                        profile_local_path = os.path.join(assets_dir, 'profile.mobileprovision')
+                        blob.download_to_filename(profile_local_path)
+                    except Exception as e:
+                        print(f"Failed to download provisioning profile: {e}")
 
             # Create the zip file
             zip_path = os.path.join(temp_dir, 'project.zip')
@@ -2259,8 +2420,84 @@ def import_project_swab():
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
 
+        # Add keystore credentials if available
+        if project_data.get('keystore_password') or project_data.get('key_alias'):
+            firestore_data['keystoreData'] = {
+                'keystorePassword': project_data.get('keystore_password', ''),
+                'keyAlias': project_data.get('key_alias', ''),
+                'keyPassword': project_data.get('key_password', '')
+            }
+
+        # Add Apple signing credentials if available
+        if project_data.get('apple_certificate_password') or project_data.get('team_id'):
+            firestore_data['appleData'] = {
+                'certificatePassword': project_data.get('apple_certificate_password', ''),
+                'teamId': project_data.get('team_id', '')
+            }
+
         doc_ref = db.collection('projects').add(firestore_data)
         project_id = doc_ref[1].id
+
+        # Upload assets from .swab to Firebase Storage
+        assets_dir = os.path.join(extract_dir, 'assets')
+        bucket = get_storage_bucket()
+
+        if bucket and os.path.exists(assets_dir):
+            update_data = {}
+
+            # Upload icon if exists
+            for ext in ['.png', '.jpg', '.jpeg']:
+                icon_path = os.path.join(assets_dir, f'icon{ext}')
+                if os.path.exists(icon_path):
+                    try:
+                        storage_path = f"projects/{user_id}/{project_id}/icon{ext}"
+                        blob = bucket.blob(storage_path)
+                        blob.upload_from_filename(icon_path)
+                        blob.make_public()
+                        update_data['iconStoragePath'] = storage_path
+                        update_data['iconUrl'] = blob.public_url
+                    except Exception as e:
+                        print(f"Failed to upload icon: {e}")
+                    break
+
+            # Upload keystore if exists
+            keystore_path = os.path.join(assets_dir, 'keystore.jks')
+            if os.path.exists(keystore_path):
+                try:
+                    storage_path = f"projects/{user_id}/{project_id}/keystore.jks"
+                    blob = bucket.blob(storage_path)
+                    blob.upload_from_filename(keystore_path)
+                    update_data['keystoreStoragePath'] = storage_path
+                except Exception as e:
+                    print(f"Failed to upload keystore: {e}")
+
+            # Upload Apple certificate if exists
+            for ext in ['.p12', '.pfx']:
+                cert_path = os.path.join(assets_dir, f'certificate{ext}')
+                if os.path.exists(cert_path):
+                    try:
+                        storage_path = f"projects/{user_id}/{project_id}/certificate{ext}"
+                        blob = bucket.blob(storage_path)
+                        blob.upload_from_filename(cert_path)
+                        update_data['appleCertStoragePath'] = storage_path
+                    except Exception as e:
+                        print(f"Failed to upload Apple certificate: {e}")
+                    break
+
+            # Upload Apple provisioning profile if exists
+            profile_path = os.path.join(assets_dir, 'profile.mobileprovision')
+            if os.path.exists(profile_path):
+                try:
+                    storage_path = f"projects/{user_id}/{project_id}/profile.mobileprovision"
+                    blob = bucket.blob(storage_path)
+                    blob.upload_from_filename(profile_path)
+                    update_data['appleProfileStoragePath'] = storage_path
+                except Exception as e:
+                    print(f"Failed to upload provisioning profile: {e}")
+
+            # Update project with storage paths
+            if update_data:
+                db.collection('projects').document(project_id).update(update_data)
 
         return jsonify({'success': True, 'projectId': project_id})
 
