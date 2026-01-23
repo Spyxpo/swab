@@ -884,6 +884,17 @@ def start_build():
         if not data['platforms']:
             logger.warning("No platforms selected")
             return jsonify({'error': 'At least one platform must be selected'}), 400
+        
+        # Contact Picker validation
+        if 'enable_contact_picker' in data and not isinstance(data['enable_contact_picker'], bool):
+            return jsonify({'error': 'enable_contact_picker must be a boolean'}), 400
+ 
+        if 'contact_picker_mode' in data:
+          if data['contact_picker_mode'] not in ['read_only', 'full_access']:
+            return jsonify({
+            'error': 'contact_picker_mode must be read_only or full_access'
+        }), 400
+
 
         # Generate build ID
         build_id = str(uuid.uuid4())
@@ -963,6 +974,9 @@ def start_build():
             'download_directory': data.get('download_directory', 'Downloads'),
             'allow_large_downloads': data.get('allow_large_downloads', True),
 
+            # Contact Picker (native)
+            'enable_contact_picker': data.get('enable_contact_picker', False),
+            'contact_picker_mode': data.get('contact_picker_mode', 'read_only'),
 
             # Keystore config (optional)
             'keystore_path': data.get('keystore_path'),
