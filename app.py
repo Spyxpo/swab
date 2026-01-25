@@ -884,6 +884,16 @@ def start_build():
         if not data['platforms']:
             logger.warning("No platforms selected")
             return jsonify({'error': 'At least one platform must be selected'}), 400
+        
+        # Local notifications validation
+        if 'enable_local_notifications' in data and not isinstance(data['enable_local_notifications'], bool):
+            return jsonify({'error': 'enable_local_notifications must be boolean'}), 400
+
+        if 'allow_scheduled_notifications' in data and not isinstance(data['allow_scheduled_notifications'], bool):
+           return jsonify({'error': 'allow_scheduled_notifications must be boolean'}), 400
+
+        if 'notification_channels' in data and not isinstance(data['notification_channels'], list):
+          return jsonify({'error': 'notification_channels must be a list'}), 400
 
         # Generate build ID
         build_id = str(uuid.uuid4())
@@ -942,7 +952,10 @@ def start_build():
             'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
             'scanner_formats': data.get('scanner_formats', []),
 
-
+            # Local notifications config
+            'enable_local_notifications': data.get('enable_local_notifications', False),
+            'allow_scheduled_notifications': data.get('allow_scheduled_notifications', True),
+            'notification_channels': data.get('notification_channels', ['default']),
 
             # Download manager config (backend support)
             'enable_download_manager': data.get('enable_download_manager', True),
