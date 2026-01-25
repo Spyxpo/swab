@@ -910,7 +910,14 @@ def start_build():
 
         if 'scanner_formats' in data and not isinstance(data['scanner_formats'], (list, str)):
             return jsonify({'error': 'scanner_formats must be a list or string'}), 400
+        
+        # Background sync validation
+        if 'enable_background_sync' in data and not isinstance(data['enable_background_sync'], bool):
+         return jsonify({'error': 'enable_background_sync must be a boolean'}), 400
 
+        if 'background_sync_interval' in data:
+           if not isinstance(data['background_sync_interval'], int) or data['background_sync_interval'] <= 0:
+            return jsonify({'error': 'background_sync_interval must be a positive integer'}), 400
 
         # Start build in background thread
         config = {
@@ -942,7 +949,9 @@ def start_build():
             'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
             'scanner_formats': data.get('scanner_formats', []),
 
-
+            # Background sync configuration
+            'enable_background_sync': data.get('enable_background_sync', False),
+            'background_sync_interval': data.get('background_sync_interval', 15),  # minutes
 
             # Download manager config (backend support)
             'enable_download_manager': data.get('enable_download_manager', True),
