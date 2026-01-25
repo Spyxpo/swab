@@ -888,7 +888,11 @@ def start_build():
         # Generate build ID
         build_id = str(uuid.uuid4())
         logger.info(f"Starting build with ID: {build_id}")
-        
+
+        # Native share validation
+        if 'enable_native_share' in data and not isinstance(data['enable_native_share'], bool):
+           return jsonify({'error': 'enable_native_share must be a boolean'}), 400
+   
         if 'download_directory' in data and not isinstance(data['download_directory'], str):
             return jsonify({'error': 'download_directory must be a string'}), 400
         # Camera & Gallery config validation
@@ -942,7 +946,8 @@ def start_build():
             'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
             'scanner_formats': data.get('scanner_formats', []),
 
-
+            # Native share configuration
+            'enable_native_share': data.get('enable_native_share', False),
 
             # Download manager config (backend support)
             'enable_download_manager': data.get('enable_download_manager', True),
