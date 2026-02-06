@@ -20,6 +20,8 @@ import logging
 from flasgger import Swagger
 import requests
 import time
+from logging_config import setup_logging
+
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -39,6 +41,10 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+
+setup_logging(app)
+
 
 # ===== Webhook Helper =====
 
@@ -75,6 +81,30 @@ swagger_config = {
 }
 
 Swagger(app, config=swagger_config)
+
+
+@app.before_request
+def log_request():
+    request.start_time = time.time()
+    app.logger.info(
+        "Incoming request: %s %s",
+        request.method,
+        request.path
+    )
+
+
+@app.after_request
+def log_response(response):
+    duration = time.time() - getattr(request, "start_time", time.time())
+    app.logger.info(
+        "Response: %s %s -> %s (%.3fs)",
+        request.method,
+        request.path,
+        response.status_code,
+        duration
+    )
+    return response
+
 
 # ---------------- Global Error Handlers ----------------
 
