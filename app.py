@@ -20,6 +20,9 @@ import logging
 from flasgger import Swagger
 import requests
 import time
+from auth.auth_routes import auth_bp
+from middleware.auth_required import auth_required
+
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -39,6 +42,9 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+app.register_blueprint(auth_bp)
+
 
 # ===== Webhook Helper =====
 
@@ -75,6 +81,24 @@ swagger_config = {
 }
 
 Swagger(app, config=swagger_config)
+
+@app.route("/protected", methods=["GET"])
+@auth_required()
+def protected_route():
+    return {
+        "success": True,
+        "message": "You accessed a protected route",
+        "user": request.user
+    }
+
+@app.route("/admin", methods=["GET"])
+@auth_required(required_role="admin")
+def admin_route():
+    return {
+        "success": True,
+        "message": "Welcome admin"
+    }
+
 
 # ---------------- Global Error Handlers ----------------
 
