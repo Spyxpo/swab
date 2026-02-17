@@ -20,7 +20,10 @@ import logging
 from flasgger import Swagger
 import requests
 import time
-
+from flask_sqlalchemy import SQLAlchemy
+from models import Project
+from models import db
+from models import Build
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
@@ -39,6 +42,17 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///swab.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+from models import db
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+
 
 # ===== Webhook Helper =====
 
@@ -1057,6 +1071,29 @@ def upload_icon():
 def save_project():
     """Save project as encrypted .swab file"""
     data = request.json
+
+    #db
+    
+    if not data:
+        return jsonify({"error": "Invalid payload"}), 400
+
+    project_name = data.get("name")
+
+    if not project_name:
+        return jsonify({"error": "Project name required"}), 400
+
+    # 🔹 Database optimization: indexed lookup
+    existing = Project.query.filter_by(name=project_name).first()
+
+    if not existing:
+        new_project = Project(name=project_name)
+        db.session.add(new_project)
+        db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Project saved successfully"
+    })
 
     # Validate required fields
     required_fields = ['app_name', 'app_version', 'build_number']
