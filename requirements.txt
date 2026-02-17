@@ -3,3 +3,6 @@ werkzeug>=3.0.0
 cryptography>=41.0.0
 flasgger
 requests
+flask_sqlalchemy==3.0.5
+sqlalchemy==2.0.29
+
