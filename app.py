@@ -20,6 +20,8 @@ import logging
 from flasgger import Swagger
 import requests
 import time
+from background_tasks import start_worker
+from background_tasks import add_task, simulate_build
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -39,6 +41,10 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+start_worker()
+
+
 
 # ===== Webhook Helper =====
 
@@ -863,6 +869,7 @@ def start_build():
     """
 
 
+
     try:
         logger.info("Received build request")
 
@@ -972,6 +979,8 @@ def start_build():
         return jsonify({
             'error': 'Failed to start build'
         }), 500
+    
+    
 
 @app.route('/api/build/<build_id>/download/<platform>')
 def download_build(build_id, platform):
