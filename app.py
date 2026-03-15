@@ -20,6 +20,8 @@ import logging
 from flasgger import Swagger
 import requests
 import time
+from werkzeug.utils import secure_filename
+import os
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -39,6 +41,15 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+ALLOWED_ICON_EXTENSIONS = {"png", "jpg", "jpeg"}
+ALLOWED_KEYSTORE_EXTENSIONS = {"jks", "keystore"}
+
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+
+def allowed_file(filename, allowed_extensions):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed_extensions
 
 # ===== Webhook Helper =====
 
@@ -981,6 +992,13 @@ def download_build(build_id, platform):
     progress = build_progress[build_id]
     if progress['status'] != 'completed':
         return jsonify({'error': 'Build not completed'}), 400
+    
+    filename = secure_filename(f"{build_id}_{platform}.apk")
+
+    file_path = os.path.join("builds", filename)
+
+    if not os.path.exists(file_path):
+       return jsonify({"error": "File not found"}), 404
 
     # Handle keystore download
     if platform == 'keystore':
@@ -1016,42 +1034,81 @@ def download_build(build_id, platform):
 
 @app.route('/api/upload/keystore', methods=['POST'])
 def upload_keystore():
+
     if 'keystore' not in request.files:
         return jsonify({'error': 'No keystore file provided'}), 400
 
     file = request.files['keystore']
+
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
 
-    if file:
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        return jsonify({'success': True, 'filename': filename, 'path': filepath})
+    # Ensure upload directory exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-    return jsonify({'error': 'Upload failed'}), 500
+    # Validate extension
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ['.jks', '.keystore']:
+        return jsonify({'error': 'Invalid keystore file type'}), 400
+
+    # File size validation (max 5MB)
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+
+    if size > 5 * 1024 * 1024:
+        return jsonify({'error': 'File size exceeds 5MB limit'}), 400
+
+    # Generate safe random filename
+    filename = f"{uuid.uuid4()}{ext}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    file.save(filepath)
+
+    return jsonify({
+        'success': True,
+        'filename': filename,
+        'path': filepath
+    })
 
 @app.route('/api/upload/icon', methods=['POST'])
 def upload_icon():
+
     if 'icon' not in request.files:
         return jsonify({'error': 'No icon file provided'}), 400
 
     file = request.files['icon']
+
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
 
-    if file:
-        # Generate unique filename
-        ext = os.path.splitext(file.filename)[1].lower()
-        if ext not in ['.png', '.jpg', '.jpeg']:
-            return jsonify({'error': 'Invalid file type. Use PNG or JPG'}), 400
+    # Ensure upload directory exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-        filename = f"{uuid.uuid4()}{ext}"
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        return jsonify({'success': True, 'filename': filename, 'path': filepath})
+    # File extension validation
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ['.png', '.jpg', '.jpeg']:
+        return jsonify({'error': 'Invalid file type. Use PNG or JPG'}), 400
 
-    return jsonify({'error': 'Upload failed'}), 500
+    # File size validation (max 2MB)
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+
+    if size > 2 * 1024 * 1024:
+        return jsonify({'error': 'File size exceeds 2MB limit'}), 400
+
+    # Generate safe random filename
+    filename = f"{uuid.uuid4()}{ext}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    file.save(filepath)
+
+    return jsonify({
+        'success': True,
+        'filename': filename,
+        'path': filepath
+    })
 
 @app.route('/api/project/save', methods=['POST'])
 def save_project():
