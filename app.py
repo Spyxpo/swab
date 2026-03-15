@@ -20,6 +20,7 @@ import logging
 from flasgger import Swagger
 import requests
 import time
+from flask_caching import Cache
 
 # ---------------- Logging Configuration ----------------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -39,6 +40,11 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+cache = Cache(app, config={
+    "CACHE_TYPE": "SimpleCache",
+    "CACHE_DEFAULT_TIMEOUT": 300
+})
 
 # ===== Webhook Helper =====
 
@@ -811,6 +817,8 @@ def build_platform(project_dir, build_dir, platform, config):
 def index():
     return render_template('index.html')
 
+
+
 @app.route('/uploads/<filename>')
 def serve_upload(filename):
     """Serve uploaded files (icons, etc.)"""
@@ -972,6 +980,8 @@ def start_build():
         return jsonify({
             'error': 'Failed to start build'
         }), 500
+    
+
 
 @app.route('/api/build/<build_id>/download/<platform>')
 def download_build(build_id, platform):
@@ -1159,6 +1169,7 @@ def save_project():
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 @app.route('/api/project/open', methods=['POST'])
+@cache.cached(timeout=120)
 def open_project():
     """Open and decrypt a .swab project file"""
     if 'project' not in request.files:
@@ -1233,6 +1244,8 @@ def open_project():
     finally:
         # Cleanup temp directory
         shutil.rmtree(temp_dir, ignore_errors=True)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
