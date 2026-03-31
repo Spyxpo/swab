@@ -95,6 +95,7 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 0;
+    text-decoration: none;
 }
 
 .toolbar-left .logo h1 {
@@ -1387,6 +1388,135 @@ body {
 
 .icon-upload-info .file-upload-label span {
     font-size: 13px;
+}
+
+/* ==================== APPLE SIGNING STYLES ==================== */
+
+/* Apple signing notice (warning for non-macOS) */
+.apple-signing-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+}
+
+.apple-signing-notice svg {
+    width: 18px;
+    height: 18px;
+    color: var(--warning);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.apple-signing-notice-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.apple-signing-notice-text strong {
+    color: var(--warning);
+    font-weight: 600;
+}
+
+/* Apple info box styling */
+.apple-info {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Certificate validation info */
+.certificate-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    margin-top: 8px;
+    transition: all var(--transition-fast);
+}
+
+.certificate-info.validating {
+    background: var(--primary-glow);
+    color: var(--primary);
+}
+
+.certificate-info.success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.certificate-info.error {
+    background: var(--error-bg);
+    color: var(--error);
+}
+
+.certificate-info svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* Provisioning profile info display */
+.profile-info {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: 12px;
+}
+
+.profile-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.profile-info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.profile-info-row:first-child {
+    padding-top: 0;
+}
+
+.profile-info-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.profile-info-value {
+    font-size: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+}
+
+/* Spinning circle animation for loading */
+.spin-circle {
+    animation: spin 1s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes dashOffset {
+    0% {
+        stroke-dashoffset: 32;
+    }
+    50% {
+        stroke-dashoffset: 0;
+    }
+    100% {
+        stroke-dashoffset: -32;
+    }
 }
 
 /* ==================== RESPONSIVE DIALOG ==================== */

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAB - Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="auth-branding-content">
+                <div class="auth-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="SWAB" class="auth-logo-img">
+                    <h1>SWAB</h1>
+                </div>
+                <p class="auth-tagline">Transform your website into a native mobile app in minutes</p>
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>Build for Android, iOS, macOS, Windows & Linux</span>
+                    </div>
+                    <div class="auth-feature">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>No coding required</span>
+                    </div>
+                    <div class="auth-feature">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>Cloud project storage & sync</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Auth Forms -->
+        <div class="auth-forms">
+            <!-- Login Form -->
+            <div class="auth-card" id="login-form">
+                <div class="auth-card-header">
+                    <h2>Welcome back</h2>
+                    <p>Sign in to your account to continue</p>
+                </div>
+                <form id="login-form-element" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                            <button type="button" class="password-toggle" data-target="login-password">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <label class="checkbox-remember">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-link" id="show-forgot-password">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="login-btn">
+                        <span>Sign In</span>
+                        <svg class="btn-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                        </svg>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="show-signup">Create account</a>
+                </p>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-card" id="signup-form" style="display: none;">
+                <div class="auth-card-header">
+                    <h2>Create an account</h2>
+                    <p>Get started with SWAB for free</p>
+                </div>
+                <form id="signup-form-element" class="auth-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="signup-password" name="password" placeholder="Create a strong password" required minlength="8">
+                            <button type="button" class="password-toggle" data-target="signup-password">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="password-strength" id="password-strength">
+                            <div class="strength-bar"><span></span></div>
+                            <span class="strength-text">Password strength</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="signup-confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                            <button type="button" class="password-toggle" data-target="signup-confirm-password">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <label class="checkbox-terms">
+                        <input type="checkbox" id="agree-terms" required>
+                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                    </label>
+                    <button type="submit" class="auth-submit-btn" id="signup-btn">
+                        <span>Create Account</span>
+                        <svg class="btn-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                        </svg>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="show-login">Sign in</a>
+                </p>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div class="auth-card" id="forgot-password-form" style="display: none;">
+                <div class="auth-card-header">
+                    <a href="#" class="back-link" id="back-to-login">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to login
+                    </a>
+                    <h2>Reset your password</h2>
+                    <p>Enter your email and we'll send you a reset link</p>
+                </div>
+                <form id="forgot-password-form-element" class="auth-form">
+                    <div class="form-group">
+                        <label for="forgot-email">Email</label>
+                        <input type="email" id="forgot-email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="forgot-btn">
+                        <span>Send Reset Link</span>
+                        <svg class="btn-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                        </svg>
+                    </button>
+                </form>
+                <div class="reset-success" id="reset-success" style="display: none;">
+                    <div class="success-icon-large">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h3>Check your email</h3>
+                    <p>We've sent a password reset link to <strong id="reset-email-display"></strong></p>
+                    <a href="#" class="auth-link" id="back-to-login-2">Return to login</a>
+                </div>
+            </div>
+
+            <!-- Email Verification Notice -->
+            <div class="auth-card" id="verify-email-form" style="display: none;">
+                <div class="auth-card-header">
+                    <div class="verify-icon">
+                        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                    <h2>Verify your email</h2>
+                    <p>We've sent a verification email to</p>
+                    <strong class="verify-email-address" id="verify-email-display"></strong>
+                </div>
+                <div class="verify-instructions">
+                    <p>Click the link in the email to verify your account. If you don't see the email, check your spam folder.</p>
+                </div>
+                <div class="verify-actions">
+                    <button type="button" class="auth-submit-btn" id="resend-verification-btn">
+                        <span>Resend Verification Email</span>
+                        <svg class="btn-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="auth-secondary-btn" id="change-email-btn">Change email address</button>
+                </div>
+                <p class="auth-switch">
+                    Already verified? <a href="#" id="continue-to-dashboard">Continue to dashboard</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error/Success Toast -->
+    <div id="auth-toast" class="auth-toast" style="display: none;">
+        <div class="toast-icon"></div>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            sendPasswordResetEmail,
+            sendEmailVerification,
+            updateProfile,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "{{ firebase_config.api_key }}",
+            authDomain: "{{ firebase_config.auth_domain }}",
+            projectId: "{{ firebase_config.project_id }}",
+            storageBucket: "{{ firebase_config.storage_bucket }}",
+            messagingSenderId: "{{ firebase_config.messaging_sender_id }}",
+            appId: "{{ firebase_config.app_id }}",
+            measurementId: "{{ firebase_config.measurement_id }}"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const verifyEmailForm = document.getElementById('verify-email-form');
+
+        // Form elements
+        const loginFormElement = document.getElementById('login-form-element');
+        const signupFormElement = document.getElementById('signup-form-element');
+        const forgotPasswordFormElement = document.getElementById('forgot-password-form-element');
+
+        // Navigation links
+        document.getElementById('show-signup').addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('signup');
+        });
+
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('login');
+        });
+
+        document.getElementById('show-forgot-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('forgot-password');
+        });
+
+        document.getElementById('back-to-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('login');
+        });
+
+        document.getElementById('back-to-login-2').addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('login');
+        });
+
+        document.getElementById('change-email-btn').addEventListener('click', () => {
+            showForm('signup');
+        });
+
+        document.getElementById('continue-to-dashboard').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/dashboard';
+        });
+
+        function showForm(formName) {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'none';
+            forgotPasswordForm.style.display = 'none';
+            verifyEmailForm.style.display = 'none';
+
+            switch(formName) {
+                case 'login':
+                    loginForm.style.display = 'block';
+                    break;
+                case 'signup':
+                    signupForm.style.display = 'block';
+                    break;
+                case 'forgot-password':
+                    forgotPasswordForm.style.display = 'block';
+                    document.getElementById('reset-success').style.display = 'none';
+                    forgotPasswordFormElement.style.display = 'block';
+                    break;
+                case 'verify-email':
+                    verifyEmailForm.style.display = 'block';
+                    break;
+            }
+        }
+
+        // Password toggle
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                const eyeIcon = btn.querySelector('.eye-icon');
+                const eyeOffIcon = btn.querySelector('.eye-off-icon');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    eyeIcon.style.display = 'none';
+                    eyeOffIcon.style.display = 'block';
+                } else {
+                    input.type = 'password';
+                    eyeIcon.style.display = 'block';
+                    eyeOffIcon.style.display = 'none';
+                }
+            });
+        });
+
+        // Password strength indicator
+        const signupPassword = document.getElementById('signup-password');
+        const strengthBar = document.querySelector('#password-strength .strength-bar span');
+        const strengthText = document.querySelector('#password-strength .strength-text');
+
+        signupPassword.addEventListener('input', () => {
+            const password = signupPassword.value;
+            const strength = calculatePasswordStrength(password);
+
+            strengthBar.style.width = strength.percent + '%';
+            strengthBar.className = strength.level;
+            strengthText.textContent = strength.text;
+        });
+
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            if (password.length >= 8) score += 25;
+            if (password.length >= 12) score += 10;
+            if (/[a-z]/.test(password)) score += 15;
+            if (/[A-Z]/.test(password)) score += 15;
+            if (/[0-9]/.test(password)) score += 15;
+            if (/[^a-zA-Z0-9]/.test(password)) score += 20;
+
+            if (score < 30) return { percent: score, level: 'weak', text: 'Weak password' };
+            if (score < 60) return { percent: score, level: 'fair', text: 'Fair password' };
+            if (score < 80) return { percent: score, level: 'good', text: 'Good password' };
+            return { percent: 100, level: 'strong', text: 'Strong password' };
+        }
+
+        // Toast notification
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('auth-toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+
+            toast.className = `auth-toast ${type}`;
+            toastMessage.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+            } else {
+                toastIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+            }
+
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.animation = '';
+                }, 300);
+            }, 4000);
+        }
+
+        // Button loading state
+        function setButtonLoading(btn, loading) {
+            const span = btn.querySelector('span');
+            const spinner = btn.querySelector('.btn-spinner');
+            btn.disabled = loading;
+
+            if (loading) {
+                span.style.opacity = '0';
+                spinner.style.display = 'block';
+            } else {
+                span.style.opacity = '1';
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Create user profile in Firestore
+        async function createUserProfile(user, additionalData = {}) {
+            const userRef = doc(db, 'users', user.uid);
+            const snapshot = await getDoc(userRef);
+
+            if (!snapshot.exists()) {
+                const { email, displayName, photoURL } = user;
+                await setDoc(userRef, {
+                    email,
+                    displayName: additionalData.displayName || displayName || '',
+                    photoURL: photoURL || '',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    projects: [],
+                    settings: {
+                        theme: 'dark',
+                        notifications: true
+                    }
+                });
+            }
+        }
+
+        // Login form submission
+        loginFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            setButtonLoading(btn, true);
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                if (!user.emailVerified) {
+                    document.getElementById('verify-email-display').textContent = user.email;
+                    showForm('verify-email');
+                    setButtonLoading(btn, false);
+                    return;
+                }
+
+                showToast('Login successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+            } catch (error) {
+                let message = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        message = 'Invalid email address.';
+                        break;
+                    case 'auth/user-disabled':
+                        message = 'This account has been disabled.';
+                        break;
+                    case 'auth/user-not-found':
+                        message = 'No account found with this email.';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Incorrect password.';
+                        break;
+                    case 'auth/invalid-credential':
+                        message = 'Invalid email or password.';
+                        break;
+                }
+                showToast(message, 'error');
+                setButtonLoading(btn, false);
+            }
+        });
+
+        // Signup form submission
+        signupFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('signup-btn');
+            setButtonLoading(btn, true);
+
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match.', 'error');
+                setButtonLoading(btn, false);
+                return;
+            }
+
+            if (password.length < 8) {
+                showToast('Password must be at least 8 characters.', 'error');
+                setButtonLoading(btn, false);
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Update profile with display name
+                await updateProfile(user, { displayName: name });
+
+                // Create user profile in Firestore
+                await createUserProfile(user, { displayName: name });
+
+                // Send email verification
+                await sendEmailVerification(user);
+
+                document.getElementById('verify-email-display').textContent = email;
+                showForm('verify-email');
+            } catch (error) {
+                let message = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'An account with this email already exists.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Invalid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'Password is too weak.';
+                        break;
+                }
+                showToast(message, 'error');
+            }
+            setButtonLoading(btn, false);
+        });
+
+        // Forgot password form submission
+        forgotPasswordFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('forgot-btn');
+            setButtonLoading(btn, true);
+
+            const email = document.getElementById('forgot-email').value;
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                document.getElementById('reset-email-display').textContent = email;
+                forgotPasswordFormElement.style.display = 'none';
+                document.getElementById('reset-success').style.display = 'block';
+            } catch (error) {
+                let message = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        message = 'Invalid email address.';
+                        break;
+                    case 'auth/user-not-found':
+                        message = 'No account found with this email.';
+                        break;
+                }
+                showToast(message, 'error');
+            }
+            setButtonLoading(btn, false);
+        });
+
+        // Resend verification email
+        document.getElementById('resend-verification-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('resend-verification-btn');
+            setButtonLoading(btn, true);
+
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    await sendEmailVerification(user);
+                    showToast('Verification email sent!', 'success');
+                }
+            } catch (error) {
+                showToast('Failed to send verification email. Please try again.', 'error');
+            }
+            setButtonLoading(btn, false);
+        });
+
+        // Check auth state on page load
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.emailVerified) {
+                // User is already logged in and verified, redirect to dashboard
+                window.location.href = '/dashboard';
+            }
+        });
+    </script>
+</body>
+</html>

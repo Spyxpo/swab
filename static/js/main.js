@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIconPath = null;
     let currentKeystorePath = null;
 
+    // Apple signing paths and info
+    let currentAppleCertificatePath = null;
+    let currentAppleProfilePath = null;
+    let currentAppleProfileInfo = null;
+    let isAppleSigningAvailable = false;
+
     // Center progress elements
     const centerProgress = document.getElementById('center-progress');
     const centerProgressFill = document.getElementById('center-progress-fill');
@@ -107,11 +113,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle platform selection for keystore visibility
+    // Apple signing elements
+    const appleSigningSection = document.getElementById('apple-signing-section');
+    const appleSigningNotice = document.getElementById('apple-signing-notice');
+    const appleCertificateFile = document.getElementById('apple-certificate-file');
+    const appleCertificateUploadLabel = document.getElementById('apple-certificate-upload-label');
+    const appleCertificateDetails = document.getElementById('apple-certificate-details');
+    const appleCertificatePassword = document.getElementById('apple-certificate-password');
+    const certificateInfo = document.getElementById('certificate-info');
+    const certificateInfoText = document.getElementById('certificate-info-text');
+    const appleProfileFile = document.getElementById('apple-profile-file');
+    const appleProfileUploadLabel = document.getElementById('apple-profile-upload-label');
+    const appleProfileDetails = document.getElementById('apple-profile-details');
+    const teamIdGroup = document.getElementById('team-id-group');
+
+    // Check Apple signing availability on load
+    checkAppleSigningAvailability();
+
+    async function checkAppleSigningAvailability() {
+        try {
+            const response = await fetch('/api/apple/check-platform');
+            const result = await response.json();
+            isAppleSigningAvailable = result.available;
+
+            if (!isAppleSigningAvailable && appleSigningNotice) {
+                appleSigningNotice.style.display = 'flex';
+            }
+        } catch (error) {
+            console.error('Failed to check Apple signing availability:', error);
+            isAppleSigningAvailable = false;
+        }
+    }
+
+    // Handle platform selection for keystore/Apple signing visibility
     platformSelect.addEventListener('change', function() {
         const selectedPlatform = this.value;
         const isAndroid = selectedPlatform === 'android' || selectedPlatform === 'android_aab';
+        const isApple = selectedPlatform === 'ios' || selectedPlatform === 'macos';
+
         keystoreSection.style.display = isAndroid ? 'block' : 'none';
+        appleSigningSection.style.display = isApple ? 'block' : 'none';
     });
 
     // Handle icon file selection
@@ -261,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (iconResponse.ok) {
                     const iconResult = await iconResponse.json();
                     formData.icon_path = iconResult.path;
+                    currentIconPath = iconResult.path;
                 }
             } catch (error) {
                 console.error('Icon upload error:', error);
@@ -281,12 +323,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (uploadResponse.ok) {
                     const uploadResult = await uploadResponse.json();
                     formData.keystore_path = uploadResult.path;
+                    currentKeystorePath = uploadResult.path;
                     formData.keystore_password = document.getElementById('keystore-password').value;
                     formData.key_alias = document.getElementById('key-alias').value;
                     formData.key_password = document.getElementById('key-password').value;
                 }
             } catch (error) {
                 console.error('Keystore upload error:', error);
+            }
+        }
+
+        // Check if Apple platform and add signing credentials
+        const isApple = selectedPlatform === 'ios' || selectedPlatform === 'macos';
+        if (isApple) {
+            // Add Apple signing credentials if available
+            if (currentAppleCertificatePath) {
+                formData.apple_certificate_path = currentAppleCertificatePath;
+                formData.apple_certificate_password = document.getElementById('apple-certificate-password').value;
+            }
+            if (currentAppleProfilePath) {
+                formData.apple_provisioning_profile_path = currentAppleProfilePath;
+            }
+            const teamId = document.getElementById('team-id').value;
+            if (teamId) {
+                formData.team_id = teamId;
+            } else if (currentAppleProfileInfo && currentAppleProfileInfo.team_id) {
+                formData.team_id = currentAppleProfileInfo.team_id;
             }
         }
 
@@ -557,6 +619,281 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
+    // ==================== APPLE SIGNING HANDLERS ====================
+
+    // Handle Apple certificate file selection
+    if (appleCertificateFile) {
+        appleCertificateFile.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files[0].name;
+                appleCertificateUploadLabel.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    <span>${fileName}</span>
+                    <small class="hint">Click to change file</small>
+                `;
+                appleCertificateUploadLabel.style.borderColor = 'var(--primary)';
+                appleCertificateUploadLabel.style.background = 'var(--primary-glow)';
+                appleCertificateDetails.style.display = 'block';
+
+                // Reset certificate validation state
+                certificateInfo.style.display = 'none';
+                currentAppleCertificatePath = null;
+            } else {
+                resetAppleCertificateUpload();
+            }
+        });
+    }
+
+    // Validate certificate when password is entered
+    if (appleCertificatePassword) {
+        let certValidationTimer;
+        appleCertificatePassword.addEventListener('input', function() {
+            clearTimeout(certValidationTimer);
+            certValidationTimer = setTimeout(() => {
+                validateAppleCertificate();
+            }, 500);
+        });
+    }
+
+    async function validateAppleCertificate() {
+        if (!appleCertificateFile.files || appleCertificateFile.files.length === 0) {
+            return;
+        }
+
+        const password = appleCertificatePassword.value;
+        if (!password) {
+            certificateInfo.style.display = 'none';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('certificate', appleCertificateFile.files[0]);
+        formData.append('password', password);
+
+        try {
+            certificateInfoText.textContent = 'Validating certificate...';
+            certificateInfo.style.display = 'flex';
+            certificateInfo.className = 'certificate-info validating';
+
+            const response = await fetch('/api/upload/apple-certificate', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                currentAppleCertificatePath = result.path;
+                certificateInfoText.textContent = 'Certificate validated successfully';
+                certificateInfo.className = 'certificate-info success';
+                appleCertificateUploadLabel.style.borderColor = 'var(--success)';
+                appleCertificateUploadLabel.style.background = 'var(--success-bg)';
+            } else {
+                currentAppleCertificatePath = null;
+                certificateInfoText.textContent = result.error || 'Certificate validation failed';
+                certificateInfo.className = 'certificate-info error';
+                appleCertificateUploadLabel.style.borderColor = 'var(--error)';
+                appleCertificateUploadLabel.style.background = 'var(--error-bg)';
+            }
+        } catch (error) {
+            console.error('Certificate validation error:', error);
+            certificateInfoText.textContent = 'Validation failed - check console';
+            certificateInfo.className = 'certificate-info error';
+        }
+    }
+
+    function resetAppleCertificateUpload() {
+        appleCertificateUploadLabel.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+            <span>Click to upload or drag and drop</span>
+            <small class="hint">.p12 file exported from Keychain Access</small>
+        `;
+        appleCertificateUploadLabel.style.borderColor = '';
+        appleCertificateUploadLabel.style.background = '';
+        appleCertificateDetails.style.display = 'none';
+        certificateInfo.style.display = 'none';
+        currentAppleCertificatePath = null;
+    }
+
+    // Handle Apple provisioning profile selection
+    if (appleProfileFile) {
+        appleProfileFile.addEventListener('change', async function() {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                const fileName = file.name;
+
+                appleProfileUploadLabel.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32" class="spin-circle"/>
+                    </svg>
+                    <span>Validating profile...</span>
+                `;
+                appleProfileUploadLabel.style.borderColor = 'var(--primary)';
+                appleProfileUploadLabel.style.background = 'var(--primary-glow)';
+
+                // Upload and validate the profile
+                const formData = new FormData();
+                formData.append('profile', file);
+
+                try {
+                    const response = await fetch('/api/upload/provisioning-profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        currentAppleProfilePath = result.path;
+                        currentAppleProfileInfo = result.info;
+
+                        appleProfileUploadLabel.innerHTML = `
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span>${fileName}</span>
+                            <small class="hint">Click to change file</small>
+                        `;
+                        appleProfileUploadLabel.style.borderColor = 'var(--success)';
+                        appleProfileUploadLabel.style.background = 'var(--success-bg)';
+
+                        // Display profile info
+                        appleProfileDetails.style.display = 'block';
+                        document.getElementById('profile-name').textContent = result.info.name || '-';
+                        document.getElementById('profile-team-id').textContent = result.info.team_id || '-';
+                        document.getElementById('profile-bundle-id').textContent = result.info.app_bundle_id || '-';
+
+                        if (result.info.expiration_date) {
+                            const expDate = new Date(result.info.expiration_date);
+                            document.getElementById('profile-expiration').textContent = expDate.toLocaleDateString();
+                        } else {
+                            document.getElementById('profile-expiration').textContent = '-';
+                        }
+
+                        // Auto-fill team ID if available
+                        if (result.info.team_id) {
+                            document.getElementById('team-id').value = result.info.team_id;
+                        }
+
+                        showToast('Provisioning profile validated', 'success');
+                    } else {
+                        resetAppleProfileUpload();
+                        showToast(result.error || 'Invalid provisioning profile', 'error');
+                    }
+                } catch (error) {
+                    console.error('Profile validation error:', error);
+                    resetAppleProfileUpload();
+                    showToast('Failed to validate provisioning profile', 'error');
+                }
+            } else {
+                resetAppleProfileUpload();
+            }
+        });
+    }
+
+    function resetAppleProfileUpload() {
+        appleProfileUploadLabel.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+            <span>Click to upload or drag and drop</span>
+            <small class="hint">.mobileprovision file from Apple Developer Portal</small>
+        `;
+        appleProfileUploadLabel.style.borderColor = '';
+        appleProfileUploadLabel.style.background = '';
+        appleProfileDetails.style.display = 'none';
+        currentAppleProfilePath = null;
+        currentAppleProfileInfo = null;
+    }
+
+    // Drag and drop for Apple certificate
+    const appleCertificateUpload = document.getElementById('apple-certificate-upload');
+    if (appleCertificateUpload) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            appleCertificateUpload.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            appleCertificateUpload.addEventListener(eventName, () => {
+                appleCertificateUploadLabel.style.borderColor = 'var(--primary)';
+                appleCertificateUploadLabel.style.background = 'var(--primary-glow)';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            appleCertificateUpload.addEventListener(eventName, () => {
+                if (!appleCertificateFile.files || appleCertificateFile.files.length === 0) {
+                    appleCertificateUploadLabel.style.borderColor = '';
+                    appleCertificateUploadLabel.style.background = '';
+                }
+            }, false);
+        });
+
+        appleCertificateUpload.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.p12') || file.name.endsWith('.pfx')) {
+                    appleCertificateFile.files = files;
+                    const event = new Event('change');
+                    appleCertificateFile.dispatchEvent(event);
+                } else {
+                    showToast('Please upload a .p12 or .pfx file', 'error');
+                }
+            }
+        }, false);
+    }
+
+    // Drag and drop for Apple provisioning profile
+    const appleProfileUpload = document.getElementById('apple-profile-upload');
+    if (appleProfileUpload) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            appleProfileUpload.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            appleProfileUpload.addEventListener(eventName, () => {
+                appleProfileUploadLabel.style.borderColor = 'var(--primary)';
+                appleProfileUploadLabel.style.background = 'var(--primary-glow)';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            appleProfileUpload.addEventListener(eventName, () => {
+                if (!appleProfileFile.files || appleProfileFile.files.length === 0) {
+                    appleProfileUploadLabel.style.borderColor = '';
+                    appleProfileUploadLabel.style.background = '';
+                }
+            }, false);
+        });
+
+        appleProfileUpload.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.mobileprovision')) {
+                    appleProfileFile.files = files;
+                    const event = new Event('change');
+                    appleProfileFile.dispatchEvent(event);
+                } else {
+                    showToast('Please upload a .mobileprovision file', 'error');
+                }
+            }
+        }, false);
+    }
+
     // ==================== Project Save/Open ====================
 
     // Save project button handler
@@ -641,9 +978,14 @@ document.addEventListener('DOMContentLoaded', function() {
             keystore_password: document.getElementById('keystore-password').value,
             key_alias: document.getElementById('key-alias').value,
             key_password: document.getElementById('key-password').value,
+            // Apple signing info
+            apple_certificate_password: document.getElementById('apple-certificate-password').value,
+            team_id: document.getElementById('team-id').value,
             // Asset paths
             icon_path: currentIconPath,
-            keystore_path: currentKeystorePath
+            keystore_path: currentKeystorePath,
+            apple_certificate_path: currentAppleCertificatePath,
+            apple_provisioning_profile_path: currentAppleProfilePath
         };
 
         try {
@@ -690,11 +1032,11 @@ document.addEventListener('DOMContentLoaded', function() {
             saveProjectBtn.disabled = false;
             saveProjectBtn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                    <polyline points="17 21 17 13 7 13 7 21"/>
-                    <polyline points="7 3 7 8 15 8"/>
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                <span>Save</span>
+                <span>Download</span>
             `;
         }
     });
@@ -818,6 +1160,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Show keystore section if we have keystore data
                 keystoreSection.style.display = 'block';
+            }
+
+            // Handle Apple certificate
+            if (project.apple_certificate_path) {
+                currentAppleCertificatePath = project.apple_certificate_path;
+                appleCertificateUploadLabel.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>certificate.p12 (loaded)</span>
+                    <small class="hint">Click to change file</small>
+                `;
+                appleCertificateUploadLabel.style.borderColor = 'var(--success)';
+                appleCertificateUploadLabel.style.background = 'var(--success-bg)';
+                appleCertificateDetails.style.display = 'block';
+
+                if (project.apple_certificate_password) {
+                    document.getElementById('apple-certificate-password').value = project.apple_certificate_password;
+                }
+
+                // Show Apple signing section
+                appleSigningSection.style.display = 'block';
+            }
+
+            // Handle Apple provisioning profile
+            if (project.apple_provisioning_profile_path) {
+                currentAppleProfilePath = project.apple_provisioning_profile_path;
+                currentAppleProfileInfo = project.apple_profile_info || null;
+
+                appleProfileUploadLabel.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>profile.mobileprovision (loaded)</span>
+                    <small class="hint">Click to change file</small>
+                `;
+                appleProfileUploadLabel.style.borderColor = 'var(--success)';
+                appleProfileUploadLabel.style.background = 'var(--success-bg)';
+
+                // Display profile info if available
+                if (project.apple_profile_info) {
+                    appleProfileDetails.style.display = 'block';
+                    document.getElementById('profile-name').textContent = project.apple_profile_info.name || '-';
+                    document.getElementById('profile-team-id').textContent = project.apple_profile_info.team_id || '-';
+                    document.getElementById('profile-bundle-id').textContent = project.apple_profile_info.app_bundle_id || '-';
+
+                    if (project.apple_profile_info.expiration_date) {
+                        const expDate = new Date(project.apple_profile_info.expiration_date);
+                        document.getElementById('profile-expiration').textContent = expDate.toLocaleDateString();
+                    }
+                }
+
+                // Show Apple signing section
+                appleSigningSection.style.display = 'block';
+            }
+
+            // Handle Team ID
+            if (project.team_id) {
+                document.getElementById('team-id').value = project.team_id;
             }
 
             // Reset build UI

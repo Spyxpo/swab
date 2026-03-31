@@ -7,6 +7,48 @@ projects/
 /__pycache__/
 *.tmp
 .env
+.env.local
+.env.production
 /uploads/
 .idea/
 *.bak
+
+# Firebase credentials - NEVER commit these
+serviceAccount.json
+*-firebase-adminsdk-*.json
+firebase-adminsdk*.json
+*.pem
+firebase-debug.log
+.firebase/
+
+# Apple signing credentials
+*.p12
+*.pfx
+*.mobileprovision
+*.cer
+*.key
+*.csr
+
+# Android signing credentials
+*.jks
+*.keystore
+keystore-info.txt
+
+# IDE
+.vscode/
+*.code-workspace
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*~
