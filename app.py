@@ -20,13 +20,27 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from dotenv import load_dotenv
-
-# Load environment variables
 load_dotenv()
 
-# Firebase Admin SDK
+# Firebase
 import firebase_admin
 from firebase_admin import credentials, auth as firebase_auth, firestore, storage as firebase_storage
+
+# Logging & Swagger
+import logging
+from flasgger import Swagger
+import requests
+import time
+
+# ---------------- Logging Configuration ----------------
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+logging.basicConfig(
+    level=LOG_LEVEL,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -436,6 +450,52 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['BUILD_FOLDER'] = os.path.join(BASE_DIR, 'builds')
 app.config['FLUTTER_TEMPLATE'] = os.path.join(BASE_DIR, 'templates', 'webview_app')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+# ===== Webhook Helper =====
+
+def send_webhook_notification(webhook_url, payload):
+    """Send webhook notification in a safe, non-blocking way."""
+    if not webhook_url:
+        return
+
+    try:
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            timeout=5
+        )
+        response.raise_for_status()
+    except Exception as e:
+        app.logger.warning(f"Webhook notification failed: {e}")
+
+# ---------------- Swagger Configuration ----------------
+
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/",
+}
+
+Swagger(app, config=swagger_config)
+
+# ---------------- Global Error Handlers ----------------
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.exception("Unhandled exception occurred")
+    return jsonify({
+        "success": False,
+        "error": "Internal server error"
+    }), 500
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -853,13 +913,44 @@ def run_build(build_id, config):
             final_status['keystore_info_path'] = keystore_info.get('info_path')
 
         build_progress[build_id] = final_status
+        # ✅ Webhook on success
+        webhook_url = config.get('webhook_url')
+        payload = {
+            "build_id": build_id,
+            "status": final_status.get('status'),
+            "platforms": config.get('platforms'),
+            "outputs": final_status.get('outputs')
+        }
+
+        threading.Thread(
+            target=send_webhook_notification,
+            args=(webhook_url, payload),
+            daemon=True
+        ).start()
 
     except Exception as e:
-        build_progress[build_id] = {
+        error_status = {
             'status': 'error',
             'progress': 0,
             'message': f'Build failed: {str(e)}'
         }
+        build_progress[build_id] = error_status
+
+        # ✅ Webhook on failure
+        webhook_url = config.get('webhook_url')
+        payload = {
+            "build_id": build_id,
+            "status": "error",
+            "error": str(e),
+            "platforms": config.get('platforms')
+        }
+
+        threading.Thread(
+            target=send_webhook_notification,
+            args=(webhook_url, payload),
+            daemon=True
+        ).start()
+
 
 def get_platform_display_name(platform):
     """Get display name for platform"""
@@ -1413,64 +1504,154 @@ def serve_upload(filename):
 
 @app.route('/api/build', methods=['POST'])
 def start_build():
-    data = request.json
 
-    # Validate required fields
-    required_fields = ['app_name', 'app_description', 'app_version', 'build_number', 'package_name', 'web_url', 'platforms']
-    for field in required_fields:
-        if field not in data or not data[field]:
-            return jsonify({'error': f'Missing required field: {field}'}), 400
+    """
+    Start a new build process
+    ---
+    tags:
+      - Build
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - app_name
+            - app_version
+            - build_number
+            - web_url
+            - platforms
+          properties:
+            app_name:
+              type: string
+            app_version:
+              type: string
+            build_number:
+              type: string
+            web_url:
+              type: string
+            platforms:
+              type: array
+              items:
+                type: string
+    responses:
+      200:
+        description: Build started successfully
+      400:
+        description: Invalid input
+      500:
+        description: Internal server error
+    """
 
-    if not data['platforms']:
-        return jsonify({'error': 'At least one platform must be selected'}), 400
+    try:
+        logger.info("Received build request")
 
-    # Generate build ID
-    build_id = str(uuid.uuid4())
+        data = request.json
 
-    # Start build in background thread
-    config = {
-        'app_name': data['app_name'],
-        'app_description': data['app_description'],
-        'app_version': data['app_version'],
-        'build_number': data['build_number'],
-        'package_name': data['package_name'],
-        'web_url': data['web_url'],
-        'platforms': data['platforms'],
-        # WebView feature options
-        'allow_zoom': data.get('allow_zoom', True),
-        'enable_javascript': data.get('enable_javascript', True),
-        'enable_dom_storage': data.get('enable_dom_storage', True),
-        'enable_geolocation': data.get('enable_geolocation', True),
-        'enable_pull_refresh': data.get('enable_pull_refresh', True),
-        'show_navigation': data.get('show_navigation', True),
-        'enable_file_access': data.get('enable_file_access', True),
-        'enable_cache': data.get('enable_cache', True),
-        'enable_media_autoplay': data.get('enable_media_autoplay', False),
-        # Keystore config (optional - Android)
-        'keystore_path': data.get('keystore_path'),
-        'keystore_password': data.get('keystore_password'),
-        'key_alias': data.get('key_alias'),
-        'key_password': data.get('key_password'),
-        # Apple signing config (optional - iOS/macOS)
-        'apple_certificate_path': data.get('apple_certificate_path'),
-        'apple_certificate_password': data.get('apple_certificate_password'),
-        'apple_provisioning_profile_path': data.get('apple_provisioning_profile_path'),
-        'team_id': data.get('team_id'),
-        # Icon config (optional)
-        'icon_path': data.get('icon_path')
-    }
+        if not data:
+            logger.warning("No JSON payload received")
+            return jsonify({'error': 'Invalid JSON payload'}), 400
 
-    thread = threading.Thread(target=run_build, args=(build_id, config))
-    thread.start()
+        # Validate required fields
+        required_fields = [
+            'app_name', 'app_description', 'app_version',
+            'build_number', 'package_name', 'web_url', 'platforms'
+        ]
 
-    return jsonify({'build_id': build_id})
+        for field in required_fields:
+            if field not in data or not data[field]:
+                logger.warning(f"Missing required field: {field}")
+                return jsonify({'error': f'Missing required field: {field}'}), 400
 
-@app.route('/api/build/<build_id>/status')
-def get_build_status(build_id):
-    if build_id not in build_progress:
-        return jsonify({'error': 'Build not found'}), 404
+        if not data['platforms']:
+            logger.warning("No platforms selected")
+            return jsonify({'error': 'At least one platform must be selected'}), 400
 
-    return jsonify(build_progress[build_id])
+        # Additional validations
+        if 'download_directory' in data and not isinstance(data['download_directory'], str):
+            return jsonify({'error': 'download_directory must be a string'}), 400
+
+        if 'enable_camera_access' in data and not isinstance(data['enable_camera_access'], bool):
+            return jsonify({'error': 'enable_camera_access must be a boolean'}), 400
+
+        if 'enable_gallery_access' in data and not isinstance(data['enable_gallery_access'], bool):
+            return jsonify({'error': 'enable_gallery_access must be a boolean'}), 400
+
+        if 'camera_permission_prompt' in data and not isinstance(data['camera_permission_prompt'], bool):
+            return jsonify({'error': 'camera_permission_prompt must be a boolean'}), 400
+
+        if 'enable_qr_scanner' in data and not isinstance(data['enable_qr_scanner'], bool):
+            return jsonify({'error': 'enable_qr_scanner must be a boolean'}), 400
+
+        if 'enable_barcode_scanner' in data and not isinstance(data['enable_barcode_scanner'], bool):
+            return jsonify({'error': 'enable_barcode_scanner must be a boolean'}), 400
+
+        if 'scanner_formats' in data and not isinstance(data['scanner_formats'], (list, str)):
+            return jsonify({'error': 'scanner_formats must be a list or string'}), 400
+
+        # Generate build ID
+        build_id = str(uuid.uuid4())
+        logger.info(f"Starting build with ID: {build_id}")
+
+        # ✅ SINGLE FINAL CONFIG
+        config = {
+            'app_name': data['app_name'],
+            'app_description': data['app_description'],
+            'app_version': data['app_version'],
+            'build_number': data['build_number'],
+            'package_name': data['package_name'],
+            'web_url': data['web_url'],
+            'platforms': data['platforms'],
+
+            'allow_zoom': data.get('allow_zoom', True),
+            'enable_javascript': data.get('enable_javascript', True),
+            'enable_dom_storage': data.get('enable_dom_storage', True),
+            'enable_geolocation': data.get('enable_geolocation', True),
+            'enable_pull_refresh': data.get('enable_pull_refresh', True),
+            'show_navigation': data.get('show_navigation', True),
+            'enable_file_access': data.get('enable_file_access', True),
+            'enable_cache': data.get('enable_cache', True),
+            'enable_media_autoplay': data.get('enable_media_autoplay', False),
+
+            'enable_camera_access': data.get('enable_camera_access', True),
+            'enable_gallery_access': data.get('enable_gallery_access', True),
+            'camera_permission_prompt': data.get('camera_permission_prompt', True),
+
+            'enable_qr_scanner': data.get('enable_qr_scanner', True),
+            'enable_barcode_scanner': data.get('enable_barcode_scanner', True),
+            'scanner_formats': data.get('scanner_formats', []),
+
+            'download_directory': data.get('download_directory', 'Downloads'),
+
+            'keystore_path': data.get('keystore_path'),
+            'keystore_password': data.get('keystore_password'),
+            'key_alias': data.get('key_alias'),
+            'key_password': data.get('key_password'),
+
+            'apple_certificate_path': data.get('apple_certificate_path'),
+            'apple_certificate_password': data.get('apple_certificate_password'),
+            'apple_provisioning_profile_path': data.get('apple_provisioning_profile_path'),
+            'team_id': data.get('team_id'),
+
+            'icon_path': data.get('icon_path'),
+            'webhook_url': data.get('webhook_url')
+        }
+
+        # Run build
+        thread = threading.Thread(target=run_build, args=(build_id, config))
+        thread.start()
+
+        logger.info(f"Build thread started for build ID: {build_id}")
+        return jsonify({'build_id': build_id})
+
+    except Exception as e:
+        logger.exception("Failed to start build process")
+        return jsonify({'error': 'Failed to start build'}), 500
 
 @app.route('/api/build/<build_id>/download/<platform>')
 def download_build(build_id, platform):
